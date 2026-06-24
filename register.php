@@ -56,14 +56,6 @@ require_once __DIR__ . '/views/layout/header.php';
                         </div>
                     </div>
                     
-                    <div class="mb-4">
-                        <label for="password" class="form-label fw-semibold">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
-                            <input type="password" class="form-control bg-light border-start-0 ps-0" id="password" name="password" placeholder="Min. 6 characters" required>
-                        </div>
-                    </div>
-                    
                     <button type="submit" class="btn btn-primary w-100 py-3 mb-3">Create Account</button>
                     
                     <div class="text-center mt-3">

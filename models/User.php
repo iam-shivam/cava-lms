@@ -19,6 +19,10 @@ class User {
         return DB::fetch("SELECT * FROM users WHERE id = ?", [$id]);
     }
     
+    public static function findByIdentifier($identifier) {
+        return DB::fetch("SELECT * FROM users WHERE email = ? OR mobile_number = ?", [$identifier, $identifier]);
+    }
+    
     public static function emailExists($email) {
         $row = DB::fetch("SELECT id FROM users WHERE email = ?", [$email]);
         return !empty($row);

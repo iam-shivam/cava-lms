@@ -46,20 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $_SESSION['user_name'] = $fullName; // update session
             set_flash_message('success', 'Profile updated successfully.');
         }
-    } elseif ($_POST['action'] === 'update_password') {
-        $oldPass = $_POST['old_password'] ?? '';
-        $newPass = $_POST['new_password'] ?? '';
-        
-        if (password_verify($oldPass, $user['password_hash'])) {
-            if (strlen($newPass) >= 6) {
-                User::updatePassword($userId, $newPass);
-                set_flash_message('success', 'Password updated successfully.');
-            } else {
-                set_flash_message('danger', 'New password must be at least 6 characters.');
-            }
-        } else {
-            set_flash_message('danger', 'Current password is incorrect.');
-        }
     }
     header("Location: dashboard.php?tab=profile");
     exit;
@@ -293,9 +279,9 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div class="card border-0 shadow-sm bg-white p-4 rounded-4 mb-4">
                         <h4 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-user-gear text-primary me-2"></i>My Profile Settings</h4>
                         
-                        <div class="row">
+                        <div class="row justify-content-center">
                             <!-- Update Profile Form -->
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-8 mb-4">
                                 <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Update Personal Details</h6>
                                 <form action="dashboard.php" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
@@ -316,27 +302,6 @@ require_once __DIR__ . '/views/layout/header.php';
                                     </div>
                                     
                                     <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 mt-2">Save Profile Details</button>
-                                </form>
-                            </div>
-                            
-                            <!-- Update Password Form -->
-                            <div class="col-md-6 mb-4">
-                                <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Modify Password</h6>
-                                <form action="dashboard.php" method="POST">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="update_password">
-                                    
-                                    <div class="mb-3">
-                                        <label for="old_password" class="form-label fw-semibold">Current Password</label>
-                                        <input type="password" class="form-control" id="old_password" name="old_password" placeholder="••••••••" required>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="new_password" class="form-label fw-semibold">New Password</label>
-                                        <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Min. 6 characters" required>
-                                    </div>
-                                    
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill px-4 py-2 mt-2">Change Password</button>
                                 </form>
                             </div>
                         </div>

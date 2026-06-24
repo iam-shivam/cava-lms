@@ -1,0 +1,14 @@
+# Composer dependencies
+/vendor/
+
+# Environment configuration (contains secrets)
+.env
+
+# Development / planning artifacts (not needed on live site)
+implementation_plan.md
+deployment.md
+walkthrough.md
+
+# OS generated files
+Thumbs.db
+Desktop.ini

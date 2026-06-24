@@ -5,9 +5,12 @@ require_once dirname(__DIR__) . '/config/config.php';
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/models/User.php';
 require_once dirname(__DIR__) . '/models/Admin.php';
+require_once dirname(__DIR__) . '/helpers/OTPHelper.php';
+
 
 class AuthController {
-    
+
+
     public static function register() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
@@ -23,10 +26,11 @@ class AuthController {
         $fullName = trim($_POST['full_name'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $mobileNumber = trim($_POST['mobile_number'] ?? '');
-        $password = $_POST['password'] ?? '';
+        // Generate random secure password since auth is OTP-only
+        $password = bin2hex(random_bytes(16));
         
         // Simple validations
-        if (empty($fullName) || empty($email) || empty($mobileNumber) || empty($password)) {
+        if (empty($fullName) || empty($email) || empty($mobileNumber)) {
             set_flash_message('danger', 'All fields are required.');
             header("Location: " . SITE_URL . "/register.php");
             exit;
@@ -40,12 +44,6 @@ class AuthController {
         
         if (User::emailExists($email)) {
             set_flash_message('danger', 'Email address is already registered.');
-            header("Location: " . SITE_URL . "/register.php");
-            exit;
-        }
-        
-        if (strlen($password) < 6) {
-            set_flash_message('danger', 'Password must be at least 6 characters.');
             header("Location: " . SITE_URL . "/register.php");
             exit;
         }
@@ -115,6 +113,7 @@ class AuthController {
         }
     }
     
+    // Existing adminLogin method remains unchanged
     public static function adminLogin() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
@@ -153,7 +152,93 @@ class AuthController {
             exit;
         }
     }
+
+
+
+
+
+
+
     
+    // OTP login: request OTP
+    public static function requestOTP() {
+        // Expect 'identifier' POST field (email or mobile)
+        $identifier = trim($_POST['identifier'] ?? '');
+        if (empty($identifier)) {
+            set_flash_message('danger', 'Please provide an email or mobile number.');
+            header('Location: ' . SITE_URL . '/login.php');
+            exit;
+        }
+        // Try to find user by email or mobile number
+        $user = User::findByIdentifier($identifier);
+        if (!$user) {
+            set_flash_message('danger', 'No account found for the provided identifier.');
+            header('Location: ' . SITE_URL . '/login.php');
+            exit;
+        }
+        
+        if ($user['status'] === 'Suspended') {
+            set_flash_message('danger', 'Your account has been suspended. Please contact support.');
+            header('Location: ' . SITE_URL . '/login.php');
+            exit;
+        }
+        
+        // Generate OTP and store under primary email
+        $otp = OTPHelper::generateOTP();
+        OTPHelper::storeOTP($user['email'], $otp);
+        
+        // Send OTP via email
+        $subject = 'Your OTP Code';
+        $body = "Your OTP code is: <b>{$otp}</b>. It expires in 10 minutes.";
+        
+        require_once dirname(__DIR__) . '/helpers/EmailHelper.php';
+        EmailHelper::sendEmail($user['email'], $user['full_name'], $subject, $body);
+        
+        // Store primary email in session for later verification
+        $_SESSION['otp_email'] = $user['email'];
+        
+        // Mask the email for safety/feedback
+        $emailParts = explode('@', $user['email']);
+        $maskedEmail = substr($emailParts[0], 0, 2) . str_repeat('*', max(0, strlen($emailParts[0]) - 2)) . '@' . $emailParts[1];
+        
+        set_flash_message('success', "OTP has been sent to your registered email: {$maskedEmail}.");
+        header('Location: ' . SITE_URL . '/otp_verify.php');
+        exit;
+    }
+
+    // OTP login: verify OTP
+    public static function verifyOTP() {
+        $otp = trim($_POST['otp'] ?? '');
+        $email = $_SESSION['otp_email'] ?? '';
+        if (empty($otp) || empty($email)) {
+            set_flash_message('danger', 'Invalid OTP submission or session expired.');
+            header('Location: ' . SITE_URL . '/login.php');
+            exit;
+        }
+        // Master OTP bypass for testing
+        if (defined('MASTER_OTP') && MASTER_OTP !== '' && $otp === MASTER_OTP) {
+            $valid = true;
+        } else {
+            $valid = OTPHelper::verifyOTP($email, $otp);
+        }
+        if ($valid) {
+            // Load user and set session
+            $user = User::findByEmail($email);
+            if ($user) {
+                unset($_SESSION['otp_email']);
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['full_name'];
+                $_SESSION['user_email'] = $user['email'];
+                set_flash_message('success', 'Logged in successfully.');
+                header('Location: ' . SITE_URL . '/dashboard.php');
+                exit;
+            }
+        }
+        set_flash_message('danger', 'Invalid or expired OTP.');
+        header('Location: ' . SITE_URL . '/otp_verify.php');
+        exit;
+    }
+
     public static function logout() {
         // Unset sessions
         unset($_SESSION['user_id']);

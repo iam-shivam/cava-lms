@@ -22,21 +22,28 @@ You can try the demo on a local XAMPP installation or deploy it to any standard 
 - Composer (for vendor dependencies)
 - XAMPP / WAMP or any LAMP stack
 
-## 🛠️ Installation
-```bash
-# Clone the repository (if you haven't already)
-git clone https://github.com/iam-shivam/cava-lms.git
-cd cava-lms
+## 🛠️ Local Development Setup
+1. **Start XAMPP Services**
+   - Open the **XAMPP Control Panel** and click **Start** for **Apache** and **MySQL**.
+2. **Clone the Repository** (if you haven't already):
+   ```bash
+   git clone https://github.com/iam-shivam/cava-lms.git
+   cd cava-lms
+   ```
+3. **Install PHP Dependencies**
+   ```bash
+   composer install
+   ```
 
-# Install PHP dependencies via Composer
-composer install
+## 🚀 Running the Project
 
-# Create the database and import the schema
-mysql -u root -p < schema.sql
+1. **Start XAMPP Services** (Apache & MySQL).
+2. Open your browser and navigate to `http://localhost/lms/init_db.php` to create the database and seed mock data.
+3. Verify the installation by visiting:
+   - Landing page: `http://localhost/lms/index.php`
+   - User dashboard: `http://localhost/lms/dashboard.php`
+   - Admin panel: `http://localhost/lms/admin/index.php` (default admin: `admin@cava.com` / `AdminPassword123!`).
 
-# (Optional) Seed the database with mock data
-php seed_large.php
-```
 
 ## ⚙️ Configuration
 1. Copy `config/config.example.php` to `config/config.php`.
@@ -58,6 +65,19 @@ php seed_large.php
 ├─ seed_large.php    # Generates 10+ mock records per module
 └─ README.md         # You are here!
 ```
+## Start The Project
+
+- **Option 1: Use XAMPP Apache (recommended)**
+  1. Open **XAMPP Control Panel** and click **Start** for **Apache** and **MySQL**.
+  2. In your browser, navigate to `http://localhost/lms/` (or `http://localhost/` if the project resides in the web root).
+
+- **Option 2: Use PHP built‑in server**
+  ```bash
+  "C:\\xampp\\php\\php.exe" -S localhost:8000 -t .
+  ```
+  Run the above command from the project root (`c:\xampp\htdocs\lms`). Then open `http://localhost:8000/` in the browser.
+
+Both methods will serve the application; the first uses Apache with full .htaccess support, the second is quick for testing.
 
 ## 🎯 Usage
 - Public pages: `index.php`, `courses.php`, `webinars.php`, `events.php`, `support.php`
