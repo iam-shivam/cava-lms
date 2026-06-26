@@ -21,6 +21,15 @@ if (!$course) {
 $courseId = $course['id'];
 $userId = $_SESSION['user_id'] ?? null;
 $isEnrolled = Course::isUserEnrolled($userId, $courseId);
+
+$totalPaid = 0;
+$remainingBalance = $course['price'];
+if ($userId) {
+    require_once __DIR__ . '/models/Payment.php';
+    $totalPaid = Payment::getTotalPaid($userId, 'course', $courseId);
+    $remainingBalance = max(0, $course['price'] - $totalPaid);
+}
+
 $syllabus = Course::getSyllabus($courseId);
 $totalLessons = Course::countLessons($courseId);
 
@@ -140,6 +149,14 @@ require_once __DIR__ . '/views/layout/header.php';
                         <div class="mb-4 text-center text-lg-start">
                             <span class="text-muted d-block mb-1">Course Fee</span>
                             <span class="h1 fw-extrabold text-primary">₹<?php echo number_format($course['price'], 2); ?></span>
+                            <?php if ($totalPaid > 0 && $remainingBalance > 0): ?>
+                                <span class="d-block text-warning fw-bold mt-2">Remaining Balance: ₹<?php echo number_format($remainingBalance, 2); ?></span>
+                            <?php endif; ?>
+                            <?php if ($course['course_duration'] > 0): ?>
+                                <span class="badge bg-info mt-2">Duration: <?php echo $course['course_duration']; ?> Months</span>
+                            <?php else: ?>
+                                <span class="badge bg-success mt-2">Lifetime Access</span>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="locked-banner">
@@ -152,8 +169,17 @@ require_once __DIR__ . '/views/layout/header.php';
                             <form action="payment_process.php" method="POST">
                                 <input type="hidden" name="item_type" value="course">
                                 <input type="hidden" name="item_id" value="<?php echo $courseId; ?>">
+                                
+                                <?php if ($course['allow_partial_payment'] && $remainingBalance > 0): ?>
+                                    <div class="mb-3 text-start">
+                                        <label for="amount_to_pay" class="form-label fw-semibold fs-7 text-dark">Amount to Pay (INR)</label>
+                                        <input type="number" step="0.01" min="<?php echo $course['min_installment']; ?>" max="<?php echo $remainingBalance; ?>" class="form-control" id="amount_to_pay" name="amount_to_pay" value="<?php echo $remainingBalance; ?>" required>
+                                        <small class="text-muted fs-8 mt-1 d-block">Min: ₹<?php echo number_format($course['min_installment'], 2); ?> | Max: ₹<?php echo number_format($remainingBalance, 2); ?></small>
+                                    </div>
+                                <?php endif; ?>
+
                                 <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold fs-5">
-                                    <i class="fa-solid fa-cart-shopping me-2"></i>Buy Now
+                                    <i class="fa-solid fa-cart-shopping me-2"></i><?php echo ($totalPaid > 0) ? 'Pay Remaining' : 'Buy Now'; ?>
                                 </button>
                             </form>
                         <?php else: ?>
@@ -167,5 +193,15 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
     </div>
 </div>
+
+<script>
+// Disable Right-Click and Inspect Elements
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+    if (e.key === "F12") return false;
+    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
+    if (e.ctrlKey && e.key === "U") return false;
+};
+</script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>
