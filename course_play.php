@@ -3,7 +3,6 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/models/Course.php';
-require_once __DIR__ . '/models/VideoOTP.php';
 
 // 1. Require Login
 if (!isset($_SESSION['user_id'])) {
@@ -24,37 +23,22 @@ if (!$course) {
 
 $courseId = $course['id'];
 
-// 2. Check Enrollment
-$enrollment = DB::fetch("SELECT status, expiry_date FROM enrollments WHERE user_id = ? AND course_id = ?", [$userId, $courseId]);
-if (!$enrollment) {
-    set_flash_message('danger', 'You must be enrolled to access this course content.');
-    header("Location: course.php?slug=" . urlencode($slug));
+// 2. Access Control check: Is enrolled?
+$isEnrolled = Course::isUserEnrolled($userId, $courseId);
+if (!$isEnrolled) {
+    set_flash_message('danger', 'You do not have access to this course. Please purchase it first.');
+    header("Location: " . SITE_URL . "/course.php?slug=" . $course['slug']);
     exit;
 }
 
-$isExpired = false;
-if ($enrollment['expiry_date'] && strtotime($enrollment['expiry_date']) < time()) {
-    $isExpired = true;
-}
-
-if ($isExpired) {
-    set_flash_message('danger', 'Your course access has expired. Please renew.');
-    header("Location: course.php?slug=" . urlencode($slug));
-    exit;
-}
-
-$enrollmentStatus = $enrollment['status'];
-
-// Fetch Course Details and Syllabus
-$course = Course::getById($courseId);
 $syllabus = Course::getSyllabus($courseId);
+$totalLessons = Course::countLessons($courseId);
 
+// Get list of all videos in a flat array for easy navigation/indexing
 $allVideos = [];
-foreach ($syllabus as $sec) {
-    if (!empty($sec['videos'])) {
-        foreach ($sec['videos'] as $v) {
-            $allVideos[] = $v;
-        }
+foreach ($syllabus as $item) {
+    foreach ($item['videos'] as $video) {
+        $allVideos[] = $video;
     }
 }
 
@@ -72,13 +56,11 @@ if (empty($allVideos)) {
 // Find Active Video
 $videoId = intval($_GET['video_id'] ?? 0);
 $activeVideo = null;
-$activeVideoIndex = 0;
 
 if ($videoId > 0) {
-    foreach ($allVideos as $index => $video) {
+    foreach ($allVideos as $video) {
         if ($video['id'] === $videoId) {
             $activeVideo = $video;
-            $activeVideoIndex = $index;
             break;
         }
     }
@@ -87,7 +69,6 @@ if ($videoId > 0) {
 // Fallback to first video
 if (!$activeVideo) {
     $activeVideo = $allVideos[0];
-    $activeVideoIndex = 0;
 }
 
 require_once __DIR__ . '/views/layout/header.php';
@@ -108,101 +89,35 @@ require_once __DIR__ . '/views/layout/header.php';
         <div class="row">
             <!-- Left Side: Player -->
             <div class="col-lg-8 mb-4">
-                <div class="video-player-container mb-3 border border-dark rounded-4" style="position: relative; overflow: hidden; background: #000;">
-                    <?php 
-                    $requiresOtp = true; // All videos require OTP
-                    $hasAccess = VideoOTP::hasValidSession($userId, $activeVideo['id']);
-                    ?>
-                    
-                    <?php if ($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2): ?>
-                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white rounded-4" style="min-height: 450px;">
-                            <div class="text-center p-4">
-                                <i class="fa-solid fa-lock fs-1 text-warning mb-3"></i>
-                                <h4>Restricted Access</h4>
-                                <p class="text-light fs-7 mb-4">You have reached the end of your preview. Please pay the remaining balance to unlock the rest of the course videos.</p>
-                                <a href="course.php?slug=<?php echo urlencode($slug); ?>" class="btn btn-warning fw-bold px-4 rounded-pill">Pay Remaining Balance</a>
-                            </div>
-                        </div>
-                    <?php elseif ($hasAccess): ?>
-                        <?php if (!empty($activeVideo['video_url'])): ?>
-                            <video controls controlsList="nodownload" style="width: 100%; height: 100%; min-height: 450px; background: #000;">
-                                <source src="video_stream.php?id=<?php echo $activeVideo['id']; ?>" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        <?php else: ?>
-                            <div class="d-flex align-items-center justify-content-center text-white h-100 bg-dark" style="min-height: 450px;">
-                                <div><i class="fa-solid fa-video-slash fs-1 mb-2 d-block text-center"></i>Video URL is not set.</div>
-                            </div>
-                        <?php endif; ?>
+                <div class="video-player-container mb-3 border border-dark rounded-4">
+                    <?php if (!empty($activeVideo['video_url'])): ?>
+                        <iframe 
+                            src="<?php echo htmlspecialchars($activeVideo['video_url']); ?>" 
+                            title="<?php echo htmlspecialchars($activeVideo['title']); ?>" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen 
+                            style="width: 100%; height: 100%;">
+                        </iframe>
                     <?php else: ?>
-                        <!-- OTP Locked Screen -->
-                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white" style="min-height: 450px;">
-                            <div class="text-center p-4">
-                                <i class="fa-solid fa-lock fs-1 text-warning mb-3"></i>
-                                <h4>Premium Content Locked</h4>
-                                <p class="text-light fs-7 mb-4">This video requires OTP verification to unlock.</p>
-                                
-                                <div id="otp-request-block">
-                                    <button class="btn btn-warning fw-bold px-4 rounded-pill" onclick="sendVideoOtp(<?php echo $activeVideo['id']; ?>)">
-                                        <i class="fa-solid fa-paper-plane me-2"></i>Send OTP to Registered Mobile
-                                    </button>
-                                </div>
-                                
-                                <div id="otp-verify-block" style="display: none; max-width: 300px; margin: 0 auto;">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" id="video_otp_input" placeholder="Enter OTP" maxlength="6">
-                                        <button class="btn btn-success" type="button" onclick="verifyVideoOtp(<?php echo $activeVideo['id']; ?>)">Unlock</button>
-                                    </div>
-                                    <small id="otp_message" class="text-info"></small>
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center justify-content-center text-white h-100 bg-dark">
+                            <div><i class="fa-solid fa-video-slash fs-1 mb-2 d-block text-center"></i>Video URL is not set.</div>
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <!-- Tabs -->
-                <ul class="nav nav-tabs mt-4 border-bottom-0" id="videoTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active fw-bold text-dark border-bottom-0" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab" aria-controls="desc" aria-selected="true">Description</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link fw-bold text-dark border-bottom-0" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="false">Resources</button>
-                    </li>
-                </ul>
-                <div class="tab-content bg-white p-4 border rounded-bottom-4 rounded-end-4 shadow-sm mb-4" id="videoTabsContent">
-                    <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
-                        <h5 class="fw-bold mb-3"><?php echo htmlspecialchars($activeVideo['title']); ?></h5>
-                        <?php if (!empty($activeVideo['description'])): ?>
-                            <p class="text-muted" style="white-space: pre-wrap;"><?php echo htmlspecialchars($activeVideo['description']); ?></p>
-                        <?php else: ?>
-                            <p class="text-muted fs-7">No description provided for this lesson.</p>
-                        <?php endif; ?>
-                        
-                        <hr class="my-4">
-                        <p class="text-muted m-0 fs-7">You are watching: Lesson <?php 
-                            $lessonIndex = 1;
-                            foreach ($allVideos as $idx => $v) {
-                                if ($v['id'] === $activeVideo['id']) {
-                                    $lessonIndex = $idx + 1;
-                                    break;
-                                }
+                <div class="card border-0 p-4 shadow-sm rounded-4 bg-white mt-4">
+                    <h4 class="fw-bold mb-3"><?php echo htmlspecialchars($activeVideo['title']); ?></h4>
+                    <p class="text-muted m-0">You are watching: Lesson <?php 
+                        $lessonIndex = 1;
+                        foreach ($allVideos as $idx => $v) {
+                            if ($v['id'] === $activeVideo['id']) {
+                                $lessonIndex = $idx + 1;
+                                break;
                             }
-                            echo $lessonIndex . " of " . count($allVideos);
-                        ?></p>
-                    </div>
-                    <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
-                        <?php if (!empty($activeVideo['document_url']) && $hasAccess && !($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2)): ?>
-                            <h5 class="fw-bold mb-3">Lesson Resources</h5>
-                            <p class="text-muted fs-7 mb-4">Download the supplementary materials for this lesson below.</p>
-                            <a href="<?php echo htmlspecialchars(SITE_URL . '/' . $activeVideo['document_url']); ?>" download class="btn btn-outline-primary rounded-pill fw-bold px-4">
-                                <i class="fa-solid fa-download me-2"></i>Download Document
-                            </a>
-                        <?php elseif (empty($activeVideo['document_url'])): ?>
-                            <p class="text-muted fs-7 m-0">No resources available for this lesson.</p>
-                        <?php else: ?>
-                            <div class="alert alert-warning py-2 fs-8 m-0"><i class="fa-solid fa-lock me-2"></i>Please unlock the video to access the resources.</div>
-                        <?php endif; ?>
-                    </div>
+                        }
+                        echo $lessonIndex . " of " . count($allVideos);
+                    ?></p>
                 </div>
             </div>
 
@@ -241,75 +156,5 @@ require_once __DIR__ . '/views/layout/header.php';
 
     </div>
 </div>
-
-<script>
-function sendVideoOtp(videoId) {
-    document.getElementById('otp-request-block').style.display = 'none';
-    document.getElementById('otp-verify-block').style.display = 'block';
-    document.getElementById('otp_message').innerText = "Sending OTP...";
-    document.getElementById('otp_message').className = "text-info d-block mt-2";
-    
-    fetch('api/video_otp.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'action=send&video_id=' + videoId
-    })
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById('otp_message').innerText = data.message;
-        if(!data.success) {
-            document.getElementById('otp_message').className = "text-danger d-block mt-2";
-            // Show request block again so they can retry
-            document.getElementById('otp-request-block').style.display = 'block';
-            document.getElementById('otp-verify-block').style.display = 'none';
-        } else {
-            document.getElementById('otp_message').className = "text-success d-block mt-2";
-        }
-    })
-    .catch(e => {
-        document.getElementById('otp_message').innerText = "Error sending OTP.";
-        document.getElementById('otp_message').className = "text-danger d-block mt-2";
-    });
-}
-
-function verifyVideoOtp(videoId) {
-    let otp = document.getElementById('video_otp_input').value;
-    if(!otp) return;
-    
-    document.getElementById('otp_message').innerText = "Verifying...";
-    document.getElementById('otp_message').className = "text-info d-block mt-2";
-    
-    fetch('api/video_otp.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'action=verify&video_id=' + videoId + '&otp=' + otp
-    })
-    .then(r => r.json())
-    .then(data => {
-        if(data.success) {
-            document.getElementById('otp_message').innerText = "Success! Reloading video...";
-            document.getElementById('otp_message').className = "text-success d-block mt-2";
-            window.location.reload();
-        } else {
-            document.getElementById('otp_message').innerText = data.message;
-            document.getElementById('otp_message').className = "text-danger d-block mt-2";
-        }
-    })
-    .catch(e => {
-        document.getElementById('otp_message').innerText = "Error verifying OTP.";
-        document.getElementById('otp_message').className = "text-danger d-block mt-2";
-    });
-}
-</script>
-
-<script>
-// Disable Right-Click and Inspect Elements
-document.addEventListener('contextmenu', event => event.preventDefault());
-document.onkeydown = function(e) {
-    if (e.key === "F12") return false;
-    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
-    if (e.ctrlKey && e.key === "U") return false;
-};
-</script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

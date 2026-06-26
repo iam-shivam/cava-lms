@@ -16,7 +16,6 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $itemType = trim($_POST['item_type'] ?? '');
 $itemId = intval($_POST['item_id'] ?? 0);
-$amountToPay = isset($_POST['amount_to_pay']) ? floatval($_POST['amount_to_pay']) : null;
 
 if (empty($itemType) || $itemId <= 0) {
     set_flash_message('danger', 'Invalid purchase request.');
@@ -26,7 +25,7 @@ if (empty($itemType) || $itemId <= 0) {
 
 try {
     // Initiate payment order via Razorpay
-    $order = PaymentController::initiatePayment($userId, $itemType, $itemId, $amountToPay);
+    $order = PaymentController::initiatePayment($userId, $itemType, $itemId);
 } catch (Exception $e) {
     set_flash_message('danger', 'Payment Initialization Failed: ' . $e->getMessage());
     header("Location: " . SITE_URL . "/index.php");

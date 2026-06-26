@@ -11,36 +11,17 @@ require_once dirname(__DIR__) . '/models/Webinar.php';
 
 class PaymentController {
     
-    public static function initiatePayment($userId, $itemType, $itemId, $amountToPay = null) {
+    public static function initiatePayment($userId, $itemType, $itemId) {
         $price = 0.00;
         $title = '';
-        $isPartial = false;
         
         if ($itemType === 'course') {
             $course = Course::getById($itemId);
             if (!$course) {
                 throw new Exception("Course not found.");
             }
+            $price = $course['price'];
             $title = $course['title'];
-            $totalPaid = Payment::getTotalPaid($userId, 'course', $itemId);
-            $remainingBalance = $course['price'] - $totalPaid;
-            
-            if ($remainingBalance <= 0) {
-                throw new Exception("Course is already fully paid.");
-            }
-            
-            if ($amountToPay !== null && $amountToPay > 0 && $course['allow_partial_payment']) {
-                if ($amountToPay < $course['min_installment'] && $amountToPay < $remainingBalance) {
-                    throw new Exception("Minimum installment amount is ₹" . number_format($course['min_installment'], 2));
-                }
-                if ($amountToPay > $remainingBalance) {
-                    $amountToPay = $remainingBalance;
-                }
-                $price = $amountToPay;
-                $isPartial = ($price < $remainingBalance);
-            } else {
-                $price = $remainingBalance;
-            }
         } elseif ($itemType === 'webinar') {
             $webinar = Webinar::getById($itemId);
             if (!$webinar) {
@@ -70,9 +51,8 @@ class PaymentController {
             $razorpayOrder = $api->order->create($orderData);
             $orderId = $razorpayOrder['id'];
             
-            $paymentType = $isPartial ? 'Partial' : 'Full';
             // Log payment in database
-            Payment::createPaymentLog($userId, $itemType, $itemId, $orderId, $price, $paymentType);
+            Payment::createPaymentLog($userId, $itemType, $itemId, $orderId, $price);
             
             return [
                 'order_id' => $orderId,
@@ -114,20 +94,7 @@ class PaymentController {
             
             // Create Enrollment / Registration
             if ($payment['item_type'] === 'course') {
-                $course = Course::getById($payment['item_id']);
-                $totalPaid = Payment::getTotalPaid($payment['user_id'], 'course', $payment['item_id']);
-                
-                $status = 'Pending';
-                $expiryDate = null;
-                
-                if ($totalPaid >= $course['price']) {
-                    $status = 'Active';
-                    if ($course['course_duration'] > 0) {
-                        $expiryDate = date('Y-m-d H:i:s', strtotime('+' . $course['course_duration'] . ' months'));
-                    }
-                }
-                
-                Payment::createEnrollment($payment['user_id'], $payment['item_id'], $payment['id'], $status, $expiryDate);
+                Payment::createEnrollment($payment['user_id'], $payment['item_id'], $payment['id']);
                 self::logTransactionEmail($payment['user_id'], 'course', $payment['item_id']);
             } elseif ($payment['item_type'] === 'webinar') {
                 Payment::createWebinarRegistration($payment['user_id'], $payment['item_id'], $payment['id']);

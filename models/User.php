@@ -28,11 +28,6 @@ class User {
         return !empty($row);
     }
     
-    public static function mobileExists($mobileNumber) {
-        $row = DB::fetch("SELECT id FROM users WHERE mobile_number = ?", [$mobileNumber]);
-        return !empty($row);
-    }
-    
     public static function updateProfile($id, $fullName, $mobileNumber) {
         $db = DB::getConnection();
         $sql = "UPDATE users SET full_name = ?, mobile_number = ? WHERE id = ?";

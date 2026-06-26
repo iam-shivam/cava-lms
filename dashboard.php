@@ -126,13 +126,6 @@ require_once __DIR__ . '/views/layout/header.php';
                                     if ($course['thumbnail']) {
                                         $thumbnailUrl = (file_exists(BASE_PATH . '/uploads/' . $course['thumbnail'])) ? SITE_URL . '/uploads/' . $course['thumbnail'] : SITE_URL . '/assets/images/' . $course['thumbnail'];
                                     }
-                                    
-                                    $isExpired = false;
-                                    if ($course['expiry_date'] && strtotime($course['expiry_date']) < time()) {
-                                        $isExpired = true;
-                                    }
-                                    $effectiveStatus = $course['enrollment_status'] ?? 'Active';
-                                    if ($isExpired) $effectiveStatus = 'Expired';
                                 ?>
                                     <div class="col-md-6 mb-4">
                                         <div class="custom-card border">
@@ -141,19 +134,9 @@ require_once __DIR__ . '/views/layout/header.php';
                                             </div>
                                             <div class="card-content">
                                                 <h5 class="fw-bold mb-3"><?php echo htmlspecialchars($course['title']); ?></h5>
-                                                <?php if ($effectiveStatus === 'Pending'): ?>
-                                                    <div class="alert alert-warning py-2 fs-8 mb-3">Partially Paid. <a href="course.php?slug=<?php echo $course['slug']; ?>">Pay Balance</a></div>
-                                                    <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-warning w-100 rounded-pill mt-auto">
-                                                        <i class="fa-solid fa-circle-play me-2"></i>Start Learning (Preview)
-                                                    </a>
-                                                <?php elseif ($effectiveStatus === 'Expired'): ?>
-                                                    <div class="alert alert-danger py-2 fs-8 mb-3">Access Expired. <a href="course.php?slug=<?php echo $course['slug']; ?>">Renew</a></div>
-                                                    <button class="btn btn-secondary w-100 rounded-pill mt-auto" disabled><i class="fa-solid fa-lock me-2"></i>Locked</button>
-                                                <?php else: ?>
-                                                    <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-primary w-100 rounded-pill mt-auto">
-                                                        <i class="fa-solid fa-circle-play me-2"></i>Start Learning
-                                                    </a>
-                                                <?php endif; ?>
+                                                <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-primary w-100 rounded-pill mt-auto">
+                                                    <i class="fa-solid fa-circle-play me-2"></i>Start Learning
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -270,8 +253,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                     <thead>
                                         <tr>
                                             <th>Receipt Name</th>
-                                            <th>Item Type</th>
-                                            <th>Payment</th>
+                                            <th>Type</th>
                                             <th>Amount</th>
                                             <th>Order ID</th>
                                             <th>Status</th>
@@ -283,11 +265,6 @@ require_once __DIR__ . '/views/layout/header.php';
                                             <tr>
                                                 <td class="fw-bold text-dark"><?php echo htmlspecialchars($payment['item_title'] ?? 'Purchase'); ?></td>
                                                 <td><span class="badge bg-secondary"><?php echo ucfirst($payment['item_type']); ?></span></td>
-                                                <td>
-                                                    <span class="badge <?php echo (isset($payment['payment_type']) && $payment['payment_type'] === 'Full') ? 'bg-success' : 'bg-info text-dark'; ?>">
-                                                        <?php echo $payment['payment_type'] ?? 'Full'; ?>
-                                                    </span>
-                                                </td>
                                                 <td class="fw-bold text-primary">₹<?php echo number_format($payment['amount'], 2); ?></td>
                                                 <td><code><?php echo htmlspecialchars($payment['razorpay_order_id']); ?></code></td>
                                                 <td>

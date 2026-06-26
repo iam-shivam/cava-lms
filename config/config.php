@@ -40,13 +40,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Database Credentials
-// define('DB_HOST', $_ENV['DB_HOST'] ?? '127.0.0.1');
-define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
+define('DB_HOST', $_ENV['DB_HOST'] ?? '127.0.0.1');
 define('DB_USER', $_ENV['DB_USER'] ?? 'root');
 define('DB_PASS', $_ENV['DB_PASS'] ?? '');
 define('DB_NAME', $_ENV['DB_NAME'] ?? 'cava_lms');
-define('DB_PORT', $_ENV['DB_PORT'] ?? '3307');
-
 
 // Razorpay Credentials (Test Mode by default)
 define('RAZORPAY_KEY_ID', $_ENV['RAZORPAY_KEY_ID'] ?? 'rzp_test_vK68kH1v9q6tWp');
@@ -90,11 +87,10 @@ function generate_csrf_token() {
 }
 
 // Helper: Flash message setting/getting (enhanced with slide-in)
-function set_flash_message($type, $message, $allow_html = false) {
+function set_flash_message($type, $message) {
     $_SESSION['flash'] = [
         'type' => $type, // 'success', 'danger', 'warning', 'info'
-        'message' => $message,
-        'allow_html' => $allow_html
+        'message' => $message
     ];
 }
 
@@ -122,7 +118,7 @@ function display_flash_message() {
                 <div id="flashToast" class="toast align-items-center text-bg-' . htmlspecialchars($flash['type']) . ' border-0" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="d-flex">
                         <div class="toast-body">
-                            ' . $icon . ((!empty($flash['allow_html'])) ? $flash['message'] : htmlspecialchars($flash['message'])) . '
+                            ' . $icon . htmlspecialchars($flash['message']) . '
                         </div>
                         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
