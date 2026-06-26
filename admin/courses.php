@@ -18,6 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0.00);
+    $courseDuration = intval($_POST['course_duration'] ?? 0);
+    $allowPartialPayment = isset($_POST['allow_partial_payment']) ? 1 : 0;
+    $minInstallment = floatval($_POST['min_installment'] ?? 0.00);
     $status = $_POST['status'] ?? 'Published';
     
     // Simple validation
@@ -78,9 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
                 $slug .= '-' . time();
             }
             
-            $sql = "INSERT INTO courses (category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO courses (category_id, title, slug, thumbnail, description, price, course_duration, allow_partial_payment, min_installment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $status]);
+            $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status]);
             set_flash_message('success', 'Course created successfully!');
         } elseif ($action === 'edit' && $id > 0) {
             // If new thumbnail uploaded, remove old one if exists
@@ -90,13 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
                     unlink(BASE_PATH . '/uploads/' . $oldThumbnail);
                 }
                 
-                $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, thumbnail = ?, description = ?, price = ?, status = ? WHERE id = ?";
+                $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, thumbnail = ?, description = ?, price = ?, course_duration = ?, allow_partial_payment = ?, min_installment = ?, status = ? WHERE id = ?";
                 $stmt = DB::getConnection()->prepare($sql);
-                $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $status, $id]);
+                $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status, $id]);
             } else {
-                $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, description = ?, price = ?, status = ? WHERE id = ?";
+                $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, description = ?, price = ?, course_duration = ?, allow_partial_payment = ?, min_installment = ?, status = ? WHERE id = ?";
                 $stmt = DB::getConnection()->prepare($sql);
-                $stmt->execute([$categoryId, $title, $slug, $description, $price, $status, $id]);
+                $stmt->execute([$categoryId, $title, $slug, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status, $id]);
             }
             set_flash_message('success', 'Course updated successfully!');
         }
@@ -263,6 +266,33 @@ $csrfToken = generate_csrf_token();
                                value="<?php echo $editCourse ? htmlspecialchars($editCourse['price']) : '0.00'; ?>" required>
                     </div>
                     
+                    <div class="mb-3">
+                        <label for="course_duration" class="form-label fw-semibold">Course Duration (Months)</label>
+                        <select class="form-select" id="course_duration" name="course_duration">
+                            <option value="0" <?php echo ($editCourse && $editCourse['course_duration'] == 0) ? 'selected' : ''; ?>>Lifetime (Unlimited)</option>
+                            <option value="3" <?php echo ($editCourse && $editCourse['course_duration'] == 3) ? 'selected' : ''; ?>>3 Months</option>
+                            <option value="6" <?php echo ($editCourse && $editCourse['course_duration'] == 6) ? 'selected' : ''; ?>>6 Months</option>
+                            <option value="12" <?php echo ($editCourse && $editCourse['course_duration'] == 12) ? 'selected' : ''; ?>>12 Months</option>
+                            <option value="24" <?php echo ($editCourse && $editCourse['course_duration'] == 24) ? 'selected' : ''; ?>>24 Months</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="allow_partial_payment" name="allow_partial_payment" value="1" <?php echo ($editCourse && $editCourse['allow_partial_payment']) ? 'checked' : ''; ?>>
+                        <label class="form-check-label fw-semibold" for="allow_partial_payment">Allow Partial Payments</label>
+                    </div>
+
+                    <div class="mb-3" id="min_installment_container" style="<?php echo ($editCourse && $editCourse['allow_partial_payment']) ? '' : 'display: none;'; ?>">
+                        <label for="min_installment" class="form-label fw-semibold">Min Installment Amount (INR)</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="min_installment" name="min_installment" value="<?php echo $editCourse ? htmlspecialchars($editCourse['min_installment']) : '0.00'; ?>">
+                    </div>
+                    
+                    <script>
+                        document.getElementById('allow_partial_payment').addEventListener('change', function() {
+                            document.getElementById('min_installment_container').style.display = this.checked ? 'block' : 'none';
+                        });
+                    </script>
+
                     <div class="mb-3">
                         <label for="status" class="form-label fw-semibold">Publish Status</label>
                         <select class="form-select" id="status" name="status" required>
