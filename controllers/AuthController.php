@@ -180,7 +180,7 @@ class AuthController {
         // Try to find user by email or mobile number
         $user = User::findByIdentifier($identifier);
         if (!$user) {
-            set_flash_message('danger', 'No account found for the provided identifier.');
+            set_flash_message('danger', 'No account found. Please <a href="' . SITE_URL . '/register.php" class="text-white fw-bold text-decoration-underline">Register now</a>.', true);
             header('Location: ' . SITE_URL . '/login.php');
             exit;
         }
