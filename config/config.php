@@ -134,4 +134,101 @@ function display_flash_message() {
             });</script>';
     }
 }
+
+// Require DB class so database functions are available
+require_once __DIR__ . '/db.php';
+
+// Inactivity Session Timeout & Single-Session Enforcement
+$isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
+if ($isLoggedIn) {
+    // 1. Session Inactivity Timeout (15 minutes = 900 seconds)
+    $timeout_duration = 900; 
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
+        $isAdminSession = isset($_SESSION['admin_id']);
+        
+        // Clear database session ID to allow future logins
+        try {
+            if (isset($_SESSION['user_id'])) {
+                DB::query("UPDATE users SET session_id = NULL WHERE id = ?", [$_SESSION['user_id']]);
+            } elseif (isset($_SESSION['admin_id'])) {
+                DB::query("UPDATE admins SET session_id = NULL WHERE id = ?", [$_SESSION['admin_id']]);
+            }
+        } catch (Exception $e) {
+            // Ignore DB errors during timeout cleanup
+        }
+        
+        $_SESSION = [];
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        session_destroy();
+        session_start();
+        set_flash_message('warning', 'Your session has expired due to inactivity. Please log in again.');
+        if ($isAdminSession) {
+            header("Location: " . SITE_URL . "/admin/login.php");
+        } else {
+            header("Location: " . SITE_URL . "/login.php");
+        }
+        exit;
+    }
+    $_SESSION['last_activity'] = time();
+
+    // 2. Single-Session Enforcement (Logout from other devices)
+    $currentSessionId = session_id();
+    try {
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+            $dbSession = DB::fetch("SELECT session_id FROM users WHERE id = ?", [$userId]);
+            if ($dbSession) {
+                if ($dbSession['session_id'] === null) {
+                    DB::query("UPDATE users SET session_id = ? WHERE id = ?", [$currentSessionId, $userId]);
+                } elseif ($dbSession['session_id'] !== $currentSessionId) {
+                    // Logged out from other device
+                    $_SESSION = [];
+                    if (ini_get("session.use_cookies")) {
+                        $params = session_get_cookie_params();
+                        setcookie(session_name(), '', time() - 42000,
+                            $params["path"], $params["domain"],
+                            $params["secure"], $params["httponly"]
+                        );
+                    }
+                    session_destroy();
+                    session_start();
+                    set_flash_message('danger', 'You have been logged out because your account was logged in from another device/browser.');
+                    header("Location: " . SITE_URL . "/login.php");
+                    exit;
+                }
+            }
+        } elseif (isset($_SESSION['admin_id'])) {
+            $adminId = $_SESSION['admin_id'];
+            $dbSession = DB::fetch("SELECT session_id FROM admins WHERE id = ?", [$adminId]);
+            if ($dbSession) {
+                if ($dbSession['session_id'] === null) {
+                    DB::query("UPDATE admins SET session_id = ? WHERE id = ?", [$currentSessionId, $adminId]);
+                } elseif ($dbSession['session_id'] !== $currentSessionId) {
+                    // Logged out from other device
+                    $_SESSION = [];
+                    if (ini_get("session.use_cookies")) {
+                        $params = session_get_cookie_params();
+                        setcookie(session_name(), '', time() - 42000,
+                            $params["path"], $params["domain"],
+                            $params["secure"], $params["httponly"]
+                        );
+                    }
+                    session_destroy();
+                    session_start();
+                    set_flash_message('danger', 'You have been logged out because your account was logged in from another device/browser.');
+                    header("Location: " . SITE_URL . "/admin/login.php");
+                    exit;
+                }
+            }
+        }
+    } catch (Exception $e) {
+        // Ignore DB connection errors during session checks to prevent site-wide crashes
+    }
+}
 ?>

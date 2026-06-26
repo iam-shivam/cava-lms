@@ -4,13 +4,21 @@
 
 $dateFormatted = date('d M, Y', strtotime($webinar['date']));
 $timeFormatted = date('h:i A', strtotime($webinar['time']));
+$webinarTimestamp = strtotime($webinar['date'] . ' ' . $webinar['time']);
+$isPastWebinar = $webinarTimestamp < time();
 ?>
 <div class="col-md-6 col-lg-6 mb-4">
     <div class="custom-card border-0 p-4 bg-white shadow-sm rounded-4 animate-fade-in-up">
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold">
-                <i class="fa-solid fa-video me-1"></i> Live Webinar
-            </span>
+            <?php if ($isPastWebinar): ?>
+                <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold">
+                    <i class="fa-solid fa-video-slash me-1"></i> Closed Webinar
+                </span>
+            <?php else: ?>
+                <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold">
+                    <i class="fa-solid fa-video me-1"></i> Live Webinar
+                </span>
+            <?php endif; ?>
             <span class="text-muted"><i class="fa-regular fa-clock me-1"></i><?php echo $timeFormatted; ?></span>
         </div>
         
@@ -35,7 +43,18 @@ $timeFormatted = date('h:i A', strtotime($webinar['time']));
         </div>
         
         <div class="d-flex align-items-center justify-content-between">
-            <?php if ($isRegistered): ?>
+            <?php if ($isPastWebinar): ?>
+                <?php if ($isRegistered): ?>
+                    <div class="alert alert-secondary m-0 py-2 px-3 border-0 d-inline-flex align-items-center gap-2 rounded-pill fs-7">
+                        <i class="fa-solid fa-circle-check"></i> Registered (Past)
+                    </div>
+                <?php else: ?>
+                    <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold fs-7">
+                        Closed
+                    </span>
+                <?php endif; ?>
+                <button class="btn btn-secondary btn-sm rounded-pill px-4" disabled>Closed</button>
+            <?php elseif ($isRegistered): ?>
                 <div class="alert alert-success m-0 py-2 px-3 border-0 d-inline-flex align-items-center gap-2 rounded-pill fs-7">
                     <i class="fa-solid fa-circle-check"></i> Registered
                 </div>

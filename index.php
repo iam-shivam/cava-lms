@@ -139,7 +139,14 @@ require_once __DIR__ . '/views/layout/header.php';
                         <div class="custom-card border-0 shadow-sm bg-white rounded-4 overflow-hidden h-100">
                             <img src="<?php echo $evImg; ?>" alt="Event banner" class="img-fluid" style="height: 180px; width: 100%; object-fit: cover;" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Event'">
                             <div class="p-4">
-                                <span class="text-primary fw-semibold fs-8 d-block mb-1"><i class="fa-regular fa-calendar me-1"></i><?php echo $evDate; ?></span>
+                                <span class="text-primary fw-semibold fs-8 d-block mb-1">
+                                    <i class="fa-regular fa-calendar me-1"></i><?php echo $evDate; ?>
+                                    <?php if (strtotime($ev['date']) < strtotime(date('Y-m-d'))): ?>
+                                        <span class="badge bg-secondary ms-2">Closed</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success-light text-success ms-2">Upcoming</span>
+                                    <?php endif; ?>
+                                </span>
                                 <h5 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($ev['title']); ?></h5>
                                 <p class="text-muted fs-7 mb-0"><?php echo htmlspecialchars($ev['description']); ?></p>
                             </div>

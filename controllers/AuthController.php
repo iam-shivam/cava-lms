@@ -103,6 +103,10 @@ class AuthController {
             $_SESSION['user_name'] = $user['full_name'];
             $_SESSION['user_email'] = $user['email'];
             
+            // Single Session Enforcement: Update session_id in Database
+            $sessionId = session_id();
+            DB::query("UPDATE users SET session_id = ? WHERE id = ?", [$sessionId, $user['id']]);
+            
             set_flash_message('success', 'Logged in successfully. Welcome back!');
             header("Location: " . SITE_URL . "/dashboard.php");
             exit;
@@ -142,6 +146,10 @@ class AuthController {
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_email'] = $admin['email'];
+            
+            // Single Session Enforcement: Update session_id in Database
+            $sessionId = session_id();
+            DB::query("UPDATE admins SET session_id = ? WHERE id = ?", [$sessionId, $admin['id']]);
             
             set_flash_message('success', 'Admin login successful!');
             header("Location: " . SITE_URL . "/admin/dashboard.php");
@@ -229,6 +237,11 @@ class AuthController {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_email'] = $user['email'];
+                
+                // Single Session Enforcement: Update session_id in Database
+                $sessionId = session_id();
+                DB::query("UPDATE users SET session_id = ? WHERE id = ?", [$sessionId, $user['id']]);
+                
                 set_flash_message('success', 'Logged in successfully.');
                 header('Location: ' . SITE_URL . '/dashboard.php');
                 exit;
@@ -240,10 +253,19 @@ class AuthController {
     }
 
     public static function logout() {
+        if (isset($_SESSION['user_id'])) {
+            try {
+                DB::query("UPDATE users SET session_id = NULL WHERE id = ?", [$_SESSION['user_id']]);
+            } catch (Exception $e) {
+                // Ignore DB errors during logout
+            }
+        }
+        
         // Unset sessions
         unset($_SESSION['user_id']);
         unset($_SESSION['user_name']);
         unset($_SESSION['user_email']);
+        unset($_SESSION['last_activity']);
         
         set_flash_message('success', 'Logged out successfully.');
         header("Location: " . SITE_URL . "/login.php");
@@ -251,9 +273,18 @@ class AuthController {
     }
     
     public static function adminLogout() {
+        if (isset($_SESSION['admin_id'])) {
+            try {
+                DB::query("UPDATE admins SET session_id = NULL WHERE id = ?", [$_SESSION['admin_id']]);
+            } catch (Exception $e) {
+                // Ignore DB errors during logout
+            }
+        }
+        
         unset($_SESSION['admin_id']);
         unset($_SESSION['admin_username']);
         unset($_SESSION['admin_email']);
+        unset($_SESSION['last_activity']);
         
         set_flash_message('success', 'Admin logged out successfully.');
         header("Location: " . SITE_URL . "/admin/login.php");

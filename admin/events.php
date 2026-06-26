@@ -24,6 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
         exit;
     }
     
+    // Server-side validation for date
+    $currentDate = date('Y-m-d');
+    if ($date < $currentDate) {
+        set_flash_message('danger', 'Event date cannot be in the past.');
+        header("Location: events.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        exit;
+    }
+    
     // File upload logic
     $imageName = null;
     if (isset($_FILES['event_image']) && $_FILES['event_image']['error'] === UPLOAD_ERR_OK) {
@@ -131,12 +139,13 @@ $csrfToken = generate_csrf_token();
                         <th style="width: 80px;">Image</th>
                         <th>Event Title</th>
                         <th>Scheduled Date</th>
+                        <th>Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($events)): ?>
-                        <tr><td colspan="4" class="text-center text-muted">No events listed yet.</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted">No events listed yet.</td></tr>
                     <?php else: ?>
                         <?php foreach ($events as $ev): 
                             $imageUrl = 'https://placehold.co/80x50/6f42c1/ffffff?text=Event';
@@ -158,6 +167,13 @@ $csrfToken = generate_csrf_token();
                                 </td>
                                 <td>
                                     <span class="fw-medium text-dark"><i class="fa-regular fa-calendar me-1"></i><?php echo date('d M, Y', strtotime($ev['date'])); ?></span>
+                                </td>
+                                <td>
+                                    <?php if (strtotime($ev['date']) < strtotime(date('Y-m-d'))): ?>
+                                        <span class="badge bg-secondary">Closed</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success">Active</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-end">
                                     <a href="events.php?action=edit&id=<?php echo $ev['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
@@ -211,7 +227,8 @@ $csrfToken = generate_csrf_token();
                     <div class="mb-3">
                         <label for="date" class="form-label fw-semibold">Event Date</label>
                         <input type="date" class="form-control" id="date" name="date" 
-                               value="<?php echo $editEvent ? $editEvent['date'] : ''; ?>" required>
+                               value="<?php echo $editEvent ? $editEvent['date'] : ''; ?>" 
+                               min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     
                     <div class="mb-4">

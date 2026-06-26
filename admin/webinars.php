@@ -27,6 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
         exit;
     }
     
+    // Server-side validation for date
+    $currentDate = date('Y-m-d');
+    if ($date < $currentDate) {
+        set_flash_message('danger', 'Webinar scheduled date cannot be in the past.');
+        header("Location: webinars.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        exit;
+    }
+    
     try {
         if ($action === 'add') {
             $sql = "INSERT INTO webinars (title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?)";
@@ -88,7 +96,8 @@ $csrfToken = generate_csrf_token();
                         <th>Price</th>
                         <th>Registrations</th>
                         <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th>Export</th>
+<th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,21 +114,33 @@ $csrfToken = generate_csrf_token();
                                 <td class="fw-bold text-primary">₹<?php echo number_format($w['price'], 2); ?></td>
                                 <td><span class="badge bg-primary-light text-primary"><?php echo $w['registration_count']; ?> Registered</span></td>
                                 <td>
+                                    <?php 
+                                    $webinarTimestamp = strtotime($w['date'] . ' ' . $w['time']);
+                                    $displayStatus = $w['status'];
+                                    if ($w['status'] === 'Active' && $webinarTimestamp < time()) {
+                                        $displayStatus = 'Closed';
+                                    }
+                                    ?>
                                     <span class="badge <?php 
-                                        echo $w['status'] == 'Active' ? 'bg-success' : ($w['status'] == 'Completed' ? 'bg-secondary' : 'bg-danger'); 
-                                    ?>"><?php echo $w['status']; ?></span>
+                                        echo $displayStatus == 'Active' ? 'bg-success' : (($displayStatus == 'Closed' || $displayStatus == 'Completed') ? 'bg-secondary' : 'bg-danger'); 
+                                    ?>"><?php echo $displayStatus; ?></span>
                                 </td>
-                                <td class="text-end">
-                                    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <a href="webinars.php?action=delete&id=<?php echo $w['id']; ?>" 
-                                       class="btn btn-outline-danger btn-sm" 
-                                       onclick="return confirm('Are you sure you want to delete this webinar?');" 
-                                       title="Delete">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </a>
-                                </td>
+                                <td>
+    <a href="export_registrants.php?webinar_id=<?php echo $w['id']; ?>&format=csv" class="btn btn-outline-success btn-sm" title="Export Registrants CSV">
+        <i class="fa-solid fa-file-csv"></i>
+    </a>
+</td>
+<td class="text-end">
+    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+        <i class="fa-solid fa-pen-to-square"></i>
+    </a>
+    <a href="webinars.php?action=delete&id=<?php echo $w['id']; ?>" 
+        class="btn btn-outline-danger btn-sm" 
+        onclick="return confirm('Are you sure you want to delete this webinar?');" 
+        title="Delete">
+        <i class="fa-solid fa-trash-can"></i>
+    </a>
+</td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -161,7 +182,8 @@ $csrfToken = generate_csrf_token();
                     <div class="mb-3">
                         <label for="date" class="form-label fw-semibold">Scheduled Date</label>
                         <input type="date" class="form-control" id="date" name="date" 
-                               value="<?php echo $editWebinar ? $editWebinar['date'] : ''; ?>" required>
+                               value="<?php echo $editWebinar ? $editWebinar['date'] : ''; ?>" 
+                               min="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                     
                     <div class="mb-3">

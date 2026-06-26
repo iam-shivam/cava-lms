@@ -162,12 +162,20 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <?php foreach ($registeredWebinars as $webinar): 
                                     $webDate = date('d M, Y', strtotime($webinar['date']));
                                     $webTime = date('h:i A', strtotime($webinar['time']));
+                                    $webinarTimestamp = strtotime($webinar['date'] . ' ' . $webinar['time']);
+                                    $isPastWebinar = $webinarTimestamp < time();
                                 ?>
                                     <div class="col-md-6 mb-4">
                                         <div class="card border-0 shadow-sm p-4 bg-light rounded-4 h-100">
-                                            <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-semibold mb-3 align-self-start">
-                                                <i class="fa-solid fa-circle-check me-1"></i> Registered
-                                            </span>
+                                            <?php if ($isPastWebinar): ?>
+                                                <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold mb-3 align-self-start">
+                                                    <i class="fa-solid fa-video-slash me-1"></i> Closed
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-semibold mb-3 align-self-start">
+                                                    <i class="fa-solid fa-circle-check me-1"></i> Registered
+                                                </span>
+                                            <?php endif; ?>
                                             <h5 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($webinar['title']); ?></h5>
                                             <p class="text-muted fs-7 mb-4"><?php echo htmlspecialchars($webinar['description']); ?></p>
                                             

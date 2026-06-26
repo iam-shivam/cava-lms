@@ -101,7 +101,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             <span class="text-primary fw-semibold fs-8 d-block mb-1">
                                 <i class="fa-regular fa-calendar me-1"></i><?php echo $evDate; ?>
                                 <?php if (strtotime($ev['date']) < strtotime(date('Y-m-d'))): ?>
-                                    <span class="badge bg-secondary ms-2">Past</span>
+                                    <span class="badge bg-secondary ms-2">Closed</span>
                                 <?php else: ?>
                                     <span class="badge bg-success-light text-success ms-2">Upcoming</span>
                                 <?php endif; ?>
