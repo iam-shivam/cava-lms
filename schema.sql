@@ -35,6 +35,9 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `thumbnail` VARCHAR(255) DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
   `price` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  `course_duration` INT DEFAULT 0,
+  `allow_partial_payment` TINYINT(1) DEFAULT 0,
+  `min_installment` DECIMAL(10, 2) DEFAULT 0.00,
   `status` ENUM('Draft', 'Published') DEFAULT 'Published',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT
@@ -56,7 +59,10 @@ CREATE TABLE IF NOT EXISTS `course_videos` (
   `title` VARCHAR(255) NOT NULL,
   `thumbnail` VARCHAR(255) DEFAULT NULL,
   `video_url` VARCHAR(255) NOT NULL,
-  `video_source` ENUM('youtube', 'vimeo') DEFAULT 'youtube',
+  `video_source` ENUM('youtube', 'vimeo', 'local') DEFAULT 'local',
+  `document_url` VARCHAR(255) DEFAULT NULL,
+  `description` TEXT DEFAULT NULL,
+  `video_access_duration` INT DEFAULT 0,
   `sort_order` INT DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`section_id`) REFERENCES `course_sections` (`id`) ON DELETE CASCADE,
@@ -72,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `razorpay_order_id` VARCHAR(100) NOT NULL UNIQUE,
   `razorpay_signature` VARCHAR(255) DEFAULT NULL,
   `amount` DECIMAL(10, 2) NOT NULL,
+  `payment_type` ENUM('Partial', 'Full') DEFAULT 'Full',
   `status` ENUM('Pending', 'Success', 'Failed') DEFAULT 'Pending',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -83,6 +90,8 @@ CREATE TABLE IF NOT EXISTS `enrollments` (
   `course_id` INT NOT NULL,
   `payment_id` INT DEFAULT NULL,
   `enrolled_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `expiry_date` DATETIME DEFAULT NULL,
+  `status` ENUM('Pending', 'Active', 'Expired') DEFAULT 'Pending',
   UNIQUE KEY `user_course` (`user_id`, `course_id`),
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
@@ -154,4 +163,14 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   `otp` VARCHAR(10) NOT NULL,
   `expires_at` DATETIME NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `video_otp_sessions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `video_id` INT NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
