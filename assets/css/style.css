@@ -1,30 +1,30 @@
-/* CAVA LMS Core Stylesheet - Premium UI/UX inspired by TagMango */
+/* CAVA LMS Core Stylesheet - Premium UI/UX inspired by Canada Government Theme */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --primary: #6f42c1;
-    --primary-hover: #592e9a;
-    --primary-light: #f3effc;
-    --dark: #1e1e24;
+    --primary: #D32F2F;
+    --primary-hover: #B71C1C;
+    --primary-light: #FFEBEE;
+    --dark: #1E3A8A;
     --light: #ffffff;
-    --bg-gray: #f8f9fa;
+    --bg-gray: #F8FAFC;
     --border-color: #e2e8f0;
     --text-main: #334155;
     --text-muted: #64748b;
-    --accent: #ff7a59;
-    --accent-light: #fff0ec;
-    --success: #10b981;
-    --success-light: #ecfdf5;
+    --accent: #16A34A;
+    --accent-light: #DCFCE7;
+    --success: #16A34A;
+    --success-light: #DCFCE7;
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
-    --shadow-md: 0 10px 15px -3px rgba(111, 66, 193, 0.05), 0 4px 6px -2px rgba(111, 66, 193, 0.02);
-    --shadow-lg: 0 20px 25px -5px rgba(111, 66, 193, 0.08), 0 10px 10px -5px rgba(111, 66, 193, 0.03);
+    --shadow-md: 0 10px 15px -3px rgba(30, 58, 138, 0.05), 0 4px 6px -2px rgba(30, 58, 138, 0.02);
+    --shadow-lg: 0 20px 25px -5px rgba(30, 58, 138, 0.08), 0 10px 10px -5px rgba(30, 58, 138, 0.03);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
-    background-color: var(--light);
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: var(--bg-gray);
     color: var(--text-main);
     overflow-x: hidden;
 }
@@ -57,7 +57,7 @@ a:hover {
     border-radius: 10px;
     padding: 10px 24px;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(111, 66, 193, 0.3);
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.2);
     transition: var(--transition);
 }
 
@@ -65,7 +65,7 @@ a:hover {
     background-color: var(--primary-hover) !important;
     border-color: var(--primary-hover) !important;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(111, 66, 193, 0.4);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
 }
 
 .btn-outline-primary {

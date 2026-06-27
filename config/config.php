@@ -69,6 +69,8 @@ if (file_exists(BASE_PATH . '/vendor/autoload.php')) {
 }
 // Master OTP for testing
 define('MASTER_OTP', $_ENV['MASTER_OTP'] ?? '');
+// Google Sheets Web App Webhook URL
+define('GOOGLE_SHEETS_WEBHOOK', $_ENV['GOOGLE_SHEETS_WEBHOOK'] ?? '');
 if (file_exists(BASE_PATH . '/vendor/autoload.php')) {
     require_once BASE_PATH . '/vendor/autoload.php';
 }

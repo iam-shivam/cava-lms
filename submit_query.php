@@ -26,6 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $saved = Query::create($userId, $name, $email, $mobile, $message);
         if ($saved) {
+            // Also push to Google Sheets (fails silently if not configured)
+            if (defined('GOOGLE_SHEETS_WEBHOOK') && GOOGLE_SHEETS_WEBHOOK && strpos(GOOGLE_SHEETS_WEBHOOK, 'YOUR_SCRIPT_ID') === false) {
+                $payload = json_encode([
+                    'name'    => $name,
+                    'email'   => $email,
+                    'mobile'  => $mobile,
+                    'message' => $message,
+                    'user_id' => $userId ?? 'Guest',
+                ]);
+                $ch = curl_init(GOOGLE_SHEETS_WEBHOOK);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Apps Script redirects
+                curl_exec($ch);
+                curl_close($ch);
+            }
             set_flash_message('success', 'Your query has been submitted successfully! We will get back to you soon.');
         } else {
             set_flash_message('danger', 'Failed to submit your query. Please try again.');
