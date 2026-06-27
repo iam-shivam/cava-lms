@@ -47,13 +47,13 @@ class Course {
     
     public static function isUserEnrolled($userId, $courseId) {
         if (!$userId) return false;
-        $row = DB::fetch("SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?", [$userId, $courseId]);
+        $row = DB::fetch("SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? AND status = 'Active' AND (expiry_date IS NULL OR expiry_date >= NOW())", [$userId, $courseId]);
         return !empty($row);
     }
     
     public static function getEnrolledCourses($userId) {
         return DB::fetchAll("
-            SELECT c.*, e.enrolled_at 
+            SELECT c.*, e.enrolled_at, e.status as enrollment_status, e.expiry_date
             FROM enrollments e 
             JOIN courses c ON e.course_id = c.id 
             WHERE e.user_id = ?

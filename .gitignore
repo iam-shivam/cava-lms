@@ -8,7 +8,13 @@
 implementation_plan.md
 deployment_guide.md
 walkthrough.md
+README.md
 
 # OS generated files
 Thumbs.db
 Desktop.ini
+
+#Tejas files
+init_db.php
+config.php
+db.php
