@@ -6,7 +6,7 @@
 
 # Development / planning artifacts (not needed on live site)
 implementation_plan.md
-deployment.md
+deployment_guide.md
 walkthrough.md
 README.md
 

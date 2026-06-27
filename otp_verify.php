@@ -32,7 +32,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-3 mb-3">Verify OTP</button>
                     <div class="text-center mt-3">
-                        <p class="mb-0 text-muted"><a href="login.php" class="fw-semibold text-primary">Resend OTP / Change identifier</a></p>
+                        <p class="mb-0 text-muted"><a href="resend_otp.php" class="fw-semibold text-primary">Resend OTP / Change identifier</a></p>
                     </div>
                 </form>
             </div>

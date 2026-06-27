@@ -66,22 +66,40 @@ class PaymentController {
             'payment_capture' => 1
         ];
         
-        try {
-            $razorpayOrder = $api->order->create($orderData);
-            $orderId = $razorpayOrder['id'];
-            
-            $paymentType = $isPartial ? 'Partial' : 'Full';
-            // Log payment in database
-            Payment::createPaymentLog($userId, $itemType, $itemId, $orderId, $price, $paymentType);
-            
-            return [
-                'order_id' => $orderId,
-                'amount' => $amountInPaise,
-                'title' => $title,
-                'price' => $price
-            ];
-        } catch (Exception $e) {
-            throw new Exception("Razorpay Order Creation Failed: " . $e->getMessage());
+        $maxRetries = 2;
+        $attempt = 0;
+        $lastException = null;
+        
+        while ($attempt <= $maxRetries) {
+            try {
+                $razorpayOrder = $api->order->create($orderData);
+                $orderId = $razorpayOrder['id'];
+                
+                $paymentType = $isPartial ? 'Partial' : 'Full';
+                // Log payment in database
+                Payment::createPaymentLog($userId, $itemType, $itemId, $orderId, $price, $paymentType);
+                
+                return [
+                    'order_id' => $orderId,
+                    'amount' => $amountInPaise,
+                    'title' => $title,
+                    'price' => $price
+                ];
+            } catch (Exception $e) {
+                $lastException = $e;
+                $msg = $e->getMessage();
+                // Only retry on transient network errors (cURL DNS / connection errors)
+                if (strpos($msg, 'cURL error 6') !== false || strpos($msg, 'cURL error 7') !== false || strpos($msg, 'cURL error 28') !== false) {
+                    $attempt++;
+                    if ($attempt <= $maxRetries) {
+                        sleep(1); // Wait 1 second before retry
+                        continue;
+                    }
+                    throw new Exception("Payment gateway is currently unreachable (network error). Please check your internet connection and try again. (Detail: " . $msg . ")");
+                }
+                // Non-network errors: fail immediately
+                throw new Exception("Razorpay Order Creation Failed: " . $msg);
+            }
         }
     }
     
