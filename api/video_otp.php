@@ -62,7 +62,8 @@ if ($action === 'send') {
         // Silently continue
     }
     
-    echo json_encode(['success' => true, 'message' => 'OTP sent to registered mobile/email.']);
+    $maskedEmail = substr($userEmail, 0, 2) . str_repeat('*', max(0, strlen(explode('@', $userEmail)[0]) - 2)) . '@' . explode('@', $userEmail)[1];
+    echo json_encode(['success' => true, 'message' => "OTP sent to registered email: {$maskedEmail}"]);
     exit;
 } elseif ($action === 'verify') {
     $otp = trim($_POST['otp'] ?? '');

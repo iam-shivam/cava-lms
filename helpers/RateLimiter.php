@@ -38,15 +38,6 @@ class RateLimiter {
         if (!self::canAttemptOTPVerification($identifier, $ip, $reason)) {
             return false;
         }
-        return self::canAttemptOTPVerification($identifier, $ip, $reason);
-
-        // 2. Check if locked due to password login failures
-        $stmt = $db->prepare('SELECT COUNT(*) FROM login_attempts WHERE identifier = ? AND attempt_type = "login" AND success = 0 AND attempted_at >= (NOW() - INTERVAL ' . self::LOGIN_LOCK_MINUTES . ' MINUTE)');
-        $stmt->execute([$identifier]);
-        if ($stmt->fetchColumn() >= self::LOGIN_MAX_INVALID) {
-            $reason = 'Too many failed login attempts. Please try again after ' . self::LOGIN_LOCK_MINUTES . ' minutes.';
-            return false;
-        }
 
         // 3. Hourly limit per identifier
         $stmt = $db->prepare('SELECT COUNT(*) FROM otp_requests WHERE identifier = ? AND requested_at >= (NOW() - INTERVAL 1 HOUR)');

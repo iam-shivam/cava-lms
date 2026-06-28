@@ -5,6 +5,7 @@ require_once __DIR__ . '/controllers/AuthController.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
+    set_flash_message('info', 'You are already logged in.');
     header("Location: " . SITE_URL . "/dashboard.php");
     exit;
 }

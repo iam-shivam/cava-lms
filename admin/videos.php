@@ -96,6 +96,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Delete Handlers
 if ($action === 'delete_section' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: videos.php?course_id=$courseId");
+        exit;
+    }
     try {
         DB::query("DELETE FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);
         set_flash_message('success', 'Section and all its videos deleted successfully!');
@@ -107,6 +112,11 @@ if ($action === 'delete_section' && $id > 0) {
 }
 
 if ($action === 'delete_video' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: videos.php?course_id=$courseId");
+        exit;
+    }
     try {
         $vid = DB::fetch("SELECT video_url, document_url FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
         if ($vid) {
@@ -186,7 +196,7 @@ foreach ($sections as $sec) {
                                                 </button>
                                                 <a href="videos.php?course_id=<?php echo $courseId; ?>&action=delete_section&id=<?php echo $sec['id']; ?>" 
                                                    class="btn btn-sm btn-outline-danger py-1 px-2 border-0" 
-                                                   onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this section and all its lesson videos?');"
+                                                   onclick="confirmAction(event, 'Are you sure you want to delete this section and all its lesson videos?', this.href);"
                                                    title="Delete Section">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </a>
@@ -230,7 +240,7 @@ foreach ($sections as $sec) {
                                                         </a>
                                                         <a href="videos.php?course_id=<?php echo $courseId; ?>&action=delete_video&id=<?php echo $video['id']; ?>" 
                                                            class="btn btn-outline-danger btn-sm border-0" 
-                                                           onclick="return confirm('Delete this lesson video?');"
+                                                           onclick="confirmAction(event, 'Delete this lesson video?', this.href);"
                                                            title="Delete Lesson">
                                                             <i class="fa-solid fa-trash-can"></i>
                                                         </a>
@@ -327,45 +337,6 @@ foreach ($sections as $sec) {
     <input type="hidden" name="section_title" id="edit_section_title">
 </form>
 
-<script>
-function toggleSectionEdit(id, event) {
-    if (event) event.stopPropagation(); // Prevents accordion from toggling
-    
-    let viewDiv = document.getElementById('view_sec_' + id);
-    let editDiv = document.getElementById('edit_sec_' + id);
-    let inputEl = document.getElementById('input_sec_' + id);
-    
-    if (viewDiv.classList.contains('d-none')) {
-        // Switch to View Mode
-        viewDiv.classList.remove('d-none');
-        viewDiv.classList.add('d-flex');
-        
-        editDiv.classList.remove('d-flex');
-        editDiv.classList.add('d-none');
-        
-        // Revert input value back to original text
-        inputEl.value = document.getElementById('text_sec_' + id).innerText;
-    } else {
-        // Switch to Edit Mode
-        viewDiv.classList.remove('d-flex');
-        viewDiv.classList.add('d-none');
-        
-        editDiv.classList.remove('d-none');
-        editDiv.classList.add('d-flex');
-        
-        inputEl.focus();
-    }
-}
 
-function saveSection(id, event) {
-    if (event) event.stopPropagation();
-    let newTitle = document.getElementById('input_sec_' + id).value;
-    if (newTitle.trim() !== "") {
-        document.getElementById('edit_section_id').value = id;
-        document.getElementById('edit_section_title').value = newTitle;
-        document.getElementById('edit_section_form').submit();
-    }
-}
-</script>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>

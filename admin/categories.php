@@ -6,7 +6,7 @@ $action = trim($_GET['action'] ?? 'list');
 $id = intval($_GET['id'] ?? 0);
 
 // Process Form Submissions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
     $csrf = $_POST['csrf_token'] ?? '';
     if (!verify_csrf_token($csrf)) {
         set_flash_message('danger', 'CSRF token verification failed.');
@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Handle Delete Action
 if ($action === 'delete' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: categories.php");
+        exit;
+    }
+    
     // Check if category contains courses
     $courseCount = DB::fetch("SELECT COUNT(id) as count FROM courses WHERE category_id = ?", [$id])['count'];
     if ($courseCount > 0) {
@@ -136,7 +142,7 @@ $csrfToken = generate_csrf_token();
                                         </a>
                                         <a href="categories.php?action=delete&id=<?php echo $cat['id']; ?>" 
                                            class="btn btn-outline-danger btn-sm" 
-                                           onclick="return confirm('Are you sure you want to delete this category?');" 
+                                           onclick="confirmAction(event, 'Are you sure you want to delete this category?', this.href);" 
                                            title="Delete">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>

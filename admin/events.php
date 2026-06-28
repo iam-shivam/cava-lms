@@ -102,6 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 
 // Delete Event
 if ($action === 'delete' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: events.php");
+        exit;
+    }
     try {
         $event = DB::fetch("SELECT event_image FROM events WHERE id = ?", [$id]);
         if ($event) {
@@ -181,7 +186,7 @@ $csrfToken = generate_csrf_token();
                                     </a>
                                     <a href="events.php?action=delete&id=<?php echo $ev['id']; ?>" 
                                        class="btn btn-outline-danger btn-sm" 
-                                       onclick="return confirm('Delete this event?');" 
+                                       onclick="confirmAction(event, 'Delete this event?', this.href);" 
                                        title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </a>

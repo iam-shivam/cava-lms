@@ -194,14 +194,6 @@ require_once __DIR__ . '/views/layout/header.php';
     </div>
 </div>
 
-<script>
-// Disable Right-Click and Inspect Elements
-document.addEventListener('contextmenu', event => event.preventDefault());
-document.onkeydown = function(e) {
-    if (e.key === "F12") return false;
-    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
-    if (e.ctrlKey && e.key === "U") return false;
-};
-</script>
+
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

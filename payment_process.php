@@ -61,45 +61,13 @@ require_once __DIR__ . '/views/layout/header.php';
 
 <!-- Razorpay JavaScript Checkout library -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    var options = {
-        "key": "<?php echo RAZORPAY_KEY_ID; ?>",
-        "amount": "<?php echo $order['amount']; ?>",
-        "currency": "INR",
-        "name": "CAVA LMS Portal",
-        "description": "<?php echo htmlspecialchars($order['title']); ?>",
-        "order_id": "<?php echo $order['order_id']; ?>",
-        "handler": function (response){
-            // On success, redirect to callback page with transaction parameters
-            window.location.href = "payment_callback.php?razorpay_payment_id=" + response.razorpay_payment_id + 
-                                   "&razorpay_order_id=" + response.razorpay_order_id + 
-                                   "&razorpay_signature=" + response.razorpay_signature;
-        },
-        "prefill": {
-            "name": "<?php echo htmlspecialchars($_SESSION['user_name']); ?>",
-            "email": "<?php echo htmlspecialchars($_SESSION['user_email']); ?>"
-        },
-        "theme": {
-            "color": "#6f42c1" // Purple Accent
-        },
-        "modal": {
-            "ondismiss": function(){
-                // If user closes modal, redirect to homepage or item details
-                window.location.href = "index.php";
-            }
-        }
-    };
-    
-    var rzp1 = new Razorpay(options);
-    
-    rzp1.on('payment.failed', function (response){
-        // Redirect to callback with error parameters
-        window.location.href = "payment_callback.php?error=payment_failed&razorpay_order_id=" + response.error.metadata.order_id;
-    });
-    
-    window.onload = function() {
-        rzp1.open();
-    };
-</script>
+<div id="razorpay-data" 
+     data-key="<?php echo RAZORPAY_KEY_ID; ?>" 
+     data-amount="<?php echo $order['amount']; ?>" 
+     data-title="<?php echo htmlspecialchars($order['title']); ?>" 
+     data-orderid="<?php echo $order['order_id']; ?>" 
+     data-name="<?php echo htmlspecialchars($_SESSION['user_name']); ?>" 
+     data-email="<?php echo htmlspecialchars($_SESSION['user_email']); ?>">
+</div>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

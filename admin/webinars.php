@@ -57,6 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 
 // Handle Delete Webinar
 if ($action === 'delete' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: webinars.php");
+        exit;
+    }
     try {
         DB::query("DELETE FROM webinars WHERE id = ?", [$id]);
         set_flash_message('success', 'Webinar deleted successfully.');
@@ -136,7 +141,7 @@ $csrfToken = generate_csrf_token();
     </a>
     <a href="webinars.php?action=delete&id=<?php echo $w['id']; ?>" 
         class="btn btn-outline-danger btn-sm" 
-        onclick="return confirm('Are you sure you want to delete this webinar?');" 
+        onclick="confirmAction(event, 'Are you sure you want to delete this webinar?', this.href);"
         title="Delete">
         <i class="fa-solid fa-trash-can"></i>
     </a>
