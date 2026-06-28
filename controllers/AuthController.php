@@ -57,6 +57,12 @@ class AuthController {
             exit;
         }
         
+        if (User::mobileExists($mobileNumber)) {
+            set_flash_message('danger', 'Mobile number is already registered.');
+            header("Location: " . SITE_URL . "/register.php");
+            exit;
+        }
+        
         try {
             $created = User::create($fullName, $email, $mobileNumber, $password);
             if ($created) {
