@@ -7,6 +7,11 @@ $action = trim($_GET['action'] ?? '');
 $id = intval($_GET['id'] ?? 0);
 
 if ($action === 'resolve' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: queries.php");
+        exit;
+    }
     try {
         Query::resolve($id);
         set_flash_message('success', 'Query marked as Resolved.');
@@ -61,7 +66,7 @@ $queries = Query::getAll();
                                 <?php if ($q['status'] === 'Pending'): ?>
                                     <a href="queries.php?action=resolve&id=<?php echo $q['id']; ?>" 
                                        class="btn btn-sm btn-success rounded-pill px-3" 
-                                       onclick="return confirm('Mark this query as resolved?');">
+                                       onclick="confirmAction(event, 'Mark this query as resolved?', this.href)">
                                         <i class="fa-solid fa-check me-1"></i> Resolve
                                     </a>
                                 <?php else: ?>

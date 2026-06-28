@@ -23,12 +23,14 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
                 <form method="POST" class="needs-validation">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                    <div class="mb-3">
-                        <label for="otp" class="form-label fw-semibold">One‑Time Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
-                            <input type="text" class="form-control bg-light border-start-0 ps-0" id="otp" name="otp" placeholder="123456" required>
+                    <div class="mb-4 text-center">
+                        <label class="form-label fw-semibold mb-3">One‑Time Password</label>
+                        <div class="d-flex justify-content-center gap-2 otp-input-group" dir="ltr">
+                            <?php for($i = 0; $i < 6; $i++): ?>
+                                <input type="text" inputmode="numeric" class="form-control text-center fs-4 fw-bold otp-input bg-light border-0 shadow-sm" maxlength="1" required style="width: 50px; height: 60px; border-radius: 8px;">
+                            <?php endfor; ?>
                         </div>
+                        <input type="hidden" name="otp" id="final_otp" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-3 mb-3">Verify OTP</button>
                     <div class="text-center mt-3">
@@ -39,6 +41,7 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
     </div>
 </div>
+<script src="assets/js/otp.js"></script>
 <?php
 require_once __DIR__ . '/views/layout/footer.php';
 ?>

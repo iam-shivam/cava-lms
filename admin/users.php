@@ -7,6 +7,11 @@ $id = intval($_GET['id'] ?? 0);
 
 // Status Toggle processing
 if ($action === 'toggle_status' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: users.php");
+        exit;
+    }
     try {
         $user = DB::fetch("SELECT status FROM users WHERE id = ?", [$id]);
         if ($user) {
@@ -69,7 +74,7 @@ $users = DB::fetchAll("
                             <td class="text-end">
                                 <a href="users.php?action=toggle_status&id=<?php echo $u['id']; ?>" 
                                    class="btn btn-sm <?php echo $u['status'] === 'Active' ? 'btn-outline-danger' : 'btn-outline-success'; ?>" 
-                                   onclick="return confirm('Are you sure you want to <?php echo $u['status'] === 'Active' ? 'Suspend' : 'Activate'; ?> this user account?');">
+                                   onclick="confirmAction(event, 'Are you sure you want to <?php echo $u['status'] === 'Active' ? 'Suspend' : 'Activate'; ?> this user account?', this.href)">
                                     <i class="fa-solid <?php echo $u['status'] === 'Active' ? 'fa-user-slash' : 'fa-user-check'; ?> me-1"></i>
                                     <?php echo $u['status'] === 'Active' ? 'Suspend' : 'Activate'; ?>
                                 </a>

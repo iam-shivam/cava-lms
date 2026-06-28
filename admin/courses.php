@@ -113,6 +113,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 
 // Handle Delete Course
 if ($action === 'delete' && $id > 0) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        set_flash_message('danger', 'Invalid or unauthorized request.');
+        header("Location: courses.php");
+        exit;
+    }
     try {
         // Fetch course details
         $course = DB::fetch("SELECT thumbnail FROM courses WHERE id = ?", [$id]);
@@ -198,7 +203,7 @@ $csrfToken = generate_csrf_token();
                                     </span>
                                 </td>
 <td class="text-end">
-    <a href="courses.php?action=delete&id=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm me-1" onclick="return confirm('Are you sure you want to delete this course and all its video lectures?');" title="Delete">
+    <a href="courses.php?action=delete&id=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm me-1" onclick="confirmAction(event, 'Are you sure you want to delete this course and all its video lectures?', this.href);" title="Delete">
         <i class="fa-solid fa-trash-can"></i>
     </a>
     <a href="courses.php?action=edit&id=<?php echo $c['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit Course details">
@@ -287,11 +292,7 @@ $csrfToken = generate_csrf_token();
                         <input type="number" step="0.01" min="0" class="form-control" id="min_installment" name="min_installment" value="<?php echo $editCourse ? htmlspecialchars($editCourse['min_installment']) : '0.00'; ?>">
                     </div>
                     
-                    <script>
-                        document.getElementById('allow_partial_payment').addEventListener('change', function() {
-                            document.getElementById('min_installment_container').style.display = this.checked ? 'block' : 'none';
-                        });
-                    </script>
+
 
                     <div class="mb-3">
                         <label for="status" class="form-label fw-semibold">Publish Status</label>
