@@ -38,6 +38,11 @@ try {
 }
 
 $userId = $_SESSION['user_id'] ?? null;
+
+// SEO meta for this page
+$pageTitle       = 'Browse Courses';
+$pageDescription = 'Explore all self-paced courses on CAVA LMS. Filter by category, search by topic, and start learning immigration, career, and skills courses today.';
+
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 

@@ -153,6 +153,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                         <input type="text" class="form-control" id="video_otp_input" placeholder="Enter OTP" maxlength="6">
                                         <button class="btn btn-success" type="button" onclick="verifyVideoOtp(<?php echo $activeVideo['id']; ?>)">Unlock</button>
                                     </div>
+                                </div>
+                                <div class="mt-2">
                                     <small id="otp_message" class="text-info"></small>
                                 </div>
                             </div>

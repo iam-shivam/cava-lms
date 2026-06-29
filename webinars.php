@@ -32,6 +32,10 @@ try {
 }
 
 $userId = $_SESSION['user_id'] ?? null;
+
+$pageTitle       = 'Live Webinars';
+$pageDescription = 'Join live interactive webinars with certified consultants on CAVA LMS. Learn from experts, ask questions, and get your immigration queries resolved.';
+
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
