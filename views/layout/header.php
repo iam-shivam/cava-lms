@@ -5,6 +5,7 @@ require_once dirname(dirname(__DIR__)) . '/config/db.php';
 
 // Fetch dynamic settings from database if possible
 $siteTitle = 'CAVA LMS Portal';
+$siteDescription = 'CAVA LMS Portal – Learn immigration, career, and skills courses online at your own pace. Expert-led video courses, live webinars, and more.';
 try {
     $titleSetting = DB::fetch("SELECT setting_value FROM settings WHERE setting_key = 'site_title'");
     if ($titleSetting) {
@@ -13,6 +14,12 @@ try {
 } catch (Exception $e) {
     // Fail silently if DB not seeded yet
 }
+
+// Per-page SEO — pages can set $pageTitle, $pageDescription, $pageImage before including this header
+$metaTitle       = isset($pageTitle)       ? htmlspecialchars($pageTitle) . ' | ' . htmlspecialchars($siteTitle) : htmlspecialchars($siteTitle);
+$metaDescription = isset($pageDescription) ? htmlspecialchars($pageDescription) : htmlspecialchars($siteDescription);
+$metaImage       = isset($pageImage)       ? $pageImage : SITE_URL . '/assets/images/og-default.png';
+$canonicalUrl    = SITE_URL . strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
 
 $isUserLoggedIn = isset($_SESSION['user_id']);
 $isAdminLoggedIn = isset($_SESSION['admin_id']);
@@ -23,7 +30,27 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($siteTitle); ?></title>
+    <title><?php echo $metaTitle; ?></title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<?php echo $metaDescription; ?>">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?php echo htmlspecialchars($canonicalUrl); ?>">
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type"        content="website">
+    <meta property="og:title"       content="<?php echo $metaTitle; ?>">
+    <meta property="og:description" content="<?php echo $metaDescription; ?>">
+    <meta property="og:image"       content="<?php echo htmlspecialchars($metaImage); ?>">
+    <meta property="og:url"         content="<?php echo htmlspecialchars($canonicalUrl); ?>">
+    <meta property="og:site_name"   content="<?php echo htmlspecialchars($siteTitle); ?>">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="<?php echo $metaTitle; ?>">
+    <meta name="twitter:description" content="<?php echo $metaDescription; ?>">
+    <meta name="twitter:image"       content="<?php echo htmlspecialchars($metaImage); ?>">
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->

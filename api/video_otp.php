@@ -37,9 +37,40 @@ if (!$video) {
     exit;
 }
 
-if (!Course::isUserEnrolled($userId, $video['course_id'])) {
+// Check enrollment status and active date range
+$enrollment = DB::fetch("SELECT status, expiry_date FROM enrollments WHERE user_id = ? AND course_id = ?", [$userId, $video['course_id']]);
+if (!$enrollment) {
     echo json_encode(['success' => false, 'message' => 'You do not have access to this course.']);
     exit;
+}
+
+if ($enrollment['expiry_date'] && strtotime($enrollment['expiry_date']) < time()) {
+    echo json_encode(['success' => false, 'message' => 'Your course access has expired.']);
+    exit;
+}
+
+if ($enrollment['status'] === 'Pending') {
+    // If pending, check if video is one of the first two preview videos
+    $syllabus = Course::getSyllabus($video['course_id']);
+    $allVideos = [];
+    foreach ($syllabus as $sec) {
+        if (!empty($sec['videos'])) {
+            foreach ($sec['videos'] as $v) {
+                $allVideos[] = $v;
+            }
+        }
+    }
+    $videoIndex = -1;
+    foreach ($allVideos as $index => $v) {
+        if (intval($v['id']) === $videoId) {
+            $videoIndex = $index;
+            break;
+        }
+    }
+    if ($videoIndex >= 2 || $videoIndex === -1) {
+        echo json_encode(['success' => false, 'message' => 'Please pay the remaining balance to unlock the rest of the course videos.']);
+        exit;
+    }
 }
 
 if ($action === 'send') {

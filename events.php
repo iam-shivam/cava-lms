@@ -31,6 +31,9 @@ try {
     $eventsList = [];
 }
 
+$pageTitle       = 'Upcoming Events';
+$pageDescription = 'Stay updated with upcoming events, seminars, and campus activities on CAVA LMS. Register today and expand your network.';
+
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 

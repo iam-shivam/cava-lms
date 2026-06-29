@@ -39,7 +39,42 @@ class Payment {
         $db = DB::getConnection();
         $sql = "INSERT IGNORE INTO webinar_registrations (webinar_id, user_id, payment_id) VALUES (?, ?, ?)";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$webinarId, $userId, $paymentLogId]);
+        $result = $stmt->execute([$webinarId, $userId, $paymentLogId]);
+        
+        if ($result) {
+            try {
+                $user = DB::fetch("SELECT full_name, email, mobile_number FROM users WHERE id = ?", [$userId]);
+                $webinar = DB::fetch("SELECT title FROM webinars WHERE id = ?", [$webinarId]);
+                
+                if ($user && $webinar) {
+                    if (defined('GOOGLE_SHEETS_WEBHOOK') && GOOGLE_SHEETS_WEBHOOK && strpos(GOOGLE_SHEETS_WEBHOOK, 'YOUR_SCRIPT_ID') === false) {
+                        $payload = json_encode([
+                            'name'          => $user['full_name'],
+                            'email'         => $user['email'],
+                            'mobile'        => $user['mobile_number'],
+                            'message'       => "Registered for Webinar: " . $webinar['title'],
+                            'user_id'       => $userId,
+                            'webinar_title' => $webinar['title'],
+                            'webinar_id'    => $webinarId,
+                            'type'          => 'webinar'
+                        ]);
+                        $ch = curl_init(GOOGLE_SHEETS_WEBHOOK);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                        curl_exec($ch);
+                        curl_close($ch);
+                    }
+                }
+            } catch (Exception $e) {
+                // Fail silently
+            }
+        }
+        
+        return $result;
     }
     
     public static function getPaymentsByUser($userId) {

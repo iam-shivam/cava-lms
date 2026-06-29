@@ -42,6 +42,11 @@ if (!empty($course['thumbnail'])) {
     }
 }
 
+// SEO meta — use actual course data for rich search results
+$pageTitle       = $course['title'];
+$pageDescription = $course['description'] ? substr(strip_tags($course['description']), 0, 155) : 'Enroll in ' . $course['title'] . ' on CAVA LMS and start learning today.';
+$pageImage       = $thumbnailUrl;
+
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
@@ -170,11 +175,13 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <input type="hidden" name="item_type" value="course">
                                 <input type="hidden" name="item_id" value="<?php echo $courseId; ?>">
                                 
-                                <?php if ($course['allow_partial_payment'] && $remainingBalance > 0): ?>
+                                <?php if ($course['allow_partial_payment'] && $remainingBalance > 0): 
+                                    $minPayment = min($course['min_installment'], $remainingBalance);
+                                ?>
                                     <div class="mb-3 text-start">
                                         <label for="amount_to_pay" class="form-label fw-semibold fs-7 text-dark">Amount to Pay (INR)</label>
-                                        <input type="number" step="0.01" min="<?php echo $course['min_installment']; ?>" max="<?php echo $remainingBalance; ?>" class="form-control" id="amount_to_pay" name="amount_to_pay" value="<?php echo $remainingBalance; ?>" required>
-                                        <small class="text-muted fs-8 mt-1 d-block">Min: ₹<?php echo number_format($course['min_installment'], 2); ?> | Max: ₹<?php echo number_format($remainingBalance, 2); ?></small>
+                                        <input type="number" step="0.01" min="<?php echo $minPayment; ?>" max="<?php echo $remainingBalance; ?>" class="form-control" id="amount_to_pay" name="amount_to_pay" value="<?php echo $remainingBalance; ?>" required>
+                                        <small class="text-muted fs-8 mt-1 d-block">Min: ₹<?php echo number_format($minPayment, 2); ?> | Max: ₹<?php echo number_format($remainingBalance, 2); ?></small>
                                     </div>
                                 <?php endif; ?>
 

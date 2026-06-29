@@ -6,6 +6,9 @@ require_once __DIR__ . '/models/Query.php';
 
 $userId = $_SESSION['user_id'] ?? null;
 $myQueries = $userId ? Query::getByUser($userId) : [];
+
+$pageTitle       = 'Support Center';
+$pageDescription = 'Have questions about immigration, courses, or your account? Submit a support query on CAVA LMS and our team will get back to you promptly.';
 ?>
 
 <?php require_once __DIR__ . '/views/layout/header.php'; ?>
