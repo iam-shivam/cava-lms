@@ -5,10 +5,11 @@ class User {
     public static function create($fullName, $email, $mobileNumber, $password) {
         $db = DB::getConnection();
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $uuid = generate_uuid();
         
-        $sql = "INSERT INTO users (full_name, email, mobile_number, password_hash, status) VALUES (?, ?, ?, ?, 'Active')";
+        $sql = "INSERT INTO users (id, full_name, email, mobile_number, password_hash, status) VALUES (?, ?, ?, ?, ?, 'Active')";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$fullName, $email, $mobileNumber, $passwordHash]);
+        return $stmt->execute([$uuid, $fullName, $email, $mobileNumber, $passwordHash]);
     }
     
     public static function findByEmail($email) {

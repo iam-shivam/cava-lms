@@ -55,10 +55,11 @@ class EmailHelper {
     private static function logToDatabase($recipient, $subject, $body, $status, $errorMessage = null) {
         try {
             $db = DB::getConnection();
-            $sql = "INSERT INTO email_logs (recipient, subject, body_excerpt, status, error_message) VALUES (?, ?, ?, ?, ?)";
+            $uuid = generate_uuid();
+            $sql = "INSERT INTO email_logs (id, recipient, subject, body_excerpt, status, error_message) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $db->prepare($sql);
             $excerpt = substr(strip_tags($body), 0, 200);
-            $stmt->execute([$recipient, $subject, $excerpt, $status, $errorMessage]);
+            $stmt->execute([$uuid, $recipient, $subject, $excerpt, $status, $errorMessage]);
         } catch (\PDOException $e) {
             // Fail silently
         }

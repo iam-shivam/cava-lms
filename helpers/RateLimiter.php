@@ -147,26 +147,26 @@ class RateLimiter {
 
     public static function logOTPRequest(string $identifier, string $ip): void {
         $db = DB::getConnection();
-        $stmt = $db->prepare('INSERT INTO otp_requests (identifier, ip_address) VALUES (?, ?)');
-        $stmt->execute([$identifier, $ip]);
+        $stmt = $db->prepare('INSERT INTO otp_requests (id, identifier, ip_address) VALUES (?, ?, ?)');
+        $stmt->execute([generate_uuid(), $identifier, $ip]);
     }
 
     public static function logOTPVerify(string $identifier, string $ip, bool $success): void {
         $db = DB::getConnection();
-        $stmt = $db->prepare('INSERT INTO login_attempts (identifier, ip_address, attempt_type, success) VALUES (?, ?, "otp_verify", ?)');
-        $stmt->execute([$identifier, $ip, $success ? 1 : 0]);
+        $stmt = $db->prepare('INSERT INTO login_attempts (id, identifier, ip_address, attempt_type, success) VALUES (?, ?, ?, "otp_verify", ?)');
+        $stmt->execute([generate_uuid(), $identifier, $ip, $success ? 1 : 0]);
     }
 
     public static function logLogin(string $identifier, string $ip, bool $success): void {
         $db = DB::getConnection();
-        $stmt = $db->prepare('INSERT INTO login_attempts (identifier, ip_address, attempt_type, success) VALUES (?, ?, "login", ?)');
-        $stmt->execute([$identifier, $ip, $success ? 1 : 0]);
+        $stmt = $db->prepare('INSERT INTO login_attempts (id, identifier, ip_address, attempt_type, success) VALUES (?, ?, ?, "login", ?)');
+        $stmt->execute([generate_uuid(), $identifier, $ip, $success ? 1 : 0]);
     }
 
     public static function logRegistration(string $ip): void {
         $db = DB::getConnection();
-        $stmt = $db->prepare('INSERT INTO login_attempts (identifier, ip_address, attempt_type, success) VALUES ("", ?, "registration", 1)');
-        $stmt->execute([$ip]);
+        $stmt = $db->prepare('INSERT INTO login_attempts (id, identifier, ip_address, attempt_type, success) VALUES (?, "", ?, "registration", 1)');
+        $stmt->execute([generate_uuid(), $ip]);
     }
 }
 ?>

@@ -9,7 +9,7 @@ $categories = Course::getCategories();
 
 // Filter Inputs
 $search = trim($_GET['search'] ?? '');
-$categoryId = intval($_GET['category'] ?? 0);
+$categoryId = trim($_GET['category'] ?? '');
 
 // Base query
 $sql = "SELECT c.*, cat.name as category_name 
@@ -73,7 +73,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 <select class="form-select bg-light border" id="category" name="category">
                     <option value="">All Categories</option>
                     <?php foreach ($categories as $cat): ?>
-                        <option value="<?php echo $cat['id']; ?>" <?php echo $categoryId === intval($cat['id']) ? 'selected' : ''; ?>>
+                        <option value="<?php echo $cat['id']; ?>" <?php echo $categoryId === trim($cat['id']) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($cat['name']); ?>
                         </option>
                     <?php endforeach; ?>

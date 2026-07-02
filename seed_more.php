@@ -15,15 +15,19 @@ try {
         ['name' => 'Provincial Nominee Programs (PNP)', 'slug' => 'pnp-programs']
     ];
     
-    $insertCat = $pdo->prepare("INSERT INTO categories (name, slug) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
+    $insertCat = $pdo->prepare("INSERT INTO categories (id, name, slug) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?");
     $catIds = [];
     foreach ($categories as $cat) {
-        $insertCat->execute([$cat['name'], $cat['slug'], $cat['name']]);
-        // Get the ID
         $stmt = $pdo->prepare("SELECT id FROM categories WHERE slug = ?");
         $stmt->execute([$cat['slug']]);
-        $catIds[$cat['slug']] = $stmt->fetch()['id'];
-        echo "Category '{$cat['name']}' seeded.<br>";
+        if ($row = $stmt->fetch()) {
+            $catIds[$cat['slug']] = $row['id'];
+        } else {
+            $uuid = generate_uuid();
+            $insertCat->execute([$uuid, $cat['name'], $cat['slug'], $cat['name']]);
+            $catIds[$cat['slug']] = $uuid;
+            echo "Category '{$cat['name']}' seeded.<br>";
+        }
     }
     
     // 2. Seed Courses
@@ -54,24 +58,28 @@ try {
         ]
     ];
     
-    $insertCourse = $pdo->prepare("INSERT INTO courses (category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, 'Published') ON DUPLICATE KEY UPDATE description = ?, price = ?");
+    $insertCourse = $pdo->prepare("INSERT INTO courses (id, category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Published') ON DUPLICATE KEY UPDATE description = ?, price = ?");
     
     $courseIds = [];
     foreach ($courses as $c) {
-        $insertCourse->execute([
-            $c['cat_id'], $c['title'], $c['slug'], $c['thumbnail'], $c['desc'], $c['price'],
-            $c['desc'], $c['price']
-        ]);
-        
         $stmt = $pdo->prepare("SELECT id FROM courses WHERE slug = ?");
         $stmt->execute([$c['slug']]);
-        $courseIds[$c['slug']] = $stmt->fetch()['id'];
-        echo "Course '{$c['title']}' seeded.<br>";
+        if ($row = $stmt->fetch()) {
+            $courseIds[$c['slug']] = $row['id'];
+        } else {
+            $uuid = generate_uuid();
+            $insertCourse->execute([
+                $uuid, $c['cat_id'], $c['title'], $c['slug'], $c['thumbnail'], $c['desc'], $c['price'],
+                $c['desc'], $c['price']
+            ]);
+            $courseIds[$c['slug']] = $uuid;
+            echo "Course '{$c['title']}' seeded.<br>";
+        }
     }
     
     // 3. Seed Sections & Videos
-    $insertSec = $pdo->prepare("INSERT INTO course_sections (course_id, title, sort_order) VALUES (?, ?, ?)");
-    $insertVid = $pdo->prepare("INSERT INTO course_videos (section_id, course_id, title, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
+    $insertSec = $pdo->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
+    $insertVid = $pdo->prepare("INSERT INTO course_videos (id, section_id, course_id, title, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
     
     // IELTS Sections
     $ieltsId = $courseIds['ielts-speaking-writing-band-8'];
@@ -79,14 +87,14 @@ try {
     $stmt = $pdo->prepare("SELECT id FROM course_sections WHERE course_id = ?");
     $stmt->execute([$ieltsId]);
     if (!$stmt->fetch()) {
-        $insertSec->execute([$ieltsId, 'Section 1: Speaking Cue Cards Tips', 1]);
-        $sec1 = $pdo->lastInsertId();
-        $insertVid->execute([$sec1, $ieltsId, 'Structuring your 2-minute Speaking Speech', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
-        $insertVid->execute([$sec1, $ieltsId, 'Common Idioms for Band 8+ Vocabulary', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
+        $sec1 = generate_uuid();
+        $insertSec->execute([$sec1, $ieltsId, 'Section 1: Speaking Cue Cards Tips', 1]);
+        $insertVid->execute([generate_uuid(), $sec1, $ieltsId, 'Structuring your 2-minute Speaking Speech', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
+        $insertVid->execute([generate_uuid(), $sec1, $ieltsId, 'Common Idioms for Band 8+ Vocabulary', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
         
-        $insertSec->execute([$ieltsId, 'Section 2: Writing Task 2 Essay Templates', 2]);
-        $sec2 = $pdo->lastInsertId();
-        $insertVid->execute([$sec2, $ieltsId, 'How to Structure Agree/Disagree Essays', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
+        $sec2 = generate_uuid();
+        $insertSec->execute([$sec2, $ieltsId, 'Section 2: Writing Task 2 Essay Templates', 2]);
+        $insertVid->execute([generate_uuid(), $sec2, $ieltsId, 'How to Structure Agree/Disagree Essays', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
         echo "IELTS course sections and videos seeded.<br>";
     }
     
@@ -94,10 +102,10 @@ try {
     $eeId = $courseIds['express-entry-profile-creation'];
     $stmt->execute([$eeId]);
     if (!$stmt->fetch()) {
-        $insertSec->execute([$eeId, 'Section 1: Documents Checklist', 1]);
-        $sec1 = $pdo->lastInsertId();
-        $insertVid->execute([$sec1, $eeId, 'How to choose the correct NOC TEER Code', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
-        $insertVid->execute([$sec1, $eeId, 'WES Evaluation Step-by-Step guide', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
+        $sec1 = generate_uuid();
+        $insertSec->execute([$sec1, $eeId, 'Section 1: Documents Checklist', 1]);
+        $insertVid->execute([generate_uuid(), $sec1, $eeId, 'How to choose the correct NOC TEER Code', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
+        $insertVid->execute([generate_uuid(), $sec1, $eeId, 'WES Evaluation Step-by-Step guide', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
         echo "Express Entry course sections seeded.<br>";
     }
     
@@ -119,13 +127,13 @@ try {
         ]
     ];
     
-    $insertWebinar = $pdo->prepare("INSERT INTO webinars (title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, 'Active')");
+    $insertWebinar = $pdo->prepare("INSERT INTO webinars (id, title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, 'Active')");
     foreach ($webinars as $w) {
         // Check if exists
         $stmt = $pdo->prepare("SELECT id FROM webinars WHERE title = ?");
         $stmt->execute([$w['title']]);
         if (!$stmt->fetch()) {
-            $insertWebinar->execute([$w['title'], $w['desc'], $w['date'], $w['time'], $w['price']]);
+            $insertWebinar->execute([generate_uuid(), $w['title'], $w['desc'], $w['date'], $w['time'], $w['price']]);
             echo "Webinar '{$w['title']}' seeded.<br>";
         }
     }
@@ -144,12 +152,12 @@ try {
         ]
     ];
     
-    $insertEvent = $pdo->prepare("INSERT INTO events (title, description, date) VALUES (?, ?, ?)");
+    $insertEvent = $pdo->prepare("INSERT INTO events (id, title, description, date) VALUES (?, ?, ?, ?)");
     foreach ($events as $ev) {
         $stmt = $pdo->prepare("SELECT id FROM events WHERE title = ?");
         $stmt->execute([$ev['title']]);
         if (!$stmt->fetch()) {
-            $insertEvent->execute([$ev['title'], $ev['desc'], $ev['date']]);
+            $insertEvent->execute([generate_uuid(), $ev['title'], $ev['desc'], $ev['date']]);
             echo "Event '{$ev['title']}' seeded.<br>";
         }
     }
@@ -161,13 +169,13 @@ try {
         ['name' => 'Rajesh Kumar', 'email' => 'rajesh@cava.com', 'mobile' => '9876543213', 'pass' => 'UserRajesh123!']
     ];
     
-    $insertUser = $pdo->prepare("INSERT INTO users (full_name, email, mobile_number, password_hash, status) VALUES (?, ?, ?, ?, 'Active')");
+    $insertUser = $pdo->prepare("INSERT INTO users (id, full_name, email, mobile_number, password_hash, status) VALUES (?, ?, ?, ?, ?, 'Active')");
     foreach ($users as $u) {
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$u['email']]);
         if (!$stmt->fetch()) {
             $hash = password_hash($u['pass'], PASSWORD_DEFAULT);
-            $insertUser->execute([$u['name'], $u['email'], $u['mobile'], $hash]);
+            $insertUser->execute([generate_uuid(), $u['name'], $u['email'], $u['mobile'], $hash]);
             echo "Mock User '{$u['name']}' seeded (Email: {$u['email']}, Password: {$u['pass']}).<br>";
         }
     }

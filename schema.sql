@@ -1,7 +1,7 @@
 -- CAVA LMS Database Schema
 
 CREATE TABLE IF NOT EXISTS `admins` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `username` VARCHAR(50) NOT NULL UNIQUE,
   `email` VARCHAR(100) NOT NULL UNIQUE,
   `password_hash` VARCHAR(255) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `admins` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `full_name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(100) NOT NULL UNIQUE,
   `mobile_number` VARCHAR(15) NOT NULL,
@@ -21,15 +21,15 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `categories` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `name` VARCHAR(100) NOT NULL,
   `slug` VARCHAR(100) NOT NULL UNIQUE,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `courses` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `category_id` INT NOT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `category_id` CHAR(36) NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `slug` VARCHAR(255) NOT NULL UNIQUE,
   `thumbnail` VARCHAR(255) DEFAULT NULL,
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `courses` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `course_sections` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `course_id` INT NOT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `course_id` CHAR(36) NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `sort_order` INT DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS `course_sections` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `course_videos` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `section_id` INT NOT NULL,
-  `course_id` INT NOT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `section_id` CHAR(36) NOT NULL,
+  `course_id` CHAR(36) NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `thumbnail` VARCHAR(255) DEFAULT NULL,
   `video_url` VARCHAR(255) NOT NULL,
@@ -70,10 +70,10 @@ CREATE TABLE IF NOT EXISTS `course_videos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `payments` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT NOT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) NOT NULL,
   `item_type` ENUM('course', 'webinar') NOT NULL,
-  `item_id` INT NOT NULL,
+  `item_id` CHAR(36) NOT NULL,
   `razorpay_payment_id` VARCHAR(100) DEFAULT NULL,
   `razorpay_order_id` VARCHAR(100) NOT NULL UNIQUE,
   `razorpay_signature` VARCHAR(255) DEFAULT NULL,
@@ -85,10 +85,10 @@ CREATE TABLE IF NOT EXISTS `payments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `enrollments` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT NOT NULL,
-  `course_id` INT NOT NULL,
-  `payment_id` INT DEFAULT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) NOT NULL,
+  `course_id` CHAR(36) NOT NULL,
+  `payment_id` CHAR(36) DEFAULT NULL,
   `enrolled_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `expiry_date` DATETIME DEFAULT NULL,
   `status` ENUM('Pending', 'Active', 'Expired') DEFAULT 'Pending',
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `enrollments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `webinars` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT DEFAULT NULL,
   `date` DATE NOT NULL,
@@ -110,10 +110,10 @@ CREATE TABLE IF NOT EXISTS `webinars` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `webinar_registrations` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `webinar_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `payment_id` INT DEFAULT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `webinar_id` CHAR(36) NOT NULL,
+  `user_id` CHAR(36) NOT NULL,
+  `payment_id` CHAR(36) DEFAULT NULL,
   `registered_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `user_webinar` (`user_id`, `webinar_id`),
   FOREIGN KEY (`webinar_id`) REFERENCES `webinars` (`id`) ON DELETE CASCADE,
@@ -122,8 +122,8 @@ CREATE TABLE IF NOT EXISTS `webinar_registrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `queries` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT DEFAULT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) DEFAULT NULL,
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `mobile_number` VARCHAR(15) NOT NULL,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `queries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `events` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT DEFAULT NULL,
   `date` DATE NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `email_logs` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `id` CHAR(36) PRIMARY KEY,
   `recipient` VARCHAR(100) NOT NULL,
   `subject` VARCHAR(255) NOT NULL,
   `body_excerpt` TEXT NOT NULL,
@@ -166,11 +166,34 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `video_otp_sessions` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `user_id` INT NOT NULL,
-  `video_id` INT NOT NULL,
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) NOT NULL,
+  `video_id` CHAR(36) NOT NULL,
   `expires_at` DATETIME NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS otp_requests (
+    id CHAR(36) PRIMARY KEY,
+    identifier VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_identifier (identifier),
+    INDEX idx_ip (ip_address),
+    INDEX idx_requested_at (requested_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    id CHAR(36) PRIMARY KEY,
+    identifier VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    attempt_type ENUM('otp_request','otp_verify','login','registration') NOT NULL,
+    success TINYINT(1) NOT NULL,
+    attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_identifier (identifier),
+    INDEX idx_ip (ip_address),
+    INDEX idx_type (attempt_type),
+    INDEX idx_at (attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

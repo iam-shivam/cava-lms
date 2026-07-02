@@ -70,7 +70,7 @@ if (empty($allVideos)) {
 }
 
 // Find Active Video
-$videoId = intval($_GET['video_id'] ?? 0);
+$videoId = trim($_GET['video_id'] ?? '');
 $activeVideo = null;
 $activeVideoIndex = 0;
 

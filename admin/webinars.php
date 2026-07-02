@@ -3,7 +3,7 @@
 require_once __DIR__ . '/admin_header.php';
 
 $action = trim($_GET['action'] ?? 'list');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Form Actions Handling
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit'])) {
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     
     if (empty($title) || empty($date) || empty($time)) {
         set_flash_message('danger', 'Title, date, and time are required.');
-        header("Location: webinars.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        header("Location: webinars.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
         exit;
     }
     
@@ -31,17 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $currentDate = date('Y-m-d');
     if ($date < $currentDate) {
         set_flash_message('danger', 'Webinar scheduled date cannot be in the past.');
-        header("Location: webinars.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        header("Location: webinars.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
         exit;
     }
     
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO webinars (title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO webinars (id, title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([$title, $description, $date, $time, $price, $status]);
+            $stmt->execute([generate_uuid(), $title, $description, $date, $time, $price, $status]);
             set_flash_message('success', 'Webinar created successfully!');
-        } elseif ($action === 'edit' && $id > 0) {
+        } elseif ($action === 'edit' && !empty($id)) {
             $sql = "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, price = ?, status = ? WHERE id = ?";
             $stmt = DB::getConnection()->prepare($sql);
             $stmt->execute([$title, $description, $date, $time, $price, $status, $id]);
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 }
 
 // Handle Delete Webinar
-if ($action === 'delete' && $id > 0) {
+if ($action === 'delete' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: webinars.php");
@@ -157,7 +157,7 @@ $csrfToken = generate_csrf_token();
 
 <?php if (in_array($action, ['add', 'edit'])): 
     $editWebinar = null;
-    if ($action === 'edit' && $id > 0) {
+    if ($action === 'edit' && !empty($id)) {
         $editWebinar = DB::fetch("SELECT * FROM webinars WHERE id = ?", [$id]);
     }
 ?>

@@ -23,9 +23,9 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_email'])) {
 $userId = $_SESSION['user_id'];
 $userEmail = $_SESSION['user_email'];
 $action = trim($_POST['action'] ?? '');
-$videoId = intval($_POST['video_id'] ?? 0);
+$videoId = trim($_POST['video_id'] ?? '');
 
-if ($videoId <= 0) {
+if (empty($videoId)) {
     echo json_encode(['success' => false, 'message' => 'Invalid video ID.']);
     exit;
 }
@@ -62,7 +62,7 @@ if ($enrollment['status'] === 'Pending') {
     }
     $videoIndex = -1;
     foreach ($allVideos as $index => $v) {
-        if (intval($v['id']) === $videoId) {
+        if (trim($v['id']) === $videoId) {
             $videoIndex = $index;
             break;
         }
