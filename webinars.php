@@ -9,7 +9,7 @@ $search = trim($_GET['search'] ?? '');
 $sortBy = trim($_GET['sort'] ?? 'soonest'); // soonest, latest
 
 // Base query
-$sql = "SELECT * FROM webinars WHERE status = 'Active'";
+$sql = "SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME()))";
 $params = [];
 
 if (!empty($search)) {

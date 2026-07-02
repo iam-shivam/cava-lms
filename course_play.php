@@ -58,6 +58,18 @@ foreach ($syllabus as $sec) {
     }
 }
 
+// Fetch completed video IDs for progress calculation and checkmarks
+$completedVideoIds = [];
+try {
+    $rows = DB::fetchAll("SELECT video_id FROM user_video_progress WHERE user_id = ? AND course_id = ? AND status = 'completed'", [$userId, $courseId]);
+    $completedVideoIds = array_column($rows, 'video_id');
+} catch (Exception $e) {
+    // Fail silently
+}
+$totalVideos = count($allVideos);
+$completedCount = count($completedVideoIds);
+$progressPercent = ($totalVideos > 0) ? min(100, round(($completedCount / $totalVideos) * 100)) : 0;
+
 if (empty($allVideos)) {
     require_once __DIR__ . '/views/layout/header.php';
     echo '<div class="container my-5 text-center">';
@@ -144,7 +156,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 
                                 <div id="otp-request-block">
                                     <button class="btn btn-warning fw-bold px-4 rounded-pill" onclick="sendVideoOtp(<?php echo $activeVideo['id']; ?>)">
-                                        <i class="fa-solid fa-paper-plane me-2"></i>Send OTP to Registered Mobile
+                                        <i class="fa-solid fa-paper-plane me-2"></i>Send OTP to Registered Email
                                     </button>
                                 </div>
                                 
@@ -173,7 +185,22 @@ require_once __DIR__ . '/views/layout/header.php';
                 </ul>
                 <div class="tab-content bg-white p-4 border rounded-bottom-4 rounded-end-4 shadow-sm mb-4" id="videoTabsContent">
                     <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
-                        <h5 class="fw-bold mb-3"><?php echo htmlspecialchars($activeVideo['title']); ?></h5>
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+                            <h5 class="fw-bold m-0"><?php echo htmlspecialchars($activeVideo['title']); ?></h5>
+                            <?php if ($hasAccess && !($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2)): ?>
+                                <div id="progress-toggle-btn">
+                                    <?php if (in_array($activeVideo['id'], $completedVideoIds)): ?>
+                                        <button class="btn btn-outline-secondary rounded-pill btn-sm px-3" onclick="toggleProgress('<?php echo $activeVideo['id']; ?>', '<?php echo $courseId; ?>', 'uncomplete')">
+                                            <i class="fa-solid fa-circle-check text-success me-1"></i> Completed (Undo)
+                                        </button>
+                                    <?php else: ?>
+                                        <button class="btn btn-primary rounded-pill btn-sm px-3 text-white" onclick="toggleProgress('<?php echo $activeVideo['id']; ?>', '<?php echo $courseId; ?>', 'complete')">
+                                            <i class="fa-regular fa-circle me-1"></i> Mark as Completed
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                         <?php if (!empty($activeVideo['description'])): ?>
                             <p class="text-muted" style="white-space: pre-wrap;"><?php echo htmlspecialchars($activeVideo['description']); ?></p>
                         <?php else: ?>
@@ -210,6 +237,17 @@ require_once __DIR__ . '/views/layout/header.php';
 
             <!-- Right Side: Syllabus navigation -->
             <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fs-7 fw-bold text-dark">Your Progress</span>
+                        <span class="fs-7 fw-bold text-primary"><?php echo $progressPercent; ?>%</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: <?php echo $progressPercent; ?>%;" aria-valuenow="<?php echo $progressPercent; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted fs-8"><?php echo $completedCount; ?> of <?php echo $totalVideos; ?> lessons completed</small>
+                </div>
+
                 <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
                     <h5 class="fw-bold mb-3"><i class="fa-solid fa-list-ul text-primary me-2"></i>Course Syllabus</h5>
                     <div class="syllabus-list">
@@ -223,11 +261,16 @@ require_once __DIR__ . '/views/layout/header.php';
                             
                             <?php foreach ($videos as $video): 
                                 $isActive = ($video['id'] === $activeVideo['id']);
+                                $isCompleted = in_array($video['id'], $completedVideoIds);
                             ?>
                                 <a href="course_play.php?slug=<?php echo $course['slug']; ?>&video_id=<?php echo $video['id']; ?>" 
                                    class="syllabus-item <?php echo $isActive ? 'active' : ''; ?> text-decoration-none">
                                     <div class="d-flex align-items-center gap-3">
-                                        <i class="fa-regular fa-circle-play <?php echo $isActive ? 'text-primary' : 'text-muted'; ?>"></i>
+                                        <?php if ($isCompleted): ?>
+                                            <i class="fa-solid fa-circle-check text-success"></i>
+                                        <?php else: ?>
+                                            <i class="fa-regular fa-circle-play <?php echo $isActive ? 'text-primary' : 'text-muted'; ?>"></i>
+                                        <?php endif; ?>
                                         <span class="fs-7 fw-medium text-dark <?php echo $isActive ? 'fw-bold text-primary' : ''; ?>">
                                             <?php echo htmlspecialchars($video['title']); ?>
                                         </span>
@@ -244,5 +287,75 @@ require_once __DIR__ . '/views/layout/header.php';
     </div>
 </div>
 
+
+<script>
+function toggleProgress(videoId, courseId, action) {
+    const btnContainer = document.getElementById('progress-toggle-btn');
+    if (!btnContainer) return;
+    
+    // Disable interaction
+    const btn = btnContainer.querySelector('button');
+    if (btn) btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('video_id', videoId);
+    formData.append('course_id', courseId);
+    formData.append('action', action);
+
+    fetch('api/track_progress.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload page to refresh progress calculation and UI states
+            window.location.reload();
+        } else {
+            alert(data.message || 'Error updating progress.');
+            if (btn) btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error tracking progress:', error);
+        if (btn) btn.disabled = false;
+    });
+}
+
+// Auto-track video completion on ended event
+document.addEventListener('DOMContentLoaded', function() {
+    const video = document.querySelector('video');
+    if (video) {
+        video.addEventListener('ended', function() {
+            console.log('Video ended. Automatically marking as completed.');
+            const videoId = "<?php echo $activeVideo['id']; ?>";
+            const courseId = "<?php echo $courseId; ?>";
+            
+            // Only auto-complete if not already completed
+            const isAlreadyCompleted = <?php echo in_array($activeVideo['id'], $completedVideoIds) ? 'true' : 'false'; ?>;
+            if (!isAlreadyCompleted) {
+                const formData = new FormData();
+                formData.append('video_id', videoId);
+                formData.append('course_id', courseId);
+                formData.append('action', 'complete');
+
+                fetch('api/track_progress.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Auto-track error:', error);
+                });
+            }
+        });
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

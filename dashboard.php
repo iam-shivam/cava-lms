@@ -135,12 +135,27 @@ require_once __DIR__ . '/views/layout/header.php';
                                     if ($isExpired) $effectiveStatus = 'Expired';
                                 ?>
                                     <div class="col-md-6 mb-4">
-                                        <div class="custom-card border">
+                                        <div class="custom-card border h-100">
                                             <div class="card-img-wrapper">
                                                 <img src="<?php echo $thumbnailUrl; ?>" alt="course thumbnail" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
                                             </div>
-                                            <div class="card-content">
-                                                <h5 class="fw-bold mb-3"><?php echo htmlspecialchars($course['title']); ?></h5>
+                                            <div class="card-content d-flex flex-column h-100">
+                                                <h5 class="fw-bold mb-2"><?php echo htmlspecialchars($course['title']); ?></h5>
+                                                <?php 
+                                                // Calculate progress for this course
+                                                $courseVideosCount = intval(DB::fetch("SELECT COUNT(id) as count FROM course_videos WHERE course_id = ?", [$course['id']])['count']);
+                                                $courseCompletedCount = intval(DB::fetch("SELECT COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND course_id = ? AND status = 'completed'", [$userId, $course['id']])['count']);
+                                                $courseProgressPercent = ($courseVideosCount > 0) ? min(100, round(($courseCompletedCount / $courseVideosCount) * 100)) : 0;
+                                                ?>
+                                                <div class="mb-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fs-8 text-muted">Progress</span>
+                                                        <span class="fs-8 fw-bold text-primary"><?php echo $courseProgressPercent; ?>%</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 6px; border-radius: 3px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $courseProgressPercent; ?>%;" aria-valuenow="<?php echo $courseProgressPercent; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
                                                 <?php if ($effectiveStatus === 'Pending'): ?>
                                                     <div class="alert alert-warning py-2 fs-8 mb-3">Partially Paid. <a href="course.php?slug=<?php echo $course['slug']; ?>">Pay Balance</a></div>
                                                     <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-warning w-100 rounded-pill mt-auto">

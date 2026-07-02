@@ -146,6 +146,8 @@ if ($isLoggedIn) {
         try {
             if (isset($_SESSION['user_id'])) {
                 DB::query("UPDATE users SET session_id = NULL WHERE id = ?", [$_SESSION['user_id']]);
+                // Delete active video OTP sessions on timeout
+                DB::query("DELETE FROM video_otp_sessions WHERE user_id = ?", [$_SESSION['user_id']]);
             }
             if (isset($_SESSION['admin_id'])) {
                 DB::query("UPDATE admins SET session_id = NULL WHERE id = ?", [$_SESSION['admin_id']]);
@@ -210,6 +212,11 @@ if ($isLoggedIn) {
         }
 
         if ($loggedOut) {
+            if (isset($_SESSION['user_id'])) {
+                try {
+                    DB::query("DELETE FROM video_otp_sessions WHERE user_id = ?", [$_SESSION['user_id']]);
+                } catch (Exception $ex) {}
+            }
             $_SESSION = [];
             if (ini_get("session.use_cookies")) {
                 $params = session_get_cookie_params();

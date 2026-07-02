@@ -60,7 +60,7 @@ class PaymentController {
         
         // Create Razorpay Order
         $orderData = [
-            'receipt'         => 'rcpt_' . $userId . '_' . time(),
+            'receipt'         => 'rcpt_' . substr($userId, 0, 8) . '_' . time(),
             'amount'          => $amountInPaise,
             'currency'        => 'INR',
             'payment_capture' => 1

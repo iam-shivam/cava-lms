@@ -8,7 +8,7 @@ $webinarTimestamp = strtotime($webinar['date'] . ' ' . $webinar['time']);
 $isPastWebinar = $webinarTimestamp < time();
 ?>
 <div class="col-md-6 col-lg-6 mb-4">
-    <div class="custom-card border-0 p-4 bg-white shadow-sm rounded-4 animate-fade-in-up">
+    <div class="custom-card border-0 p-4 bg-white shadow-sm rounded-4 animate-fade-in-up h-100 d-flex flex-column">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <?php if ($isPastWebinar): ?>
                 <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold">
@@ -25,7 +25,7 @@ $isPastWebinar = $webinarTimestamp < time();
         <h4 class="fw-bold mb-2 text-dark"><?php echo htmlspecialchars($webinar['title']); ?></h4>
         <p class="text-muted mb-4"><?php echo htmlspecialchars($webinar['description'] ?? ''); ?></p>
         
-        <div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between">
+        <div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between mt-auto">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-regular fa-calendar text-primary fs-5"></i>
                 <div>

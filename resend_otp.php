@@ -31,20 +31,21 @@ $otp = OTPHelper::generateOTP();
 OTPHelper::storeOTP($email, $otp);
 RateLimiter::logOTPRequest($identifier, $ip);
 
-// Send the OTP via appropriate channel (email or SMS)
-$isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL) !== false;
-if ($isEmail) {
-    $subject = 'Your OTP Code';
-    $body = "Your OTP code is: <b>{$otp}</b>. It expires in 5 minutes.";
-    EmailHelper::sendEmail($email, $identifier, $subject, $body);
-    $masked = substr($email, 0, 2) . str_repeat('*', max(0, strlen(explode('@', $email)[0]) - 2)) . '@' . explode('@', $email)[1];
-    set_flash_message('success', "OTP has been resent to your email: {$masked}.");
-} else {
-    $message = "Your OTP code is: {$otp}. It expires in 5 minutes.";
-    SMSHelper::sendSMS($identifier, $message);
-    $maskedMobile = str_repeat('*', max(0, strlen($identifier) - 4)) . substr($identifier, -4);
-    set_flash_message('success', "OTP has been resent to your mobile: {$maskedMobile}.");
+// Fetch user to get registered mobile number
+require_once __DIR__ . '/models/User.php';
+$user = User::findByEmail($email);
+if (!$user) {
+    set_flash_message('danger', 'User account not found.');
+    header('Location: ' . SITE_URL . '/login.php');
+    exit;
 }
+$mobileNumber = $user['mobile_number'];
+
+// Send the OTP via SMS (mobile number) only as requested
+$message = "Your OTP code is: {$otp}. It expires in 5 minutes.";
+SMSHelper::sendSMS($mobileNumber, $message);
+$maskedMobile = str_repeat('*', max(0, strlen($mobileNumber) - 4)) . substr($mobileNumber, -4);
+set_flash_message('success', "OTP has been resent to your registered mobile: {$maskedMobile}.");
 
 // Return to the verification page
 header('Location: ' . SITE_URL . '/otp_verify.php');
