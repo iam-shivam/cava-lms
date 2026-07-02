@@ -238,25 +238,13 @@ class AuthController {
         // Log OTP request
         RateLimiter::logOTPRequest($identifier, $ip);
 
-        // Determine delivery method
-        $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL) !== false;
-        if ($isEmail) {
-            // Send OTP via email
-            $subject = 'Your OTP Code';
-            $body = "Your OTP code is: <b>{$otp}</b>. It expires in 5 minutes.";
-            require_once dirname(__DIR__) . '/helpers/EmailHelper.php';
-            EmailHelper::sendEmail($user['email'], $user['full_name'], $subject, $body);
-            $masked = substr($user['email'], 0, 2) . str_repeat('*', max(0, strlen(explode('@', $user['email'])[0]) - 2)) . '@' . explode('@', $user['email'])[1];
-            set_flash_message('success', "OTP has been sent to your registered email: {$masked}.");
-        } else {
-            // Send OTP via SMS (mobile number)
-            $message = "Your OTP code is: {$otp}. It expires in 5 minutes.";
-            require_once dirname(__DIR__) . '/helpers/SMSHelper.php';
-            SMSHelper::sendSMS($user['mobile_number'], $message);
-            // Mask mobile number for display (show last 4 digits)
-            $maskedMobile = str_repeat('*', max(0, strlen($user['mobile_number']) - 4)) . substr($user['mobile_number'], -4);
-            set_flash_message('success', "OTP has been sent to your registered mobile: {$maskedMobile}.");
-        }
+        // Send OTP via SMS (mobile number) only as requested
+        $message = "Your OTP code is: {$otp}. It expires in 5 minutes.";
+        require_once dirname(__DIR__) . '/helpers/SMSHelper.php';
+        SMSHelper::sendSMS($user['mobile_number'], $message);
+        // Mask mobile number for display (show last 4 digits)
+        $maskedMobile = str_repeat('*', max(0, strlen($user['mobile_number']) - 4)) . substr($user['mobile_number'], -4);
+        set_flash_message('success', "OTP has been sent to your registered mobile: {$maskedMobile}.");
 
         // Store primary email and identifier in session for later verification
         $_SESSION['otp_email'] = $user['email'];
@@ -334,6 +322,8 @@ class AuthController {
         if (isset($_SESSION['user_id'])) {
             try {
                 DB::query("UPDATE users SET session_id = NULL WHERE id = ?", [$_SESSION['user_id']]);
+                // Delete active video OTP sessions on logout
+                DB::query("DELETE FROM video_otp_sessions WHERE user_id = ?", [$_SESSION['user_id']]);
             } catch (Exception $e) {
                 // Ignore DB errors during logout
             }

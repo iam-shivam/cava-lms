@@ -1,6 +1,9 @@
 # Composer dependencies
 /vendor/
 
+# Upload Folder
+/uploads/
+
 # Environment configuration (contains secrets)
 .env
 

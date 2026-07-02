@@ -9,7 +9,7 @@ $search = trim($_GET['search'] ?? '');
 $sortBy = trim($_GET['sort'] ?? 'soonest'); // soonest, latest
 
 // Base query
-$sql = "SELECT * FROM webinars WHERE status = 'Active'";
+$sql = "SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME()))";
 $params = [];
 
 if (!empty($search)) {
@@ -39,49 +39,61 @@ $pageDescription = 'Join live interactive webinars with certified consultants on
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<!-- Header Banner -->
-<div class="bg-light py-5 mb-5 border-bottom">
-    <div class="container text-center">
-        <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Live Masterclasses</span>
-        <h1 class="fw-extrabold display-5 text-dark">Live Interactive Webinars</h1>
-        <p class="text-muted col-md-6 mx-auto">Join live interactive sessions with certified consultants and visa advisors to resolve your queries instantly.</p>
-    </div>
-</div>
-
+<!-- Main Container -->
 <div class="container mb-5">
-    <!-- Filter Panel -->
-    <div class="card border-0 shadow-sm p-4 bg-white rounded-4 mb-5">
-        <form action="webinars.php" method="GET" class="row g-3">
-            <div class="col-md-5">
-                <label for="search" class="form-label fw-semibold fs-7 text-muted">Search Webinars</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                    <input type="text" class="form-control bg-light border-start-0 ps-0" id="search" name="search" 
-                           value="<?php echo htmlspecialchars($search); ?>" placeholder="e.g. CRS score, IELTS mock...">
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <label for="sort" class="form-label fw-semibold fs-7 text-muted">Sort by Date</label>
-                <select class="form-select bg-light border" id="sort" name="sort">
-                    <option value="soonest" <?php echo $sortBy === 'soonest' ? 'selected' : ''; ?>>Soonest / Upcoming First</option>
-                    <option value="latest" <?php echo $sortBy === 'latest' ? 'selected' : ''; ?>>Latest Scheduled</option>
-                </select>
-            </div>
-            
-            <div class="col-md-3 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">
-                    <i class="fa-solid fa-filter me-1"></i> Apply Filters
-                </button>
-                <?php if (!empty($search) || $sortBy !== 'soonest'): ?>
-                    <a href="webinars.php" class="btn btn-outline-secondary w-50 py-2 rounded-pill text-center">Reset</a>
-                <?php endif; ?>
+    <!-- Header Row (Title & Sleek Search) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 mt-5">
+        <h1 class="fw-extrabold text-dark m-0">Webinars</h1>
+        
+        <!-- Sleek Search Input -->
+        <form action="webinars.php" method="GET" class="m-0" style="width: 100%; max-width: 320px;">
+            <?php if ($sortBy !== 'soonest'): ?>
+                <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sortBy); ?>">
+            <?php endif; ?>
+            <div class="input-group search-input-group align-items-center pe-3 bg-white">
+                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" class="form-control border-0 ps-0" id="search" name="search" 
+                       value="<?php echo htmlspecialchars($search); ?>" placeholder="Search Webinars..." autocomplete="off">
+                <i class="fa-solid fa-xmark text-muted" id="search-clear" style="cursor: pointer; display: <?php echo !empty($search) ? 'block' : 'none'; ?>;"></i>
             </div>
         </form>
     </div>
 
+    <!-- Filter Row (Horizontal Tabs & Sorting Select) -->
+    <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom flex-wrap gap-3">
+        <!-- Category Pill Tabs -->
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="webinars.php<?php 
+                $q = [];
+                if (!empty($search)) $q['search'] = $search;
+                if ($sortBy !== 'soonest') $q['sort'] = $sortBy;
+                echo !empty($q) ? '?' . http_build_query($q) : ''; 
+               ?>" 
+               class="btn btn-sm rounded-pill px-3 btn-primary fw-semibold filter-link">
+                Upcoming Webinars
+            </a>
+        </div>
+        
+        <!-- Sorting Select -->
+        <div class="d-flex align-items-center gap-2">
+            <select class="form-select form-select-sm bg-white border fw-medium sort-select" style="width: auto; min-width: 130px; height: 36px; border-radius: 20px; padding-left: 14px; padding-right: 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);" onchange="location = this.value;">
+                <?php 
+                $baseQuery = [];
+                if ($search) $baseQuery['search'] = $search;
+                
+                $soonQuery = $baseQuery;
+                $soonQuery['sort'] = 'soonest';
+                $latQuery = $baseQuery;
+                $latQuery['sort'] = 'latest';
+                ?>
+                <option value="webinars.php?<?php echo http_build_query($soonQuery); ?>" <?php echo $sortBy === 'soonest' ? 'selected' : ''; ?>>Upcoming</option>
+                <option value="webinars.php?<?php echo http_build_query($latQuery); ?>" <?php echo $sortBy === 'latest' ? 'selected' : ''; ?>>Latest</option>
+            </select>
+        </div>
+    </div>
+
     <!-- Webinars Grid -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="webinars-grid">
         <?php if (empty($webinarsList)): ?>
             <div class="col text-center py-5">
                 <i class="fa-solid fa-video-slash fs-1 text-muted mb-3 d-block"></i>

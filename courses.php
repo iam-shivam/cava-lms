@@ -10,6 +10,7 @@ $categories = Course::getCategories();
 // Filter Inputs
 $search = trim($_GET['search'] ?? '');
 $categoryId = trim($_GET['category'] ?? '');
+$sort = trim($_GET['sort'] ?? 'latest');
 
 // Base query
 $sql = "SELECT c.*, cat.name as category_name 
@@ -24,12 +25,16 @@ if (!empty($search)) {
     $params[] = '%' . $search . '%';
 }
 
-if ($categoryId > 0) {
+if (!empty($categoryId)) {
     $sql .= " AND c.category_id = ?";
     $params[] = $categoryId;
 }
 
-$sql .= " ORDER BY c.id DESC";
+if ($sort === 'alpha') {
+    $sql .= " ORDER BY c.title ASC";
+} else {
+    $sql .= " ORDER BY c.id DESC";
+}
 
 try {
     $coursesList = DB::fetchAll($sql, $params);
@@ -46,53 +51,73 @@ $pageDescription = 'Explore all self-paced courses on CAVA LMS. Filter by catego
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<!-- Header Banner -->
-<div class="bg-light py-5 mb-5 border-bottom">
-    <div class="container text-center">
-        <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Explore Modules</span>
-        <h1 class="fw-extrabold display-5 text-dark">Our Self-Paced Courses</h1>
-        <p class="text-muted col-md-6 mx-auto">Upgrade your skills at your own pace with our structured, video-enabled courses.</p>
-    </div>
-</div>
-
 <div class="container mb-5">
-    <!-- Filter Panel -->
-    <div class="card border-0 shadow-sm p-4 bg-white rounded-4 mb-5">
-        <form action="courses.php" method="GET" class="row g-3">
-            <div class="col-md-5">
-                <label for="search" class="form-label fw-semibold fs-7 text-muted">Search Courses</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                    <input type="text" class="form-control bg-light border-start-0 ps-0" id="search" name="search" 
-                           value="<?php echo htmlspecialchars($search); ?>" placeholder="e.g. Express Entry, IELTS...">
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <label for="category" class="form-label fw-semibold fs-7 text-muted">Filter by Category</label>
-                <select class="form-select bg-light border" id="category" name="category">
-                    <option value="">All Categories</option>
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?php echo $cat['id']; ?>" <?php echo $categoryId === trim($cat['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($cat['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            
-            <div class="col-md-3 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">
-                    <i class="fa-solid fa-filter me-1"></i> Apply Filters
-                </button>
-                <?php if (!empty($search) || $categoryId > 0): ?>
-                    <a href="courses.php" class="btn btn-outline-secondary w-50 py-2 rounded-pill text-center">Reset</a>
-                <?php endif; ?>
+    <!-- Header Row (Title & Sleek Search) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 mt-5">
+        <h1 class="fw-extrabold text-dark m-0">Courses</h1>
+        
+        <!-- Sleek Search Input -->
+        <form action="courses.php" method="GET" class="m-0" style="width: 100%; max-width: 320px;">
+            <?php if (!empty($categoryId)): ?>
+                <input type="hidden" name="category" value="<?php echo htmlspecialchars($categoryId); ?>">
+            <?php endif; ?>
+            <?php if ($sort !== 'latest'): ?>
+                <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>">
+            <?php endif; ?>
+            <div class="input-group search-input-group align-items-center pe-3 bg-white">
+                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" class="form-control border-0 ps-0" id="search" name="search" 
+                       value="<?php echo htmlspecialchars($search); ?>" placeholder="Search Courses..." autocomplete="off">
+                <i class="fa-solid fa-xmark text-muted" id="search-clear" style="cursor: pointer; display: <?php echo !empty($search) ? 'block' : 'none'; ?>;"></i>
             </div>
         </form>
     </div>
 
+    <!-- Filter Row (Horizontal Tabs & Sorting Select) -->
+    <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom flex-wrap gap-3">
+        <!-- Category Pill Tabs -->
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="courses.php<?php 
+                $q = [];
+                if (!empty($search)) $q['search'] = $search;
+                if ($sort !== 'latest') $q['sort'] = $sort;
+                echo !empty($q) ? '?' . http_build_query($q) : ''; 
+               ?>" 
+               class="btn btn-sm rounded-pill px-3 <?php echo empty($categoryId) ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
+                All Courses
+            </a>
+            <?php foreach ($categories as $cat): ?>
+                <a href="courses.php?category=<?php echo urlencode($cat['id']); ?><?php 
+                    if (!empty($search)) echo '&search=' . urlencode($search);
+                    if ($sort !== 'latest') echo '&sort=' . urlencode($sort);
+                   ?>" 
+                   class="btn btn-sm rounded-pill px-3 <?php echo $categoryId === trim($cat['id']) ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
+                    <?php echo htmlspecialchars($cat['name']); ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        
+        <!-- Sorting Select -->
+        <div class="d-flex align-items-center gap-2">
+            <select class="form-select form-select-sm bg-white border fw-medium sort-select" style="width: auto; min-width: 120px; height: 36px; border-radius: 20px; padding-left: 14px; padding-right: 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);" onchange="location = this.value;">
+                <?php 
+                $baseQuery = [];
+                if ($categoryId) $baseQuery['category'] = $categoryId;
+                if ($search) $baseQuery['search'] = $search;
+                
+                $latQuery = $baseQuery;
+                $latQuery['sort'] = 'latest';
+                $alpQuery = $baseQuery;
+                $alpQuery['sort'] = 'alpha';
+                ?>
+                <option value="courses.php?<?php echo http_build_query($latQuery); ?>" <?php echo $sort === 'latest' ? 'selected' : ''; ?>>Latest</option>
+                <option value="courses.php?<?php echo http_build_query($alpQuery); ?>" <?php echo $sort === 'alpha' ? 'selected' : ''; ?>>A – Z</option>
+            </select>
+        </div>
+    </div>
+
     <!-- Courses Grid -->
-    <div class="row">
+    <div class="row" id="courses-grid">
         <?php if (empty($coursesList)): ?>
             <div class="col text-center py-5">
                 <i class="fa-solid fa-circle-exclamation fs-1 text-muted mb-3 d-block"></i>

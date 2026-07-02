@@ -40,6 +40,13 @@ class User {
         $stmt = $db->prepare($sql);
         return $stmt->execute([$fullName, $mobileNumber, $id]);
     }
+
+    public static function updateAvatar($id, $filename) {
+        $db = DB::getConnection();
+        $sql = "UPDATE users SET profile_picture = ? WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$filename, $id]);
+    }
     
     public static function updatePassword($id, $newPassword) {
         $db = DB::getConnection();

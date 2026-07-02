@@ -4,7 +4,7 @@
 class Webinar {
     
     public static function getAll() {
-        return DB::fetchAll("SELECT * FROM webinars WHERE status = 'Active' ORDER BY date ASC, time ASC");
+        return DB::fetchAll("SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME())) ORDER BY date ASC, time ASC");
     }
     
     public static function getById($id) {

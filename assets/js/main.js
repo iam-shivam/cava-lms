@@ -180,4 +180,123 @@ document.addEventListener('DOMContentLoaded', function () {
         
         rzp1.open();
     }
+
+    // 7. AJAX Search and Search Clear Button
+    var searchInput = document.getElementById('search');
+    var clearBtn = document.getElementById('search-clear');
+    
+    if (searchInput) {
+        var debounceTimer;
+        
+        // Detect which grid page we're on
+        var gridId = '';
+        if (document.getElementById('courses-grid')) gridId = 'courses-grid';
+        else if (document.getElementById('webinars-grid')) gridId = 'webinars-grid';
+        else if (document.getElementById('events-grid')) gridId = 'events-grid';
+        
+        // After AJAX search, update all filter tab links and sort options to include the new search term
+        // This ensures clicking category tabs or changing sort after searching still works correctly
+        function syncFilterLinks(searchValue) {
+            // Sync .filter-link tab hrefs
+            document.querySelectorAll('a.filter-link').forEach(function(link) {
+                try {
+                    var url = new URL(link.href);
+                    if (searchValue && searchValue.trim() !== '') {
+                        url.searchParams.set('search', searchValue.trim());
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    link.href = url.toString();
+                } catch(e) {}
+            });
+            
+            // Sync .sort-select option values
+            document.querySelectorAll('select.sort-select option').forEach(function(option) {
+                try {
+                    var url = new URL(option.value);
+                    if (searchValue && searchValue.trim() !== '') {
+                        url.searchParams.set('search', searchValue.trim());
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    option.value = url.toString();
+                } catch(e) {}
+            });
+        }
+        
+        var triggerSearch = function() {
+            var form = searchInput.form;
+            var url = new URL(form.action);
+            var formData = new FormData(form);
+            var searchVal = searchInput.value.trim();
+            
+            // Build URL from form data (includes hidden inputs like category/sort)
+            for (var pair of formData.entries()) {
+                var key = pair[0];
+                var val = pair[1].trim();
+                if (val !== '') {
+                    url.searchParams.set(key, val);
+                } else {
+                    url.searchParams.delete(key);
+                }
+            }
+            
+            // Show / hide clear button
+            if (clearBtn) {
+                clearBtn.style.display = searchVal !== '' ? 'block' : 'none';
+            }
+            
+            if (gridId) {
+                fetch(url.toString())
+                .then(function(res) { return res.text(); })
+                .then(function(html) {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var newGrid = doc.getElementById(gridId);
+                    var currentGrid = document.getElementById(gridId);
+                    
+                    if (currentGrid && newGrid) {
+                        currentGrid.innerHTML = newGrid.innerHTML;
+                    }
+                    
+                    // Push new URL to browser history
+                    window.history.pushState({}, '', url.toString());
+                    
+                    // Sync all filter links and sort options to include current search value
+                    syncFilterLinks(searchVal);
+                })
+                .catch(function(err) {
+                    console.error('AJAX search error:', err);
+                });
+            } else {
+                form.submit();
+            }
+        };
+
+        // Trigger search on input (debounced 300ms)
+        searchInput.addEventListener('input', function() {
+            if (clearBtn) {
+                clearBtn.style.display = searchInput.value.trim() !== '' ? 'block' : 'none';
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(triggerSearch, 300);
+        });
+
+        // Intercept form submit
+        searchInput.form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearTimeout(debounceTimer);
+            triggerSearch();
+        });
+
+        // Clear button: do a clean full-page redirect to current URL without search param
+        // (avoids stale state from repeated AJAX calls)
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                var url = new URL(window.location.href);
+                url.searchParams.delete('search');
+                window.location.href = url.toString();
+            });
+        }
+    }
 });
