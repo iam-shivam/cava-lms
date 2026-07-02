@@ -2,7 +2,7 @@
 // Admin Course Sections & Videos Manager
 require_once __DIR__ . '/admin_header.php';
 
-$courseId = intval($_GET['course_id'] ?? 0);
+$courseId = trim($_GET['course_id'] ?? '');
 $course = DB::fetch("SELECT * FROM courses WHERE id = ?", [$courseId]);
 
 if (!$course) {
@@ -13,7 +13,7 @@ if (!$course) {
 
 $csrfToken = generate_csrf_token();
 $action = trim($_GET['action'] ?? 'list');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Form Actions Handling
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,25 +33,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($title)) {
                 set_flash_message('danger', 'Section title cannot be empty.');
             } else {
-                $stmt = DB::getConnection()->prepare("INSERT INTO course_sections (course_id, title, sort_order) VALUES (?, ?, ?)");
-                $stmt->execute([$courseId, $title, $order]);
+                $stmt = DB::getConnection()->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
+                $stmt->execute([generate_uuid(), $courseId, $title, $order]);
                 set_flash_message('success', 'Section created successfully!');
             }
         } elseif ($formType === 'edit_section_inline') {
-            $sectionId = intval($_POST['section_id'] ?? 0);
+            $sectionId = trim($_POST['section_id'] ?? '');
             $title = trim($_POST['section_title'] ?? '');
-            if ($sectionId > 0 && !empty($title)) {
+            if (!empty($sectionId) && !empty($title)) {
                 $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ? AND course_id = ?");
                 $stmt->execute([$title, $sectionId, $courseId]);
                 set_flash_message('success', 'Section name updated!');
             }
         } elseif ($formType === 'add_video') {
-            $sectionId = intval($_POST['section_id'] ?? 0);
+            $sectionId = trim($_POST['section_id'] ?? '');
             $title = trim($_POST['video_title'] ?? '');
             $description = trim($_POST['description'] ?? '');
             $order = intval($_POST['sort_order'] ?? 0);
             
-            if ($sectionId <= 0 || empty($title) || empty($_FILES['video_file']['name'])) {
+            if (empty($sectionId) || empty($title) || empty($_FILES['video_file']['name'])) {
                 set_flash_message('danger', 'Please complete all required fields and select a video.');
             } else {
                 $videoUrl = '';
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
-                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (section_id, course_id, title, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, 'local', ?, 0, ?)");
-                $stmt->execute([$sectionId, $courseId, $title, $description, $videoUrl, $documentUrl, $order]);
+                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (id, section_id, course_id, title, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, ?, 'local', ?, 0, ?)");
+                $stmt->execute([generate_uuid(), $sectionId, $courseId, $title, $description, $videoUrl, $documentUrl, $order]);
                 set_flash_message('success', 'Video lesson and resources added successfully!');
             }
         }
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Delete Handlers
-if ($action === 'delete_section' && $id > 0) {
+if ($action === 'delete_section' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: videos.php?course_id=$courseId");
@@ -111,7 +111,7 @@ if ($action === 'delete_section' && $id > 0) {
     exit;
 }
 
-if ($action === 'delete_video' && $id > 0) {
+if ($action === 'delete_video' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: videos.php?course_id=$courseId");

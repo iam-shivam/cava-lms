@@ -3,7 +3,7 @@
 require_once __DIR__ . '/admin_header.php';
 
 $action = trim($_GET['action'] ?? 'list');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Process Form Submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
             $stmt = DB::getConnection()->prepare("INSERT INTO categories (name, slug) VALUES (?, ?)");
             $stmt->execute([$name, $slug]);
             set_flash_message('success', 'Category added successfully!');
-        } elseif ($_POST['form_action'] === 'edit' && $id > 0) {
+        } elseif ($_POST['form_action'] === 'edit' && !empty($id)) {
             $stmt = DB::getConnection()->prepare("UPDATE categories SET name = ?, slug = ? WHERE id = ?");
             $stmt->execute([$name, $slug, $id]);
             set_flash_message('success', 'Category updated successfully!');
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
 }
 
 // Handle Delete Action
-if ($action === 'delete' && $id > 0) {
+if ($action === 'delete' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: categories.php");
@@ -74,7 +74,7 @@ if ($action === 'delete' && $id > 0) {
 
 // Fetch Category Details if Editing
 $editCategory = null;
-if ($action === 'edit' && $id > 0) {
+if ($action === 'edit' && !empty($id)) {
     $editCategory = DB::fetch("SELECT * FROM categories WHERE id = ?", [$id]);
 }
 

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS login_attempts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     identifier VARCHAR(255) NOT NULL,
     ip_address VARCHAR(45) NOT NULL,
     attempt_type ENUM('otp_request','otp_verify','login','registration') NOT NULL,

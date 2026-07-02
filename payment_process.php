@@ -15,10 +15,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 $itemType = trim($_POST['item_type'] ?? '');
-$itemId = intval($_POST['item_id'] ?? 0);
+$itemId = trim($_POST['item_id'] ?? '');
 $amountToPay = isset($_POST['amount_to_pay']) ? floatval($_POST['amount_to_pay']) : null;
 
-if (empty($itemType) || $itemId <= 0) {
+if (empty($itemType) || empty($itemId)) {
     set_flash_message('danger', 'Invalid purchase request.');
     header("Location: " . SITE_URL . "/index.php");
     exit;

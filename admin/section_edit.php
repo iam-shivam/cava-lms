@@ -2,8 +2,8 @@
 // Admin Edit Course Section
 require_once __DIR__ . '/admin_header.php';
 
-$courseId = intval($_GET['course_id'] ?? 0);
-$id = intval($_GET['id'] ?? 0);
+$courseId = trim($_GET['course_id'] ?? '');
+$id = trim($_GET['id'] ?? '');
 
 $course = DB::fetch("SELECT * FROM courses WHERE id = ?", [$courseId]);
 $section = DB::fetch("SELECT * FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);

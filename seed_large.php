@@ -89,24 +89,22 @@ try {
         ]
     ];
     
-    $insertCourse = $pdo->prepare("INSERT INTO courses (category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, 'Published') ON DUPLICATE KEY UPDATE description = ?, price = ?");
-    $insertSec = $pdo->prepare("INSERT INTO course_sections (course_id, title, sort_order) VALUES (?, ?, ?)");
-    $insertVid = $pdo->prepare("INSERT INTO course_videos (section_id, course_id, title, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
+    $insertCourse = $pdo->prepare("INSERT INTO courses (id, category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Published') ON DUPLICATE KEY UPDATE description = ?, price = ?");
+    $insertSec = $pdo->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
+    $insertVid = $pdo->prepare("INSERT INTO course_videos (id, section_id, course_id, title, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
     
     foreach ($newCourses as $c) {
+        $courseId = generate_uuid();
         $insertCourse->execute([
-            $c['cat_id'], $c['title'], $c['slug'], $c['thumbnail'], $c['desc'], $c['price'],
+            $courseId, $c['cat_id'], $c['title'], $c['slug'], $c['thumbnail'], $c['desc'], $c['price'],
             $c['desc'], $c['price']
         ]);
         
-        $courseId = $pdo->lastInsertId();
-        if ($courseId > 0) {
-            // Seed a default lesson section
-            $insertSec->execute([$courseId, 'Section 1: General Introduction', 1]);
-            $secId = $pdo->lastInsertId();
-            $insertVid->execute([$secId, $courseId, 'Welcome & Class Dashboard Tour', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
-            $insertVid->execute([$secId, $courseId, 'Resource Downloads & Checklists', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
-        }
+        // Seed a default lesson section
+        $secId = generate_uuid();
+        $insertSec->execute([$secId, $courseId, 'Section 1: General Introduction', 1]);
+        $insertVid->execute([generate_uuid(), $secId, $courseId, 'Welcome & Class Dashboard Tour', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 1]);
+        $insertVid->execute([generate_uuid(), $secId, $courseId, 'Resource Downloads & Checklists', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'youtube', 2]);
         echo "Mock Course '{$c['title']}' added.<br>";
     }
     
@@ -170,9 +168,9 @@ try {
         ]
     ];
     
-    $insertWebinar = $pdo->prepare("INSERT INTO webinars (title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, 'Active')");
+    $insertWebinar = $pdo->prepare("INSERT INTO webinars (id, title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, 'Active')");
     foreach ($newWebinars as $w) {
-        $insertWebinar->execute([$w['title'], $w['desc'], $w['date'], $w['time'], $w['price']]);
+        $insertWebinar->execute([generate_uuid(), $w['title'], $w['desc'], $w['date'], $w['time'], $w['price']]);
         echo "Mock Webinar '{$w['title']}' added.<br>";
     }
     
@@ -220,9 +218,9 @@ try {
         ]
     ];
     
-    $insertEvent = $pdo->prepare("INSERT INTO events (title, description, date) VALUES (?, ?, ?)");
+    $insertEvent = $pdo->prepare("INSERT INTO events (id, title, description, date) VALUES (?, ?, ?, ?)");
     foreach ($newEvents as $ev) {
-        $insertEvent->execute([$ev['title'], $ev['desc'], $ev['date']]);
+        $insertEvent->execute([generate_uuid(), $ev['title'], $ev['desc'], $ev['date']]);
         echo "Mock Event '{$ev['title']}' added.<br>";
     }
     
@@ -242,7 +240,7 @@ try {
         ['name' => 'Pooja Hegde', 'email' => 'pooja@example.com', 'mobile' => '9876543222', 'msg' => 'Which IELTS test should I take for Express Entry? General Training or Academic?', 'status' => 'Resolved']
     ];
     
-    $insertQuery = $pdo->prepare("INSERT INTO queries (user_id, name, email, mobile_number, query_message, status, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $insertQuery = $pdo->prepare("INSERT INTO queries (id, user_id, name, email, mobile_number, query_message, status, resolved_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     
     // Get mock user mapping to link query histories
     $userMap = [];
@@ -254,7 +252,7 @@ try {
     foreach ($queries as $q) {
         $uId = $userMap[$q['email']] ?? null;
         $resolvedAt = ($q['status'] === 'Resolved') ? date('Y-m-d H:i:s', strtotime('-1 day')) : null;
-        $insertQuery->execute([$uId, $q['name'], $q['email'], $q['mobile'], $q['msg'], $q['status'], $resolvedAt]);
+        $insertQuery->execute([generate_uuid(), $uId, $q['name'], $q['email'], $q['mobile'], $q['msg'], $q['status'], $resolvedAt]);
         echo "Mock Query from '{$q['name']}' added (Status: {$q['status']}).<br>";
     }
     

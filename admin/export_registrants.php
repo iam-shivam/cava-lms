@@ -9,15 +9,11 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
-$webinarId = intval($_GET['webinar_id'] ?? 0);
+$webinarId = trim($_GET['webinar_id'] ?? '');
 $format = strtolower($_GET['format'] ?? 'csv');
 
-if ($webinarId < 0) {
-    die('Invalid webinar ID');
-}
-
 // Fetch webinar details (optional, for filename) if single webinar
-if ($webinarId > 0) {
+if (!empty($webinarId)) {
     $webinar = DB::fetch('SELECT title FROM webinars WHERE id = ?', [$webinarId]);
     if (!$webinar) {
         die('Webinar not found');
@@ -25,7 +21,7 @@ if ($webinarId > 0) {
 }
 
 // Retrieve registrations with user info
-if ($webinarId > 0) {
+if (!empty($webinarId)) {
     $registrations = DB::fetchAll(
         "SELECT wr.id, u.full_name, u.email, u.mobile_number, wr.registered_at FROM webinar_registrations wr JOIN users u ON wr.user_id = u.id WHERE wr.webinar_id = ? ORDER BY wr.registered_at ASC",
         [$webinarId]
@@ -43,7 +39,7 @@ if (empty($registrations)) {
     exit;
 }
 if ($format === 'csv' || $format === 'excel') {
-    $filenameBase = $webinarId > 0 ? 'webinar_' . $webinarId . '_' . preg_replace('/[^a-z0-9]/i', '_', $webinar['title']) : 'all_webinars';
+    $filenameBase = !empty($webinarId) ? 'webinar_' . $webinarId . '_' . preg_replace('/[^a-z0-9]/i', '_', $webinar['title']) : 'all_webinars';
     $filename = $filenameBase . '_registrants_' . date('Ymd_His') . ($format === 'excel' ? '.xlsx' : '.csv');
     if ($format === 'excel') {
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

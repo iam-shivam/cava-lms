@@ -10,10 +10,11 @@ class VideoOTP {
         $db->prepare("DELETE FROM video_otp_sessions WHERE user_id = ?")->execute([$userId]);
         
         $expiresAt = date('Y-m-d H:i:s', strtotime("+$durationMinutes minutes"));
+        $uuid = generate_uuid();
         
-        $sql = "INSERT INTO video_otp_sessions (user_id, video_id, expires_at) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO video_otp_sessions (id, user_id, video_id, expires_at) VALUES (?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$userId, $videoId, $expiresAt]);
+        return $stmt->execute([$uuid, $userId, $videoId, $expiresAt]);
     }
     
     public static function hasValidSession($userId, $videoId) {

@@ -3,10 +3,10 @@
 require_once __DIR__ . '/admin_header.php';
 
 $action = trim($_GET['action'] ?? '');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Status Toggle processing
-if ($action === 'toggle_status' && $id > 0) {
+if ($action === 'toggle_status' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: users.php");

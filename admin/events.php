@@ -3,7 +3,7 @@
 require_once __DIR__ . '/admin_header.php';
 
 $action = trim($_GET['action'] ?? 'list');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Form processing (Add/Edit)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit'])) {
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     
     if (empty($title) || empty($date)) {
         set_flash_message('danger', 'Title and date are required.');
-        header("Location: events.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        header("Location: events.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
         exit;
     }
     
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $currentDate = date('Y-m-d');
     if ($date < $currentDate) {
         set_flash_message('danger', 'Event date cannot be in the past.');
-        header("Location: events.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        header("Location: events.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
         exit;
     }
     
@@ -63,18 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             }
         } else {
             set_flash_message('danger', 'Upload failed. Allowed formats: JPG, PNG, GIF.');
-            header("Location: events.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+            header("Location: events.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
             exit;
         }
     }
     
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO events (title, description, date, event_image) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO events (id, title, description, date, event_image) VALUES (?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([$title, $description, $date, $imageName]);
+            $stmt->execute([generate_uuid(), $title, $description, $date, $imageName]);
             set_flash_message('success', 'Event created successfully!');
-        } elseif ($action === 'edit' && $id > 0) {
+        } elseif ($action === 'edit' && !empty($id)) {
             if ($imageName) {
                 // Delete old image
                 $oldImage = DB::fetch("SELECT event_image FROM events WHERE id = ?", [$id])['event_image'];
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 }
 
 // Delete Event
-if ($action === 'delete' && $id > 0) {
+if ($action === 'delete' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: events.php");
@@ -202,7 +202,7 @@ $csrfToken = generate_csrf_token();
 
 <?php if (in_array($action, ['add', 'edit'])): 
     $editEvent = null;
-    if ($action === 'edit' && $id > 0) {
+    if ($action === 'edit' && !empty($id)) {
         $editEvent = DB::fetch("SELECT * FROM events WHERE id = ?", [$id]);
     }
 ?>

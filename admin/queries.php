@@ -4,9 +4,9 @@ require_once __DIR__ . '/admin_header.php';
 require_once dirname(__DIR__) . '/models/Query.php';
 
 $action = trim($_GET['action'] ?? '');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
-if ($action === 'resolve' && $id > 0) {
+if ($action === 'resolve' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: queries.php");

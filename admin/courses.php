@@ -3,7 +3,7 @@
 require_once __DIR__ . '/admin_header.php';
 
 $action = trim($_GET['action'] ?? 'list');
-$id = intval($_GET['id'] ?? 0);
+$id = trim($_GET['id'] ?? '');
 
 // Form Submission (Add or Edit)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit'])) {
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
         exit;
     }
     
-    $categoryId = intval($_POST['category_id'] ?? 0);
+    $categoryId = trim($_POST['category_id'] ?? '');
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $price = floatval($_POST['price'] ?? 0.00);
@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $status = $_POST['status'] ?? 'Published';
     
     // Simple validation
-    if ($categoryId <= 0 || empty($title) || empty($description)) {
+    if (empty($categoryId) || empty($title) || empty($description)) {
         set_flash_message('danger', 'All fields are required.');
-        header("Location: courses.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+        header("Location: courses.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
         exit;
     }
     
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             }
         } else {
             set_flash_message('danger', 'Upload failed. Allowed formats: JPG, PNG, GIF.');
-            header("Location: courses.php?action=" . $action . ($id > 0 ? "&id=$id" : ""));
+            header("Location: courses.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
             exit;
         }
     }
@@ -81,11 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
                 $slug .= '-' . time();
             }
             
-            $sql = "INSERT INTO courses (category_id, title, slug, thumbnail, description, price, course_duration, allow_partial_payment, min_installment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO courses (id, category_id, title, slug, thumbnail, description, price, course_duration, allow_partial_payment, min_installment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status]);
+            $stmt->execute([generate_uuid(), $categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status]);
             set_flash_message('success', 'Course created successfully!');
-        } elseif ($action === 'edit' && $id > 0) {
+        } elseif ($action === 'edit' && !empty($id)) {
             // If new thumbnail uploaded, remove old one if exists
             if ($thumbnailName) {
                 $oldThumbnail = DB::fetch("SELECT thumbnail FROM courses WHERE id = ?", [$id])['thumbnail'];
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 }
 
 // Handle Delete Course
-if ($action === 'delete' && $id > 0) {
+if ($action === 'delete' && !empty($id)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         set_flash_message('danger', 'Invalid or unauthorized request.');
         header("Location: courses.php");
@@ -225,7 +225,7 @@ $csrfToken = generate_csrf_token();
 <!-- Add or Edit Form View -->
 <?php if (in_array($action, ['add', 'edit'])): 
     $editCourse = null;
-    if ($action === 'edit' && $id > 0) {
+    if ($action === 'edit' && !empty($id)) {
         $editCourse = DB::fetch("SELECT * FROM courses WHERE id = ?", [$id]);
     }
 ?>

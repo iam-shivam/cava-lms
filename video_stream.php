@@ -10,9 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
-$videoId = intval($_GET['id'] ?? 0);
+$videoId = trim($_GET['id'] ?? '');
 
-if ($videoId <= 0 || !VideoOTP::hasValidSession($userId, $videoId)) {
+if (empty($videoId) || !VideoOTP::hasValidSession($userId, $videoId)) {
     header("HTTP/1.1 403 Forbidden");
     exit('Access Denied or OTP Session Expired.');
 }

@@ -5,10 +5,11 @@ class Payment {
     
     public static function createPaymentLog($userId, $itemType, $itemId, $orderId, $amount, $paymentType = 'Full') {
         $db = DB::getConnection();
-        $sql = "INSERT INTO payments (user_id, item_type, item_id, razorpay_order_id, amount, payment_type, status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
+        $uuid = generate_uuid();
+        $sql = "INSERT INTO payments (id, user_id, item_type, item_id, razorpay_order_id, amount, payment_type, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')";
         $stmt = $db->prepare($sql);
-        $stmt->execute([$userId, $itemType, $itemId, $orderId, $amount, $paymentType]);
-        return DB::lastInsertId();
+        $stmt->execute([$uuid, $userId, $itemType, $itemId, $orderId, $amount, $paymentType]);
+        return $uuid;
     }
     
     public static function updatePaymentStatus($orderId, $paymentId, $signature, $status) {
@@ -24,10 +25,11 @@ class Payment {
     
     public static function createEnrollment($userId, $courseId, $paymentLogId, $status = 'Pending', $expiryDate = null) {
         $db = DB::getConnection();
-        $sql = "INSERT INTO enrollments (user_id, course_id, payment_id, status, expiry_date) VALUES (?, ?, ?, ?, ?)
+        $uuid = generate_uuid();
+        $sql = "INSERT INTO enrollments (id, user_id, course_id, payment_id, status, expiry_date) VALUES (?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE payment_id = VALUES(payment_id), status = VALUES(status), expiry_date = VALUES(expiry_date)";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$userId, $courseId, $paymentLogId, $status, $expiryDate]);
+        return $stmt->execute([$uuid, $userId, $courseId, $paymentLogId, $status, $expiryDate]);
     }
     
     public static function getTotalPaid($userId, $itemType, $itemId) {
@@ -37,9 +39,10 @@ class Payment {
     
     public static function createWebinarRegistration($userId, $webinarId, $paymentLogId) {
         $db = DB::getConnection();
-        $sql = "INSERT IGNORE INTO webinar_registrations (webinar_id, user_id, payment_id) VALUES (?, ?, ?)";
+        $uuid = generate_uuid();
+        $sql = "INSERT IGNORE INTO webinar_registrations (id, webinar_id, user_id, payment_id) VALUES (?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $result = $stmt->execute([$webinarId, $userId, $paymentLogId]);
+        $result = $stmt->execute([$uuid, $webinarId, $userId, $paymentLogId]);
         
         if ($result) {
             try {

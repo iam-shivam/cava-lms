@@ -5,9 +5,10 @@ class Query {
     
     public static function create($userId, $name, $email, $mobileNumber, $message) {
         $db = DB::getConnection();
-        $sql = "INSERT INTO queries (user_id, name, email, mobile_number, query_message, status) VALUES (?, ?, ?, ?, ?, 'Pending')";
+        $uuid = generate_uuid();
+        $sql = "INSERT INTO queries (id, user_id, name, email, mobile_number, query_message, status) VALUES (?, ?, ?, ?, ?, ?, 'Pending')";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$userId ?: null, $name, $email, $mobileNumber, $message]);
+        return $stmt->execute([$uuid, $userId ?: null, $name, $email, $mobileNumber, $message]);
     }
     
     public static function getByUser($userId) {

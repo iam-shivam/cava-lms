@@ -16,8 +16,9 @@ try {
     
     // Create DB
     $dbName = DB_NAME;
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    echo "Database `$dbName` created or already exists.<br>";
+    $pdo->exec("DROP DATABASE IF EXISTS `$dbName`");
+    $pdo->exec("CREATE DATABASE `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    echo "Database `$dbName` dropped and recreated successfully.<br>";
     
     // Switch to database
     $pdo->exec("USE `$dbName`");
@@ -52,8 +53,9 @@ try {
     $stmt->execute([$adminEmail]);
     if (!$stmt->fetch()) {
         $passwordHash = password_hash($adminPassword, PASSWORD_DEFAULT);
-        $insertAdmin = $pdo->prepare("INSERT INTO admins (username, email, password_hash) VALUES (?, ?, ?)");
-        $insertAdmin->execute([$adminUsername, $adminEmail, $passwordHash]);
+        $adminId = generate_uuid();
+        $insertAdmin = $pdo->prepare("INSERT INTO admins (id, username, email, password_hash) VALUES (?, ?, ?, ?)");
+        $insertAdmin->execute([$adminId, $adminUsername, $adminEmail, $passwordHash]);
         echo "Default admin account created:<br>";
         echo "- Email: <b>$adminEmail</b><br>";
         echo "- Password: <b>$adminPassword</b><br>";
@@ -81,7 +83,7 @@ try {
     
     // 5. Seed Demo Category & Course & Sections & Videos
     $checkCat = $pdo->prepare("SELECT id FROM categories WHERE slug = ?");
-    $insertCat = $pdo->prepare("INSERT INTO categories (name, slug) VALUES (?, ?)");
+    $insertCat = $pdo->prepare("INSERT INTO categories (id, name, slug) VALUES (?, ?, ?)");
     
     $catSlug = 'canada-immigration';
     $stmt = $pdo->prepare("SELECT id FROM categories WHERE slug = ?");
@@ -89,8 +91,8 @@ try {
     $catRow = $stmt->fetch();
     
     if (!$catRow) {
-        $insertCat->execute(['Canada Immigration', $catSlug]);
-        $catId = $pdo->lastInsertId();
+        $catId = generate_uuid();
+        $insertCat->execute([$catId, 'Canada Immigration', $catSlug]);
         echo "Demo category 'Canada Immigration' created.<br>";
     } else {
         $catId = $catRow['id'];
@@ -103,9 +105,11 @@ try {
     $courseRow = $stmt->fetch();
     
     if (!$courseRow) {
-        $insertCourse = $pdo->prepare("INSERT INTO courses (category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $courseId = generate_uuid();
+        $insertCourse = $pdo->prepare("INSERT INTO courses (id, category_id, title, slug, thumbnail, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $desc = "Learn about the Express Entry system, Provincial Nominee Programs (PNP), and required documentation to immigrate to Canada.";
         $insertCourse->execute([
+            $courseId,
             $catId,
             'Canada Immigration Process Masterclass',
             $courseSlug,
@@ -114,16 +118,16 @@ try {
             999.00,
             'Published'
         ]);
-        $courseId = $pdo->lastInsertId();
         echo "Demo course 'Canada Immigration Process Masterclass' created.<br>";
         
         // Demo Section 1
-        $insertSection = $pdo->prepare("INSERT INTO course_sections (course_id, title, sort_order) VALUES (?, ?, ?)");
-        $insertSection->execute([$courseId, 'Section 1: The Basics of Canada Immigration', 1]);
-        $sec1Id = $pdo->lastInsertId();
+        $insertSection = $pdo->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
+        $sec1Id = generate_uuid();
+        $insertSection->execute([$sec1Id, $courseId, 'Section 1: The Basics of Canada Immigration', 1]);
         
-        $insertVideo = $pdo->prepare("INSERT INTO course_videos (section_id, course_id, title, thumbnail, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $insertVideo = $pdo->prepare("INSERT INTO course_videos (id, section_id, course_id, title, thumbnail, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $insertVideo->execute([
+            generate_uuid(),
             $sec1Id,
             $courseId,
             'What is ECA (Educational Credential Assessment)',
@@ -133,6 +137,7 @@ try {
             1
         ]);
         $insertVideo->execute([
+            generate_uuid(),
             $sec1Id,
             $courseId,
             'What is EOI (Expression of Interest)',
@@ -143,10 +148,11 @@ try {
         ]);
         
         // Demo Section 2
-        $insertSection->execute([$courseId, 'Section 2: Scoring Points Systems', 2]);
-        $sec2Id = $pdo->lastInsertId();
+        $sec2Id = generate_uuid();
+        $insertSection->execute([$sec2Id, $courseId, 'Section 2: Scoring Points Systems', 2]);
         
         $insertVideo->execute([
+            generate_uuid(),
             $sec2Id,
             $courseId,
             'FSW (Federal Skilled Worker) Point System',
@@ -156,6 +162,7 @@ try {
             1
         ]);
         $insertVideo->execute([
+            generate_uuid(),
             $sec2Id,
             $courseId,
             'CRS (Comprehensive Ranking System) Point System',
@@ -173,9 +180,10 @@ try {
     // 6. Seed Demo Webinar
     $stmt = $pdo->query("SELECT id FROM webinars WHERE title = 'Immigration Q&A Webinar'");
     if (!$stmt->fetch()) {
-        $insertWebinar = $pdo->prepare("INSERT INTO webinars (title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?)");
+        $insertWebinar = $pdo->prepare("INSERT INTO webinars (id, title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $webDesc = "Join our Regulated Canadian Immigration Consultant (RCIC) for a live query session answering all your CRS score, PNP draws, and documentation doubts.";
         $insertWebinar->execute([
+            generate_uuid(),
             'Immigration Q&A Webinar',
             $webDesc,
             date('Y-m-d', strtotime('+3 days')),
@@ -191,9 +199,10 @@ try {
     // 7. Seed Demo Events
     $stmt = $pdo->query("SELECT id FROM events WHERE title = 'Virtual Immigration Fair 2026'");
     if (!$stmt->fetch()) {
-        $insertEvent = $pdo->prepare("INSERT INTO events (title, description, date, event_image) VALUES (?, ?, ?, ?)");
+        $insertEvent = $pdo->prepare("INSERT INTO events (id, title, description, date, event_image) VALUES (?, ?, ?, ?, ?)");
         $eventDesc = "Meet representatives from Canadian universities, employers, and immigration consulting firms online.";
         $insertEvent->execute([
+            generate_uuid(),
             'Virtual Immigration Fair 2026',
             $eventDesc,
             date('Y-m-d', strtotime('+7 days')),
