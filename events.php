@@ -37,49 +37,43 @@ $pageDescription = 'Stay updated with upcoming events, seminars, and campus acti
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<!-- Header Banner -->
-<div class="bg-light py-5 mb-5 border-bottom">
-    <div class="container text-center">
-        <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Campus Events</span>
-        <h1 class="fw-extrabold display-5 text-dark">Portal Events & Fairs</h1>
-        <p class="text-muted col-md-6 mx-auto">Explore student intake fairs, live group evaluations, and university networking summits scheduled online and offline.</p>
-    </div>
-</div>
-
+<!-- Main Container -->
 <div class="container mb-5">
-    <!-- Filter Panel -->
-    <div class="card border-0 shadow-sm p-4 bg-white rounded-4 mb-5">
-        <form action="events.php" method="GET" class="row g-3">
-            <div class="col-md-5">
-                <label for="search" class="form-label fw-semibold fs-7 text-muted">Search Events</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                    <input type="text" class="form-control bg-light border-start-0 ps-0" id="search" name="search" 
-                           value="<?php echo htmlspecialchars($search); ?>" placeholder="e.g. Ontario fair, Mock speaking...">
-                </div>
-            </div>
-            
-            <div class="col-md-4">
-                <label for="timeframe" class="form-label fw-semibold fs-7 text-muted">Scheduled Period</label>
-                <select class="form-select bg-light border" id="timeframe" name="timeframe">
-                    <option value="upcoming" <?php echo $timeframe === 'upcoming' ? 'selected' : ''; ?>>Upcoming Events Only</option>
-                    <option value="all" <?php echo $timeframe === 'all' ? 'selected' : ''; ?>>All Historical & Scheduled</option>
-                </select>
-            </div>
-            
-            <div class="col-md-3 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">
-                    <i class="fa-solid fa-filter me-1"></i> Apply Filters
-                </button>
-                <?php if (!empty($search) || $timeframe !== 'upcoming'): ?>
-                    <a href="events.php" class="btn btn-outline-secondary w-50 py-2 rounded-pill text-center">Reset</a>
-                <?php endif; ?>
+    <!-- Header Row (Title & Sleek Search) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 mt-5">
+        <h1 class="fw-extrabold text-dark m-0">Events</h1>
+        
+        <!-- Sleek Search Input -->
+        <form action="events.php" method="GET" class="m-0" style="width: 100%; max-width: 320px;">
+            <?php if ($timeframe !== 'upcoming'): ?>
+                <input type="hidden" name="timeframe" value="<?php echo htmlspecialchars($timeframe); ?>">
+            <?php endif; ?>
+            <div class="input-group search-input-group align-items-center pe-3 bg-white">
+                <span class="input-group-text bg-white border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                <input type="text" class="form-control border-0 ps-0" id="search" name="search" 
+                       value="<?php echo htmlspecialchars($search); ?>" placeholder="Search Events..." autocomplete="off">
+                <i class="fa-solid fa-xmark text-muted" id="search-clear" style="cursor: pointer; display: <?php echo !empty($search) ? 'block' : 'none'; ?>;"></i>
             </div>
         </form>
     </div>
 
+    <!-- Filter Row (Horizontal Timeframe Tabs) -->
+    <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom flex-wrap gap-3">
+        <!-- Timeframe Pill Tabs -->
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="events.php?timeframe=upcoming<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>" 
+               class="btn btn-sm rounded-pill px-3 <?php echo $timeframe === 'upcoming' ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
+                Upcoming Events
+            </a>
+            <a href="events.php?timeframe=all<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>" 
+               class="btn btn-sm rounded-pill px-3 <?php echo $timeframe === 'all' ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
+                All Events
+            </a>
+        </div>
+    </div>
+
     <!-- Events Grid -->
-    <div class="row">
+    <div class="row" id="events-grid">
         <?php if (empty($eventsList)): ?>
             <div class="col text-center py-5">
                 <i class="fa-regular fa-calendar-times fs-1 text-muted mb-3 d-block"></i>

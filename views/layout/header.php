@@ -90,9 +90,38 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
                 <div class="d-flex align-items-center gap-3">
 
                     <?php if ($isUserLoggedIn): ?>
+                        <?php
+                        // Resolve profile picture for navbar
+                        $navAvatarUrl = '';
+                        if (!empty($_SESSION['user_avatar'])) {
+                            $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $_SESSION['user_avatar'];
+                            if (file_exists($navAvatarFile)) {
+                                $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $_SESSION['user_avatar'];
+                            }
+                        }
+                        if (!$navAvatarUrl) {
+                            // Try fetching from DB if session doesn't have it yet
+                            try {
+                                $navUser = DB::fetch("SELECT profile_picture FROM users WHERE id = ?", [$_SESSION['user_id']]);
+                                if ($navUser && !empty($navUser['profile_picture'])) {
+                                    $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $navUser['profile_picture'];
+                                    if (file_exists($navAvatarFile)) {
+                                        $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $navUser['profile_picture'];
+                                        $_SESSION['user_avatar'] = $navUser['profile_picture'];
+                                    }
+                                }
+                            } catch (Exception $e) {}
+                        }
+                        $navNameParts = explode(' ', trim($userName));
+                        $navInitials  = strtoupper(substr($navNameParts[0], 0, 1) . (isset($navNameParts[1]) ? substr($navNameParts[1], 0, 1) : ''));
+                        ?>
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-user-circle fs-5"></i>
+                                <?php if ($navAvatarUrl): ?>
+                                    <img src="<?php echo htmlspecialchars($navAvatarUrl); ?>" alt="avatar" class="nav-avatar">
+                                <?php else: ?>
+                                    <div class="nav-avatar-initials"><?php echo $navInitials; ?></div>
+                                <?php endif; ?>
                                 <span>Hi, <?php echo htmlspecialchars($userName); ?></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="userMenuButton">

@@ -13,16 +13,13 @@ $pageDescription = 'Have questions about immigration, courses, or your account? 
 
 <?php require_once __DIR__ . '/views/layout/header.php'; ?>
 
-<!-- Header Banner -->
-<div class="bg-light py-5 mb-5 border-bottom">
-    <div class="container text-center">
-        <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold mb-2">Helpdesk Portal</span>
-        <h1 class="fw-extrabold display-5 text-dark">Support Center & Queries</h1>
-        <p class="text-muted col-md-6 mx-auto">Have visa, profile draw, or course syllabus doubts? Submit a query below and track your support tickets.</p>
-    </div>
-</div>
-
+<!-- Main Container -->
 <div class="container mb-5">
+    <!-- Header Row (Title Only) -->
+    <div class="mb-5 mt-5">
+        <h1 class="fw-extrabold text-dark m-0">Support Center</h1>
+        <p class="text-muted mt-1 mb-0">Have visa, profile draw, or course syllabus doubts? Submit a query below and track your support tickets.</p>
+    </div>
     <div class="row">
         <!-- Left Column: Submit Query Form -->
         <div class="col-lg-6 mb-5 mb-lg-0">
