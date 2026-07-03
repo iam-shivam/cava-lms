@@ -142,7 +142,7 @@ $courses = DB::fetchAll("
            (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as video_count 
     FROM courses c 
     JOIN categories cat ON c.category_id = cat.id 
-    ORDER BY c.id DESC
+    ORDER BY c.created_at DESC
 ");
 
 $categories = DB::fetchAll("SELECT * FROM categories ORDER BY name ASC");
@@ -203,15 +203,17 @@ $csrfToken = generate_csrf_token();
                                     </span>
                                 </td>
 <td class="text-end">
-    <a href="courses.php?action=delete&id=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm me-1" onclick="confirmAction(event, 'Are you sure you want to delete this course and all its video lectures?', this.href);" title="Delete">
-        <i class="fa-solid fa-trash-can"></i>
-    </a>
-    <a href="courses.php?action=edit&id=<?php echo $c['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit Course details">
-        <i class="fa-solid fa-pen-to-square"></i>
-    </a>
-    <a href="videos.php?course_id=<?php echo $c['id']; ?>" class="btn btn-outline-success btn-sm" title="Manage Lessons / Syllabus">
-        <i class="fa-solid fa-list-check me-1"></i> Syllabus
-    </a>
+    <div class="d-flex align-items-center justify-content-end gap-2">
+        <a href="courses.php?action=delete&id=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm" onclick="confirmAction(event, 'Are you sure you want to delete this course and all its video lectures?', this.href);" title="Delete">
+            <i class="fa-solid fa-trash-can"></i>
+        </a>
+        <a href="courses.php?action=edit&id=<?php echo $c['id']; ?>" class="btn btn-outline-primary btn-sm" title="Edit Course details">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </a>
+        <a href="videos.php?course_id=<?php echo $c['id']; ?>" class="btn btn-outline-success btn-sm text-nowrap" title="Manage Lessons / Syllabus">
+            <i class="fa-solid fa-list-check me-1"></i> Syllabus
+        </a>
+    </div>
 </td>
                             </tr>
                         <?php endforeach; ?>

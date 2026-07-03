@@ -19,9 +19,27 @@ $sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDE
 $csrfToken = generate_csrf_token();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrf = $_POST['csrf_token'] ?? '';
+    $csrf = trim($_REQUEST['csrf_token'] ?? '');
     if (!verify_csrf_token($csrf)) {
         set_flash_message('danger', 'CSRF verification failed.');
+        header("Location: video_edit.php?course_id=$courseId&id=$id");
+        exit;
+    }
+    
+    // Check if it's a delete doc action
+    $action = $_POST['action'] ?? '';
+    if ($action === 'delete_doc') {
+        $docIdToDelete = $_POST['doc_id'] ?? '';
+        if ($docIdToDelete) {
+            $docToDelete = DB::fetch("SELECT file_path FROM video_documents WHERE id = ? AND video_id = ?", [$docIdToDelete, $id]);
+            if ($docToDelete) {
+                if (!empty($docToDelete['file_path']) && file_exists(BASE_PATH . '/' . $docToDelete['file_path'])) {
+                    @unlink(BASE_PATH . '/' . $docToDelete['file_path']);
+                }
+                DB::query("DELETE FROM video_documents WHERE id = ?", [$docIdToDelete]);
+                set_flash_message('success', 'Document deleted successfully.');
+            }
+        }
         header("Location: video_edit.php?course_id=$courseId&id=$id");
         exit;
     }
@@ -55,16 +73,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Process new document upload (optional)
-        if (!empty($_FILES['document_file']['name'])) {
-            $docExt = strtolower(pathinfo($_FILES['document_file']['name'], PATHINFO_EXTENSION));
-            $docName = 'doc_' . time() . '_' . uniqid() . '.' . $docExt;
-            if (move_uploaded_file($_FILES['document_file']['tmp_name'], $docDir . $docName)) {
-                // Delete old document
-                if (!empty($documentUrl) && file_exists(BASE_PATH . '/' . $documentUrl)) {
-                    @unlink(BASE_PATH . '/' . $documentUrl);
+        // Process new multiple document uploads (optional)
+        if (!empty($_FILES['document_files']['name'][0])) {
+            $docCount = count($_FILES['document_files']['name']);
+            for ($i = 0; $i < $docCount; $i++) {
+                if ($_FILES['document_files']['error'][$i] === UPLOAD_ERR_OK) {
+                    $docTitleOrig = pathinfo($_FILES['document_files']['name'][$i], PATHINFO_FILENAME);
+                    $docExt = strtolower(pathinfo($_FILES['document_files']['name'][$i], PATHINFO_EXTENSION));
+                    $docSize = $_FILES['document_files']['size'][$i];
+                    $docName = 'doc_' . time() . '_' . uniqid() . '.' . $docExt;
+                    $tmpName = $_FILES['document_files']['tmp_name'][$i];
+                    
+                    if (move_uploaded_file($tmpName, $docDir . $docName)) {
+                        $docPath = 'uploads/documents/' . $docName;
+                        $stmtDoc = DB::getConnection()->prepare("INSERT INTO video_documents (id, video_id, title, file_path, file_type, file_size) VALUES (?, ?, ?, ?, ?, ?)");
+                        $stmtDoc->execute([generate_uuid(), $id, $docTitleOrig, $docPath, $docExt, $docSize]);
+                    }
                 }
-                $documentUrl = 'uploads/documents/' . $docName;
             }
         }
         
@@ -78,6 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ? ORDER BY created_at ASC", [$id]);
 ?>
 
 <div class="mb-4">
@@ -121,17 +148,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Current Document</label>
-                    <?php if (!empty($video['document_url'])): ?>
-                        <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light border rounded">
-                            <i class="fa-solid fa-file-pdf text-danger"></i>
-                            <span class="fs-8 text-dark text-truncate" style="max-width: 300px;"><?php echo htmlspecialchars($video['document_url']); ?></span>
+                    <label class="form-label fw-semibold">Current Documents</label>
+                    <?php if (!empty($videoDocuments)): ?>
+                        <div class="list-group mb-3">
+                            <?php foreach ($videoDocuments as $doc): ?>
+                                <div class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                                    <div class="text-truncate" style="max-width:300px;">
+                                        <i class="fa-solid fa-file text-secondary me-2"></i>
+                                        <?php echo htmlspecialchars($doc['title'] . '.' . $doc['file_type']); ?>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteDocument('<?php echo $doc['id']; ?>')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     <?php else: ?>
-                        <div class="text-muted fs-8 mb-2">No document attached.</div>
+                        <div class="text-muted fs-8 mb-3">No documents attached.</div>
                     <?php endif; ?>
-                    <label for="document_file" class="form-label fw-semibold mt-2">Replace Document (Optional)</label>
-                    <input type="file" class="form-control" id="document_file" name="document_file" accept=".pdf,.doc,.docx">
+                    <label for="document_files" class="form-label fw-semibold mt-2">Add More Documents (Optional)</label>
+                    <input type="file" class="form-control" id="document_files" name="document_files[]" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip">
+                    <div class="form-text">You can select multiple files at once. Supported formats: PDF, DOC, PPT, XLS, ZIP.</div>
                 </div>
                 
                 <div class="mb-3">
@@ -149,5 +186,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+
+<form id="deleteDocForm" action="video_edit.php?course_id=<?php echo $courseId; ?>&id=<?php echo $id; ?>" method="POST" style="display:none;">
+    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+    <input type="hidden" name="action" value="delete_doc">
+    <input type="hidden" name="doc_id" id="deleteDocId">
+</form>
+
+<script>
+function deleteDocument(docId) {
+    if (confirm('Are you sure you want to delete this document?')) {
+        document.getElementById('deleteDocId').value = docId;
+        document.getElementById('deleteDocForm').submit();
+    }
+}
+</script>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>

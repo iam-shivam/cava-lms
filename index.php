@@ -22,11 +22,13 @@ $heroSubtitle = $settings['hero_subtitle'] ?? 'Access high-quality courses, webi
 $aboutUs = $settings['about_us'] ?? 'CAVA LMS is a premium e-learning portal designed to provide quality, affordable education for career development.';
 
 // Fetch dynamic data
-$featuredCourses = Course::getFeatured(3);
-$upcomingWebinars = Webinar::getAll();
-$upcomingEvents = Event::getAll();
-
 $userId = $_SESSION['user_id'] ?? null;
+
+// Fetch dynamic data (excluding ones already bought/registered by the user)
+$featuredCourses = Course::getFeatured(3, $userId);
+$upcomingWebinars = Webinar::getAll(3, $userId);
+$upcomingEvents = Event::getAll(3);
+
 
 require_once __DIR__ . '/views/layout/header.php';
 ?>
@@ -86,6 +88,12 @@ require_once __DIR__ . '/views/layout/header.php';
                 endforeach; ?>
             <?php endif; ?>
         </div>
+        
+        <?php if (!empty($featuredCourses)): ?>
+        <div class="text-center mt-5">
+            <a href="courses.php" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-semibold">Explore All Courses <i class="fa-solid fa-arrow-right ms-2"></i></a>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -110,6 +118,12 @@ require_once __DIR__ . '/views/layout/header.php';
                 endforeach; ?>
             <?php endif; ?>
         </div>
+        
+        <?php if (!empty($upcomingWebinars)): ?>
+        <div class="text-center mt-5">
+            <a href="webinars.php" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-semibold">Browse All Webinars <i class="fa-solid fa-arrow-right ms-2"></i></a>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -155,6 +169,12 @@ require_once __DIR__ . '/views/layout/header.php';
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+        
+        <?php if (!empty($upcomingEvents)): ?>
+        <div class="text-center mt-5">
+            <a href="events.php" class="btn btn-outline-primary rounded-pill px-5 py-2 fw-semibold">View All Events <i class="fa-solid fa-arrow-right ms-2"></i></a>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 

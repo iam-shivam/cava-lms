@@ -22,12 +22,7 @@
                     <p><a href="<?php echo SITE_URL; ?>/events.php" class="text-white-50" style="text-decoration: none;">Events</a></p>
                 </div>
 
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
-                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Support</h5>
-                    <p><a href="<?php echo SITE_URL; ?>/support.php" class="text-white-50" style="text-decoration: none;">Contact Us</a></p>
-                    <p><a href="<?php echo SITE_URL; ?>/login.php" class="text-white-50" style="text-decoration: none;">User Login</a></p>
-                    <p><a href="<?php echo SITE_URL; ?>/admin/index.php" class="text-white-50" style="text-decoration: none;">Admin Panel</a></p>
-                </div>
+
 
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Contact</h5>

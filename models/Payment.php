@@ -12,11 +12,11 @@ class Payment {
         return $uuid;
     }
     
-    public static function updatePaymentStatus($orderId, $paymentId, $signature, $status) {
+    public static function updatePaymentStatus($orderId, $paymentId, $signature, $status, $paymentMethod = null, $paymentCurrency = 'INR') {
         $db = DB::getConnection();
-        $sql = "UPDATE payments SET razorpay_payment_id = ?, razorpay_signature = ?, status = ? WHERE razorpay_order_id = ?";
+        $sql = "UPDATE payments SET razorpay_payment_id = ?, razorpay_signature = ?, status = ?, payment_method = ?, payment_currency = ? WHERE razorpay_order_id = ?";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$paymentId, $signature, $status, $orderId]);
+        return $stmt->execute([$paymentId, $signature, $status, $paymentMethod, $paymentCurrency, $orderId]);
     }
     
     public static function getByOrderId($orderId) {
@@ -95,7 +95,7 @@ class Payment {
     
     public static function getAllPayments() {
         return DB::fetchAll("
-            SELECT p.*, u.full_name as user_name, u.email as user_email,
+            SELECT p.*, u.full_name as user_name, u.email as user_email, u.mobile_number as user_mobile,
                    CASE 
                        WHEN p.item_type = 'course' THEN (SELECT title FROM courses WHERE id = p.item_id)
                        WHEN p.item_type = 'webinar' THEN (SELECT title FROM webinars WHERE id = p.item_id)

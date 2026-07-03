@@ -127,8 +127,18 @@ class PaymentController {
         }
         
         if ($success) {
+            $paymentMethod = null;
+            $paymentCurrency = 'INR';
+            try {
+                $rzpPayment = $api->payment->fetch($razorpayPaymentId);
+                $paymentMethod = $rzpPayment->method; // e.g., 'upi', 'card', 'netbanking'
+                $paymentCurrency = $rzpPayment->currency ?? 'INR';
+            } catch (Exception $e) {
+                // Fail silently if fetch fails
+            }
+            
             // Update payment status to Success
-            Payment::updatePaymentStatus($razorpayOrderId, $razorpayPaymentId, $razorpaySignature, 'Success');
+            Payment::updatePaymentStatus($razorpayOrderId, $razorpayPaymentId, $razorpaySignature, 'Success', $paymentMethod, $paymentCurrency);
             
             // Create Enrollment / Registration
             if ($payment['item_type'] === 'course') {

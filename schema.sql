@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_hash` VARCHAR(255) NOT NULL,
   `status` ENUM('Active', 'Suspended') DEFAULT 'Active',
   `session_id` VARCHAR(255) DEFAULT NULL,
+  `profile_picture` VARCHAR(255) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -79,6 +80,8 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `razorpay_signature` VARCHAR(255) DEFAULT NULL,
   `amount` DECIMAL(10, 2) NOT NULL,
   `payment_type` ENUM('Partial', 'Full') DEFAULT 'Full',
+  `payment_method` VARCHAR(50) DEFAULT NULL,
+  `payment_currency` VARCHAR(10) DEFAULT 'INR',
   `status` ENUM('Pending', 'Success', 'Failed') DEFAULT 'Pending',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -196,4 +199,38 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     INDEX idx_ip (ip_address),
     INDEX idx_type (attempt_type),
     INDEX idx_at (attempted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `user_video_progress` (
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) NOT NULL,
+  `video_id` CHAR(36) NOT NULL,
+  `course_id` CHAR(36) NOT NULL,
+  `status` ENUM('started', 'completed') DEFAULT 'completed',
+  `watched_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `user_video` (`user_id`, `video_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `video_otp_sessions` (
+  `id` CHAR(36) PRIMARY KEY,
+  `user_id` CHAR(36) NOT NULL,
+  `video_id` CHAR(36) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `video_documents` (
+    `id` CHAR(36) PRIMARY KEY,
+    `video_id` CHAR(36) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `file_path` VARCHAR(255) NOT NULL,
+    `file_type` VARCHAR(50) NOT NULL,
+    `file_size` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

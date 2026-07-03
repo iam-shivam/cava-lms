@@ -124,21 +124,21 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
                                 <?php endif; ?>
                                 <span>Hi, <?php echo htmlspecialchars($userName); ?></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="userMenuButton">
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 w-100" aria-labelledby="userMenuButton" style="border-radius: 0.5rem; overflow: hidden; margin-top: 5px;">
                                 <li>
-                                    <a class="dropdown-item py-2" href="<?php echo SITE_URL; ?>/dashboard.php">
-                                        <i class="fa-solid fa-gauge me-2 text-primary"></i>My Dashboard
+                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center" href="<?php echo SITE_URL; ?>/dashboard.php">
+                                        <i class="fa-solid fa-chart-pie me-2 text-primary" style="width: 20px; text-align: center;"></i> <span class="fw-medium">My Dashboard</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item py-2" href="<?php echo SITE_URL; ?>/dashboard.php?tab=profile">
-                                        <i class="fa-solid fa-id-card me-2 text-primary"></i>My Profile
+                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center" href="<?php echo SITE_URL; ?>/dashboard.php?tab=profile">
+                                        <i class="fa-solid fa-user-gear me-2 text-success" style="width: 20px; text-align: center;"></i> <span class="fw-medium">My Profile</span>
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item py-2 text-danger" href="<?php echo SITE_URL; ?>/logout.php">
-                                        <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center text-danger" href="<?php echo SITE_URL; ?>/logout.php">
+                                        <i class="fa-solid fa-arrow-right-from-bracket me-2" style="width: 20px; text-align: center;"></i> <span class="fw-medium">Logout</span>
                                     </a>
                                 </li>
                             </ul>

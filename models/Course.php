@@ -7,8 +7,18 @@ class Course {
         return DB::fetchAll("SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published' ORDER BY c.id DESC");
     }
     
-    public static function getFeatured($limit = 3) {
-        return DB::fetchAll("SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published' ORDER BY c.id DESC LIMIT ?", [$limit]);
+    public static function getFeatured($limit = 3, $excludeUserId = null) {
+        $sql = "SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published'";
+        $params = [];
+        if ($excludeUserId) {
+            $sql .= " AND c.id NOT IN (SELECT course_id FROM enrollments WHERE user_id = ?)";
+            $params[] = $excludeUserId;
+        }
+        $sql .= " ORDER BY c.created_at DESC";
+        if ($limit) {
+            $sql .= " LIMIT " . (int)$limit;
+        }
+        return DB::fetchAll($sql, $params);
     }
     
     public static function getBySlug($slug) {
