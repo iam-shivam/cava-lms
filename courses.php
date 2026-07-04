@@ -12,6 +12,8 @@ $search = trim($_GET['search'] ?? '');
 $categoryId = trim($_GET['category'] ?? '');
 $sort = trim($_GET['sort'] ?? 'latest');
 
+$userId = $_SESSION['user_id'] ?? null;
+
 // Base query
 $sql = "SELECT c.*, cat.name as category_name 
         FROM courses c 
@@ -30,10 +32,15 @@ if (!empty($categoryId)) {
     $params[] = $categoryId;
 }
 
+if ($userId) {
+    $sql .= " AND c.id NOT IN (SELECT course_id FROM enrollments WHERE user_id = ?)";
+    $params[] = $userId;
+}
+
 if ($sort === 'alpha') {
     $sql .= " ORDER BY c.title ASC";
 } else {
-    $sql .= " ORDER BY c.id DESC";
+    $sql .= " ORDER BY c.created_at DESC";
 }
 
 try {
@@ -42,7 +49,6 @@ try {
     $coursesList = [];
 }
 
-$userId = $_SESSION['user_id'] ?? null;
 
 // SEO meta for this page
 $pageTitle       = 'Browse Courses';
@@ -91,7 +97,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     if (!empty($search)) echo '&search=' . urlencode($search);
                     if ($sort !== 'latest') echo '&sort=' . urlencode($sort);
                    ?>" 
-                   class="btn btn-sm rounded-pill px-3 <?php echo $categoryId === trim($cat['id']) ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
+                   class="btn btn-sm rounded-pill px-3 <?php echo (!empty($categoryId) && $categoryId === trim($cat['id'])) ? 'btn-primary' : 'btn-outline-secondary'; ?> fw-semibold filter-link">
                     <?php echo htmlspecialchars($cat['name']); ?>
                 </a>
             <?php endforeach; ?>

@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
                 $slug .= '-' . time();
             }
             
-            $stmt = DB::getConnection()->prepare("INSERT INTO categories (name, slug) VALUES (?, ?)");
-            $stmt->execute([$name, $slug]);
+            $stmt = DB::getConnection()->prepare("INSERT INTO categories (id, name, slug) VALUES (?, ?, ?)");
+            $stmt->execute([generate_uuid(), $name, $slug]);
             set_flash_message('success', 'Category added successfully!');
         } elseif ($_POST['form_action'] === 'edit' && !empty($id)) {
             $stmt = DB::getConnection()->prepare("UPDATE categories SET name = ?, slug = ? WHERE id = ?");
@@ -79,7 +79,7 @@ if ($action === 'edit' && !empty($id)) {
 }
 
 // Fetch All Categories
-$categories = DB::fetchAll("SELECT c.*, (SELECT COUNT(id) FROM courses WHERE category_id = c.id) as course_count FROM categories c ORDER BY name ASC");
+$categories = DB::fetchAll("SELECT c.*, (SELECT COUNT(id) FROM courses WHERE category_id = c.id) as course_count FROM categories c ORDER BY created_at DESC");
 $csrfToken = generate_csrf_token();
 ?>
 

@@ -4,9 +4,10 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/models/Webinar.php';
 
-// Filter Inputs
 $search = trim($_GET['search'] ?? '');
 $sortBy = trim($_GET['sort'] ?? 'soonest'); // soonest, latest
+
+$userId = $_SESSION['user_id'] ?? null;
 
 // Base query
 $sql = "SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME()))";
@@ -18,8 +19,13 @@ if (!empty($search)) {
     $params[] = '%' . $search . '%';
 }
 
+if ($userId) {
+    $sql .= " AND id NOT IN (SELECT webinar_id FROM webinar_registrations WHERE user_id = ?)";
+    $params[] = $userId;
+}
+
 if ($sortBy === 'latest') {
-    $sql .= " ORDER BY date DESC, time DESC";
+    $sql .= " ORDER BY created_at DESC";
 } else {
     // Default to soonest first
     $sql .= " ORDER BY date ASC, time ASC";
@@ -31,7 +37,6 @@ try {
     $webinarsList = [];
 }
 
-$userId = $_SESSION['user_id'] ?? null;
 
 $pageTitle       = 'Live Webinars';
 $pageDescription = 'Join live interactive webinars with certified consultants on CAVA LMS. Learn from experts, ask questions, and get your immigration queries resolved.';

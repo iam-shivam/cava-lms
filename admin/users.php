@@ -35,7 +35,7 @@ $users = DB::fetchAll("
            (SELECT COUNT(id) FROM enrollments WHERE user_id = u.id) as enrollment_count,
            (SELECT COUNT(id) FROM webinar_registrations WHERE user_id = u.id) as webinar_count
     FROM users u 
-    ORDER BY u.id DESC
+    ORDER BY u.created_at DESC
 ");
 ?>
 

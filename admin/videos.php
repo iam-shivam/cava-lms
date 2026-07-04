@@ -72,17 +72,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new Exception("Failed to upload video.");
                 }
                 
-                // Process Document Upload (if any)
-                if (!empty($_FILES['document_file']['name'])) {
-                    $docExt = strtolower(pathinfo($_FILES['document_file']['name'], PATHINFO_EXTENSION));
-                    $docName = 'doc_' . time() . '_' . uniqid() . '.' . $docExt;
-                    if (move_uploaded_file($_FILES['document_file']['tmp_name'], $docDir . $docName)) {
-                        $documentUrl = 'uploads/documents/' . $docName;
+                // We insert the video first to get the video UUID
+                $videoId = generate_uuid();
+                
+                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (id, section_id, course_id, title, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, ?, 'local', NULL, 0, ?)");
+                $stmt->execute([$videoId, $sectionId, $courseId, $title, $description, $videoUrl, $order]);
+                
+                // Process Multiple Document Uploads
+                if (!empty($_FILES['document_files']['name'][0])) {
+                    $docCount = count($_FILES['document_files']['name']);
+                    for ($i = 0; $i < $docCount; $i++) {
+                        if ($_FILES['document_files']['error'][$i] === UPLOAD_ERR_OK) {
+                            $docTitleOrig = pathinfo($_FILES['document_files']['name'][$i], PATHINFO_FILENAME);
+                            $docExt = strtolower(pathinfo($_FILES['document_files']['name'][$i], PATHINFO_EXTENSION));
+                            $docSize = $_FILES['document_files']['size'][$i];
+                            $docName = 'doc_' . time() . '_' . uniqid() . '.' . $docExt;
+                            $tmpName = $_FILES['document_files']['tmp_name'][$i];
+                            
+                            if (move_uploaded_file($tmpName, $docDir . $docName)) {
+                                $docPath = 'uploads/documents/' . $docName;
+                                $stmtDoc = DB::getConnection()->prepare("INSERT INTO video_documents (id, video_id, title, file_path, file_type, file_size) VALUES (?, ?, ?, ?, ?, ?)");
+                                $stmtDoc->execute([generate_uuid(), $videoId, $docTitleOrig, $docPath, $docExt, $docSize]);
+                            }
+                        }
                     }
                 }
                 
-                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (id, section_id, course_id, title, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, ?, 'local', ?, 0, ?)");
-                $stmt->execute([generate_uuid(), $sectionId, $courseId, $title, $description, $videoUrl, $documentUrl, $order]);
                 set_flash_message('success', 'Video lesson and resources added successfully!');
             }
         }
@@ -123,11 +138,17 @@ if ($action === 'delete_video' && !empty($id)) {
             if ($vid['video_url'] && file_exists(BASE_PATH . '/' . $vid['video_url'])) {
                 unlink(BASE_PATH . '/' . $vid['video_url']);
             }
-            if (!empty($vid['document_url']) && file_exists(BASE_PATH . '/' . $vid['document_url'])) {
-                unlink(BASE_PATH . '/' . $vid['document_url']);
+            
+            // Delete multiple documents
+            $docs = DB::fetchAll("SELECT file_path FROM video_documents WHERE video_id = ?", [$id]);
+            foreach ($docs as $d) {
+                if (!empty($d['file_path']) && file_exists(BASE_PATH . '/' . $d['file_path'])) {
+                    unlink(BASE_PATH . '/' . $d['file_path']);
+                }
             }
+            
             DB::query("DELETE FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
-            set_flash_message('success', 'Video lesson deleted successfully!');
+            set_flash_message('success', 'Video lesson and associated resources deleted successfully!');
         }
     } catch (Exception $e) {
         set_flash_message('danger', 'Database Error: ' . $e->getMessage());
@@ -309,8 +330,9 @@ foreach ($sections as $sec) {
                 </div>
 
                 <div class="mb-3">
-                    <label for="document_file" class="form-label fw-semibold">Upload Resource Document (Optional)</label>
-                    <input type="file" class="form-control" id="document_file" name="document_file" accept=".pdf,.doc,.docx">
+                    <label for="document_files" class="form-label fw-semibold">Upload Resource Documents (Optional)</label>
+                    <input type="file" class="form-control" id="document_files" name="document_files[]" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip">
+                    <div class="form-text">You can select multiple files at once. Supported formats: PDF, DOC, PPT, XLS, ZIP.</div>
                 </div>
                 
                 <div class="mb-3">

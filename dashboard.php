@@ -136,8 +136,8 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
 
         <!-- Stats Row -->
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
+        <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
+            <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon purple"><i class="fa-solid fa-book-open"></i></div>
                     <div>
@@ -146,7 +146,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon blue"><i class="fa-solid fa-video"></i></div>
                     <div>
@@ -155,7 +155,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon amber"><i class="fa-solid fa-circle-question"></i></div>
                     <div>
@@ -164,7 +164,16 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col">
+                <div class="dash-stat-card animate-fade-in-up">
+                    <div class="dash-stat-icon text-info bg-info bg-opacity-10"><i class="fa-solid fa-credit-card"></i></div>
+                    <div>
+                        <div class="dash-stat-value"><?php echo count($myPayments); ?></div>
+                        <div class="dash-stat-label">Total Orders</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon green"><i class="fa-solid fa-indian-rupee-sign"></i></div>
                     <div>
@@ -195,19 +204,15 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div class="dash-section-label">Workspace</div>
                     <a href="dashboard.php?tab=courses" class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-book-open"></i> My Courses
-                        <span class="menu-badge"><?php echo count($purchasedCourses); ?></span>
                     </a>
                     <a href="dashboard.php?tab=webinars" class="dashboard-menu-link <?php echo $tab === 'webinars' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-video"></i> My Webinars
-                        <span class="menu-badge"><?php echo count($registeredWebinars); ?></span>
                     </a>
                     <a href="dashboard.php?tab=queries" class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-circle-question"></i> Query History
-                        <span class="menu-badge"><?php echo count($myQueries); ?></span>
                     </a>
                     <a href="dashboard.php?tab=payments" class="dashboard-menu-link <?php echo $tab === 'payments' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-credit-card"></i> Order History
-                        <span class="menu-badge"><?php echo count($myPayments); ?></span>
                     </a>
 
                     <div class="dash-section-label">Account</div>
@@ -275,6 +280,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <div class="flex-shrink-0">
                                     <?php if ($effectiveStatus === 'Expired'): ?>
                                         <button class="btn btn-secondary btn-sm rounded-pill px-3" disabled><i class="fa-solid fa-lock me-1"></i>Locked</button>
+                                    <?php elseif ($effectiveStatus === 'Pending'): ?>
+                                        <a href="course.php?slug=<?php echo $course['slug']; ?>" class="btn btn-warning btn-sm rounded-pill px-3"><i class="fa-solid fa-lock me-1"></i>Pay Balance</a>
                                     <?php else: ?>
                                         <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-primary btn-sm rounded-pill px-3">
                                             <i class="fa-solid fa-circle-play me-1"></i>

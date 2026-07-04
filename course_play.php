@@ -45,6 +45,12 @@ if ($isExpired) {
 
 $enrollmentStatus = $enrollment['status'];
 
+if ($enrollmentStatus === 'Pending') {
+    set_flash_message('warning', 'Please pay the remaining balance to access the course content.');
+    header("Location: course.php?slug=" . urlencode($slug));
+    exit;
+}
+
 // Fetch Course Details and Syllabus
 $course = Course::getById($courseId);
 $syllabus = Course::getSyllabus($courseId);
@@ -102,6 +108,9 @@ if (!$activeVideo) {
     $activeVideoIndex = 0;
 }
 
+// Fetch active video documents
+$activeVideoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ? ORDER BY created_at ASC", [$activeVideo['id']]);
+
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
@@ -126,16 +135,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     $hasAccess = VideoOTP::hasValidSession($userId, $activeVideo['id']);
                     ?>
                     
-                    <?php if ($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2): ?>
-                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white rounded-4" style="min-height: 450px;">
-                            <div class="text-center p-4">
-                                <i class="fa-solid fa-lock fs-1 text-warning mb-3"></i>
-                                <h4>Restricted Access</h4>
-                                <p class="text-light fs-7 mb-4">You have reached the end of your preview. Please pay the remaining balance to unlock the rest of the course videos.</p>
-                                <a href="course.php?slug=<?php echo urlencode($slug); ?>" class="btn btn-warning fw-bold px-4 rounded-pill">Pay Remaining Balance</a>
-                            </div>
-                        </div>
-                    <?php elseif ($hasAccess): ?>
+                    <?php if ($hasAccess): ?>
                         <?php if (!empty($activeVideo['video_url'])): ?>
                             <video controls controlsList="nodownload" style="width: 100%; height: 100%; min-height: 450px; background: #000;">
                                 <source src="video_stream.php?id=<?php echo $activeVideo['id']; ?>" type="video/mp4">
@@ -155,7 +155,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-light fs-7 mb-4">This video requires OTP verification to unlock.</p>
                                 
                                 <div id="otp-request-block">
-                                    <button class="btn btn-warning fw-bold px-4 rounded-pill" onclick="sendVideoOtp(<?php echo $activeVideo['id']; ?>)">
+                                    <button class="btn btn-warning fw-bold px-4 rounded-pill" onclick="sendVideoOtp('<?php echo $activeVideo['id']; ?>')">
                                         <i class="fa-solid fa-paper-plane me-2"></i>Send OTP to Registered Email
                                     </button>
                                 </div>
@@ -163,7 +163,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <div id="otp-verify-block" style="display: none; max-width: 300px; margin: 0 auto;">
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" id="video_otp_input" placeholder="Enter OTP" maxlength="6">
-                                        <button class="btn btn-success" type="button" onclick="verifyVideoOtp(<?php echo $activeVideo['id']; ?>)">Unlock</button>
+                                        <button class="btn btn-success" type="button" onclick="verifyVideoOtp('<?php echo $activeVideo['id']; ?>')">Unlock</button>
                                     </div>
                                 </div>
                                 <div class="mt-2">
@@ -187,7 +187,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div class="tab-pane fade show active" id="desc" role="tabpanel" aria-labelledby="desc-tab">
                         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
                             <h5 class="fw-bold m-0"><?php echo htmlspecialchars($activeVideo['title']); ?></h5>
-                            <?php if ($hasAccess && !($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2)): ?>
+                            <?php if ($hasAccess): ?>
                                 <div id="progress-toggle-btn">
                                     <?php if (in_array($activeVideo['id'], $completedVideoIds)): ?>
                                         <button class="btn btn-outline-secondary rounded-pill btn-sm px-3" onclick="toggleProgress('<?php echo $activeVideo['id']; ?>', '<?php echo $courseId; ?>', 'uncomplete')">
@@ -220,14 +220,36 @@ require_once __DIR__ . '/views/layout/header.php';
                         ?></p>
                     </div>
                     <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
-                        <?php if (!empty($activeVideo['document_url']) && $hasAccess && !($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2)): ?>
-                            <h5 class="fw-bold mb-3">Lesson Resources</h5>
-                            <p class="text-muted fs-7 mb-4">Download the supplementary materials for this lesson below.</p>
-                            <a href="<?php echo htmlspecialchars(SITE_URL . '/' . $activeVideo['document_url']); ?>" download class="btn btn-outline-primary rounded-pill fw-bold px-4">
-                                <i class="fa-solid fa-download me-2"></i>Download Document
-                            </a>
-                        <?php elseif (empty($activeVideo['document_url'])): ?>
-                            <p class="text-muted fs-7 m-0">No resources available for this lesson.</p>
+                        <?php if ($hasAccess): ?>
+                            <?php if (!empty($activeVideoDocuments)): ?>
+                                <h5 class="fw-bold mb-3">Lesson Resources</h5>
+                                <p class="text-muted fs-7 mb-4">View or download the supplementary materials for this lesson below.</p>
+                                <div class="list-group">
+                                    <?php foreach ($activeVideoDocuments as $doc): ?>
+                                        <a href="document_viewer.php?id=<?php echo urlencode($doc['id']); ?>" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
+                                            <div class="d-flex align-items-center">
+                                                <?php 
+                                                    $icon = 'fa-file';
+                                                    $textClass = 'text-secondary';
+                                                    if ($doc['file_type'] === 'pdf') { $icon = 'fa-file-pdf'; $textClass = 'text-danger'; }
+                                                    elseif (in_array($doc['file_type'], ['doc','docx'])) { $icon = 'fa-file-word'; $textClass = 'text-primary'; }
+                                                    elseif (in_array($doc['file_type'], ['xls','xlsx'])) { $icon = 'fa-file-excel'; $textClass = 'text-success'; }
+                                                    elseif (in_array($doc['file_type'], ['ppt','pptx'])) { $icon = 'fa-file-powerpoint'; $textClass = 'text-warning'; }
+                                                    elseif (in_array($doc['file_type'], ['zip'])) { $icon = 'fa-file-zipper'; $textClass = 'text-muted'; }
+                                                ?>
+                                                <i class="fa-solid <?php echo $icon; ?> <?php echo $textClass; ?> fs-4 me-3"></i>
+                                                <div>
+                                                    <h6 class="mb-0 fw-semibold text-dark"><?php echo htmlspecialchars($doc['title'] . '.' . $doc['file_type']); ?></h6>
+                                                    <small class="text-muted"><?php echo number_format($doc['file_size'] / 1024 / 1024, 2); ?> MB</small>
+                                                </div>
+                                            </div>
+                                            <i class="fa-solid fa-arrow-up-right-from-square text-muted"></i>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <p class="text-muted fs-7 m-0">No resources available for this lesson.</p>
+                            <?php endif; ?>
                         <?php else: ?>
                             <div class="alert alert-warning py-2 fs-8 m-0"><i class="fa-solid fa-lock me-2"></i>Please unlock the video to access the resources.</div>
                         <?php endif; ?>

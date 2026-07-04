@@ -23,7 +23,7 @@ if ($timeframe === 'upcoming') {
     $params[] = date('Y-m-d');
 }
 
-$sql .= " ORDER BY date ASC";
+$sql .= " ORDER BY created_at DESC";
 
 try {
     $eventsList = DB::fetchAll($sql, $params);

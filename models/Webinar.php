@@ -3,8 +3,18 @@
 
 class Webinar {
     
-    public static function getAll() {
-        return DB::fetchAll("SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME())) ORDER BY date ASC, time ASC");
+    public static function getAll($limit = null, $excludeUserId = null) {
+        $sql = "SELECT * FROM webinars WHERE status = 'Active' AND (date > CURRENT_DATE() OR (date = CURRENT_DATE() AND time >= CURRENT_TIME()))";
+        $params = [];
+        if ($excludeUserId) {
+            $sql .= " AND id NOT IN (SELECT webinar_id FROM webinar_registrations WHERE user_id = ?)";
+            $params[] = $excludeUserId;
+        }
+        $sql .= " ORDER BY created_at DESC, time ASC";
+        if ($limit !== null) {
+            $sql .= " LIMIT " . (int)$limit;
+        }
+        return DB::fetchAll($sql, $params);
     }
     
     public static function getById($id) {

@@ -124,7 +124,7 @@ if ($action === 'delete' && !empty($id)) {
 }
 
 // Fetch Events
-$events = DB::fetchAll("SELECT * FROM events ORDER BY date ASC");
+$events = DB::fetchAll("SELECT * FROM events ORDER BY created_at DESC");
 $csrfToken = generate_csrf_token();
 ?>
 
