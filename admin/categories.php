@@ -137,11 +137,11 @@ $csrfToken = generate_csrf_token();
                                     <td class="text-muted"><?php echo htmlspecialchars($cat['slug']); ?></td>
                                     <td class="text-center"><span class="badge bg-primary-light text-primary"><?php echo $cat['course_count']; ?></span></td>
                                     <td class="text-end">
-                                        <a href="categories.php?action=edit&id=<?php echo $cat['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+                                        <a href="categories.php?action=edit&id=<?php echo $cat['id']; ?>" class="btn btn-outline-primary btn-sm me-1" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" title="Edit">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                         <a href="categories.php?action=delete&id=<?php echo $cat['id']; ?>" 
-                                           class="btn btn-outline-danger btn-sm" 
+                                           class="btn btn-outline-danger btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" 
                                            onclick="confirmAction(event, 'Are you sure you want to delete this category?', this.href);" 
                                            title="Delete">
                                             <i class="fa-solid fa-trash-can"></i>

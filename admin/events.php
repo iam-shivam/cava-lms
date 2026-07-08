@@ -181,11 +181,11 @@ $csrfToken = generate_csrf_token();
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end">
-                                    <a href="events.php?action=edit&id=<?php echo $ev['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+                                    <a href="events.php?action=edit&id=<?php echo $ev['id']; ?>" class="btn btn-outline-primary btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <a href="events.php?action=delete&id=<?php echo $ev['id']; ?>" 
-                                       class="btn btn-outline-danger btn-sm" 
+                                       class="btn btn-outline-danger btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" 
                                        onclick="confirmAction(event, 'Delete this event?', this.href);" 
                                        title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>

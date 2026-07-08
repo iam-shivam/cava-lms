@@ -102,7 +102,7 @@ $csrfToken = generate_csrf_token();
                         <th>Registrations</th>
                         <th>Status</th>
                         <th>Export</th>
-<th class="text-end">Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,11 +136,12 @@ $csrfToken = generate_csrf_token();
     </a>
 </td>
 <td class="text-end">
-    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;"  title="Edit">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
     <a href="webinars.php?action=delete&id=<?php echo $w['id']; ?>" 
-        class="btn btn-outline-danger btn-sm" 
+        class="btn btn-outline-danger btn-sm"
+        style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;"
         onclick="confirmAction(event, 'Are you sure you want to delete this webinar?', this.href);"
         title="Delete">
         <i class="fa-solid fa-trash-can"></i>
