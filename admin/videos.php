@@ -24,6 +24,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    // Handle delete actions
+    if ($action === 'delete_section' && !empty($id)) {
+        try {
+            DB::query("DELETE FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);
+            set_flash_message('success', 'Section and all its videos deleted successfully!');
+        } catch (Exception $e) {
+            set_flash_message('danger', 'Database Error: ' . $e->getMessage());
+        }
+        header("Location: videos.php?course_id=$courseId");
+        exit;
+    }
+    
+    if ($action === 'delete_video' && !empty($id)) {
+        try {
+            $vid = DB::fetch("SELECT video_url, document_url FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
+            if ($vid) {
+                if ($vid['video_url'] && file_exists(BASE_PATH . '/' . $vid['video_url'])) {
+                    unlink(BASE_PATH . '/' . $vid['video_url']);
+                }
+                
+                // Delete multiple documents
+                $docs = DB::fetchAll("SELECT file_path FROM video_documents WHERE video_id = ?", [$id]);
+                foreach ($docs as $d) {
+                    if (!empty($d['file_path']) && file_exists(BASE_PATH . '/' . $d['file_path'])) {
+                        unlink(BASE_PATH . '/' . $d['file_path']);
+                    }
+                }
+                
+                DB::query("DELETE FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
+                set_flash_message('success', 'Video lesson and associated resources deleted successfully!');
+            }
+        } catch (Exception $e) {
+            set_flash_message('danger', 'Database Error: ' . $e->getMessage());
+        }
+        header("Location: videos.php?course_id=$courseId");
+        exit;
+    }
+    
     $formType = $_POST['form_type'] ?? '';
     
     try {
@@ -109,53 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Delete Handlers
-if ($action === 'delete_section' && !empty($id)) {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
-        set_flash_message('danger', 'Invalid or unauthorized request.');
-        header("Location: videos.php?course_id=$courseId");
-        exit;
-    }
-    try {
-        DB::query("DELETE FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);
-        set_flash_message('success', 'Section and all its videos deleted successfully!');
-    } catch (Exception $e) {
-        set_flash_message('danger', 'Database Error: ' . $e->getMessage());
-    }
-    header("Location: videos.php?course_id=$courseId");
-    exit;
-}
-
-if ($action === 'delete_video' && !empty($id)) {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
-        set_flash_message('danger', 'Invalid or unauthorized request.');
-        header("Location: videos.php?course_id=$courseId");
-        exit;
-    }
-    try {
-        $vid = DB::fetch("SELECT video_url, document_url FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
-        if ($vid) {
-            if ($vid['video_url'] && file_exists(BASE_PATH . '/' . $vid['video_url'])) {
-                unlink(BASE_PATH . '/' . $vid['video_url']);
-            }
-            
-            // Delete multiple documents
-            $docs = DB::fetchAll("SELECT file_path FROM video_documents WHERE video_id = ?", [$id]);
-            foreach ($docs as $d) {
-                if (!empty($d['file_path']) && file_exists(BASE_PATH . '/' . $d['file_path'])) {
-                    unlink(BASE_PATH . '/' . $d['file_path']);
-                }
-            }
-            
-            DB::query("DELETE FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
-            set_flash_message('success', 'Video lesson and associated resources deleted successfully!');
-        }
-    } catch (Exception $e) {
-        set_flash_message('danger', 'Database Error: ' . $e->getMessage());
-    }
-    header("Location: videos.php?course_id=$courseId");
-    exit;
-}
 
 // Fetch Sections
 $sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, id ASC", [$courseId]);
@@ -250,7 +241,13 @@ foreach ($sections as $sec) {
                                                         <i class="fa-regular fa-circle-play text-primary"></i>
                                                         <div>
                                                             <span class="fw-medium text-dark d-block"><?php echo htmlspecialchars($video['title']); ?></span>
-                                                            <span class="text-muted fs-8 d-block text-truncate" style="max-width: 300px;"><?php echo htmlspecialchars($video['video_url']); ?></span>
+                                                            <span class="text-muted fs-8 d-block text-truncate" style="max-width: 300px;">
+                                                                <?php if (($video['video_provider'] ?? 'local') === 'bunny'): ?>
+                                                                    <strong>[Bunny Stream]</strong> <?php echo htmlspecialchars($video['bunny_video_id'] ?? ''); ?>
+                                                                <?php else: ?>
+                                                                    <strong>[Local File]</strong> <?php echo htmlspecialchars($video['video_url'] ?? ''); ?>
+                                                                <?php endif; ?>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div class="d-flex align-items-center gap-2">
@@ -305,7 +302,7 @@ foreach ($sections as $sec) {
         <!-- Add Video Form -->
         <div class="card shadow-sm border-0 rounded-4 bg-white p-4">
             <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-video-camera me-2"></i>Add Video Lesson</h5>
-            <form action="videos.php?course_id=<?php echo $courseId; ?>" method="POST" enctype="multipart/form-data">
+            <form id="add_video_form" action="videos.php?course_id=<?php echo $courseId; ?>" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
                 <input type="hidden" name="form_type" value="add_video">
                 
@@ -345,7 +342,10 @@ foreach ($sections as $sec) {
                     <input type="number" class="form-control" id="sort_order_vid" name="sort_order" value="1">
                 </div>
                 
-                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Add Video Lesson</button>
+                <div class="d-flex flex-column gap-2">
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Add Video Lesson</button>
+                    <button type="button" class="btn btn-secondary w-100 rounded-pill py-2" id="upload_bunny_btn"><i class="fa-solid fa-cloud-arrow-up me-1"></i>Upload to Bunny Stream</button>
+                </div>
             </form>
         </div>
     </div>
@@ -360,5 +360,146 @@ foreach ($sections as $sec) {
 </form>
 
 
+
+<!-- Bunny Upload Progress Modal -->
+<div class="modal fade" id="bunnyUploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="bunnyUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg bg-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="bunnyUploadModalLabel">Bunny Stream Integration</h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div id="bunny-spinner" class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h6 class="fw-bold mb-2 text-dark" id="bunny-status-title">Preparing upload...</h6>
+                <p class="text-muted fs-7 mb-3" id="bunny-status-desc">Please do not close this window or navigate away.</p>
+                <div class="progress rounded-pill mb-2" style="height: 10px;">
+                    <div id="bunny-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-primary fw-semibold" id="bunny-percentage">0%</small>
+                <div id="bunny-error-block" class="alert alert-danger py-2 fs-8 mt-3 d-none"></div>
+            </div>
+            <div class="modal-footer border-0 pt-0 d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary btn-sm px-4 rounded-pill d-none" id="bunny-close-btn" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bunnyBtn = document.getElementById('upload_bunny_btn');
+    if (bunnyBtn) {
+        bunnyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const form = document.getElementById('add_video_form');
+            const sectionSelect = form.querySelector('#section_id');
+            const titleInput = form.querySelector('#video_title');
+            const videoFileInput = form.querySelector('#video_file');
+            
+            if (!sectionSelect.value) {
+                alert('Please select a section.');
+                sectionSelect.focus();
+                return;
+            }
+            if (!titleInput.value.trim()) {
+                alert('Please enter a lesson title.');
+                titleInput.focus();
+                return;
+            }
+            if (videoFileInput.files.length === 0) {
+                alert('Please select a video file to upload to Bunny Stream.');
+                videoFileInput.focus();
+                return;
+            }
+            
+            const modalEl = document.getElementById('bunnyUploadModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+            
+            const statusTitle = document.getElementById('bunny-status-title');
+            const statusDesc = document.getElementById('bunny-status-desc');
+            const progressBar = document.getElementById('bunny-progress-bar');
+            const percentageEl = document.getElementById('bunny-percentage');
+            const spinner = document.getElementById('bunny-spinner');
+            const closeBtn = document.getElementById('bunny-close-btn');
+            const errorBlock = document.getElementById('bunny-error-block');
+            
+            statusTitle.innerText = "Uploading to server...";
+            statusDesc.innerText = "Your video file is being transferred to the server.";
+            progressBar.style.width = "0%";
+            progressBar.className = "progress-bar progress-bar-striped progress-bar-animated bg-primary";
+            percentageEl.innerText = "0%";
+            errorBlock.classList.add('d-none');
+            closeBtn.classList.add('d-none');
+            spinner.classList.remove('d-none');
+            
+            const formData = new FormData(form);
+            formData.append('course_id', '<?php echo $courseId; ?>');
+            formData.append('is_edit', '0');
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../api/bunny_upload.php', true);
+            
+            xhr.upload.onprogress = function(evt) {
+                if (evt.lengthComputable) {
+                    const percentComplete = Math.round((evt.loaded / evt.total) * 100);
+                    progressBar.style.width = percentComplete + '%';
+                    percentageEl.innerText = percentComplete + '%';
+                    
+                    if (percentComplete === 100) {
+                        statusTitle.innerText = "Uploading to Bunny Stream...";
+                        statusDesc.innerText = "The server is securely transferring the video to Bunny Stream.";
+                        progressBar.className = "progress-bar progress-bar-striped progress-bar-animated bg-success";
+                    }
+                }
+            };
+            
+            xhr.onload = function() {
+                let data;
+                try {
+                    data = JSON.parse(xhr.responseText);
+                } catch(ex) {
+                    data = { success: false, message: "Invalid server response: " + xhr.responseText };
+                }
+                
+                if (xhr.status === 200 && data.success) {
+                    statusTitle.innerText = "Upload Complete!";
+                    statusDesc.innerText = "Your video lesson was successfully uploaded. Redirecting...";
+                    progressBar.style.width = "100%";
+                    percentageEl.innerText = "100%";
+                    spinner.classList.add('d-none');
+                    
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    statusTitle.innerText = "Upload Failed";
+                    statusDesc.innerText = "An error occurred during upload.";
+                    spinner.classList.add('d-none');
+                    progressBar.className = "progress-bar bg-danger";
+                    errorBlock.innerText = data.message || "An unexpected error occurred.";
+                    errorBlock.classList.remove('d-none');
+                    closeBtn.classList.remove('d-none');
+                }
+            };
+            
+            xhr.onerror = function() {
+                statusTitle.innerText = "Upload Failed";
+                statusDesc.innerText = "Network communication error.";
+                spinner.classList.add('d-none');
+                progressBar.className = "progress-bar bg-danger";
+                errorBlock.innerText = "Check your connection or file size limitations.";
+                errorBlock.classList.remove('d-none');
+                closeBtn.classList.remove('d-none');
+            };
+            
+            xhr.send(formData);
+        });
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>
