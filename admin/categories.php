@@ -26,7 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
     
     try {
         if ($_POST['form_action'] === 'add') {
-            // Check if slug exists
+            $nameExists = DB::fetch("SELECT id FROM categories WHERE name = ?", [$name]);
+            if ($nameExists) {
+                set_flash_message('danger', 'A category with this name already exists. Please choose a different name.');
+                header("Location: categories.php");
+                exit;
+            }
+
+            // Check if slug exists (fallback for identical slugs with different non-alphanumeric chars)
             $exists = DB::fetch("SELECT id FROM categories WHERE slug = ?", [$slug]);
             if ($exists) {
                 $slug .= '-' . time();
@@ -42,6 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
             $params = [];
             
             if ($name !== $oldCategory['name']) {
+                $nameExists = DB::fetch("SELECT id FROM categories WHERE name = ? AND id != ?", [$name, $id]);
+                if ($nameExists) {
+                    set_flash_message('danger', 'A category with this name already exists. Please choose a different name.');
+                    header("Location: categories.php?action=edit&id=$id");
+                    exit;
+                }
+                
                 $updates[] = "name = ?";
                 $params[] = $name;
                 
@@ -94,13 +108,10 @@ if ($action === 'delete' && !empty($id)) {
     exit;
 }
 
-// Add or Edit View
-if (in_array($action, ['add', 'edit'])) {
-    $editCategory = null;
-    if ($action === 'edit' && !empty($id)) {
-        // Fetch only the required fields
-        $editCategory = DB::fetch("SELECT id, name FROM categories WHERE id = ?", [$id]);
-    }
+$editCategory = null;
+if ($action === 'edit' && !empty($id)) {
+    // Fetch only the required fields
+    $editCategory = DB::fetch("SELECT id, name FROM categories WHERE id = ?", [$id]);
 }
 
 // Fetch All Categories
