@@ -5,8 +5,8 @@ require_once __DIR__ . '/admin_header.php';
 $courseId = trim($_GET['course_id'] ?? '');
 $id = trim($_GET['id'] ?? '');
 
-$course = DB::fetch("SELECT * FROM courses WHERE id = ?", [$courseId]);
-$section = DB::fetch("SELECT * FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);
+$course = DB::fetch("SELECT id FROM courses WHERE id = ?", [$courseId]);
+$section = DB::fetch("SELECT id, title, sort_order FROM course_sections WHERE id = ? AND course_id = ?", [$id, $courseId]);
 
 if (!$course || !$section) {
     set_flash_message('danger', 'Section or Course not found.');
@@ -30,14 +30,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($title)) {
         set_flash_message('danger', 'Section title cannot be empty.');
     } else {
-        $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ?, sort_order = ? WHERE id = ?");
-        if ($stmt->execute([$title, $order, $id])) {
-            set_flash_message('success', 'Section updated successfully!');
-            header("Location: videos.php?course_id=$courseId");
-            exit;
-        } else {
-            set_flash_message('danger', 'Failed to update section.');
+        $updates = [];
+        $params = [];
+        
+        if ($title !== $section['title']) { $updates[] = "title = ?"; $params[] = $title; }
+        if ($order !== intval($section['sort_order'])) { $updates[] = "sort_order = ?"; $params[] = $order; }
+        
+        if (!empty($updates)) {
+            $params[] = $id;
+            $stmt = DB::getConnection()->prepare("UPDATE course_sections SET " . implode(', ', $updates) . " WHERE id = ?");
+            if (!$stmt->execute($params)) {
+                set_flash_message('danger', 'Failed to update section.');
+                header("Location: section_edit.php?course_id=$courseId&id=$id");
+                exit;
+            }
         }
+        
+        set_flash_message('success', 'Section updated successfully!');
+        header("Location: videos.php?course_id=$courseId");
+        exit;
     }
 }
 ?>

@@ -15,14 +15,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $settingsKeys = ['site_title', 'contact_email', 'contact_phone', 'about_us', 'hero_title', 'hero_subtitle'];
     
     try {
+        $currentSettings = [];
+        $rows = DB::fetchAll("SELECT setting_key, setting_value FROM settings");
+        foreach ($rows as $row) {
+            $currentSettings[$row['setting_key']] = $row['setting_value'];
+        }
+
         $stmt = DB::getConnection()->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
         
+        $changesMade = false;
         foreach ($settingsKeys as $key) {
             $value = trim($_POST[$key] ?? '');
-            $stmt->execute([$key, $value, $value]);
+            if (!isset($currentSettings[$key]) || $currentSettings[$key] !== $value) {
+                $stmt->execute([$key, $value, $value]);
+                $changesMade = true;
+            }
         }
         
-        set_flash_message('success', 'Portal configurations updated successfully!');
+        if ($changesMade) {
+            set_flash_message('success', 'Portal configurations updated successfully!');
+        } else {
+            set_flash_message('success', 'No changes were made.');
+        }
     } catch (Exception $e) {
         set_flash_message('danger', 'Database Error: ' . $e->getMessage());
     }
@@ -34,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch current configurations
 $currentSettings = [];
 try {
-    $rows = DB::fetchAll("SELECT * FROM settings");
+    $rows = DB::fetchAll("SELECT setting_key, setting_value FROM settings");
     foreach ($rows as $row) {
         $currentSettings[$row['setting_key']] = $row['setting_value'];
     }

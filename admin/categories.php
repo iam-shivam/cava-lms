@@ -36,8 +36,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action'])) {
             $stmt->execute([generate_uuid(), $name, $slug]);
             set_flash_message('success', 'Category added successfully!');
         } elseif ($_POST['form_action'] === 'edit' && !empty($id)) {
-            $stmt = DB::getConnection()->prepare("UPDATE categories SET name = ?, slug = ? WHERE id = ?");
-            $stmt->execute([$name, $slug, $id]);
+            $oldCategory = DB::fetch("SELECT name, slug FROM categories WHERE id = ?", [$id]);
+            
+            $updates = [];
+            $params = [];
+            
+            if ($name !== $oldCategory['name']) {
+                $updates[] = "name = ?";
+                $params[] = $name;
+                
+                $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $name));
+                $exists = DB::fetch("SELECT id FROM categories WHERE slug = ? AND id != ?", [$slug, $id]);
+                if ($exists) {
+                    $slug .= '-' . time();
+                }
+                $updates[] = "slug = ?";
+                $params[] = $slug;
+            }
+            
+            if (!empty($updates)) {
+                $params[] = $id;
+                $stmt = DB::getConnection()->prepare("UPDATE categories SET " . implode(', ', $updates) . " WHERE id = ?");
+                $stmt->execute($params);
+            }
+            
             set_flash_message('success', 'Category updated successfully!');
         }
     } catch (Exception $e) {
@@ -72,10 +94,13 @@ if ($action === 'delete' && !empty($id)) {
     exit;
 }
 
-// Fetch Category Details if Editing
-$editCategory = null;
-if ($action === 'edit' && !empty($id)) {
-    $editCategory = DB::fetch("SELECT * FROM categories WHERE id = ?", [$id]);
+// Add or Edit View
+if (in_array($action, ['add', 'edit'])) {
+    $editCategory = null;
+    if ($action === 'edit' && !empty($id)) {
+        // Fetch only the required fields
+        $editCategory = DB::fetch("SELECT id, name FROM categories WHERE id = ?", [$id]);
+    }
 }
 
 // Fetch All Categories

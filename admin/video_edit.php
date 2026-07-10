@@ -5,8 +5,8 @@ require_once __DIR__ . '/admin_header.php';
 $courseId = trim($_GET['course_id'] ?? '');
 $id = trim($_GET['id'] ?? '');
 
-$course = DB::fetch("SELECT * FROM courses WHERE id = ?", [$courseId]);
-$video = DB::fetch("SELECT * FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
+$course = DB::fetch("SELECT id FROM courses WHERE id = ?", [$courseId]);
+$video = DB::fetch("SELECT id, section_id, title, description, video_url, document_url, sort_order FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
 
 if (!$course || !$video) {
     set_flash_message('danger', 'Video or Course not found.');
@@ -93,14 +93,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        $stmt = DB::getConnection()->prepare("UPDATE course_videos SET section_id = ?, title = ?, description = ?, video_url = ?, document_url = ?, sort_order = ? WHERE id = ?");
-        if ($stmt->execute([$sectionId, $title, $description, $videoUrl, $documentUrl, $order, $id])) {
-            set_flash_message('success', 'Video lesson updated successfully!');
-            header("Location: videos.php?course_id=$courseId");
-            exit;
-        } else {
-            set_flash_message('danger', 'Failed to update video.');
+        $updates = [];
+        $params = [];
+        
+        if ($sectionId !== $video['section_id']) { $updates[] = "section_id = ?"; $params[] = $sectionId; }
+        if ($title !== $video['title']) { $updates[] = "title = ?"; $params[] = $title; }
+        if ($description !== $video['description']) { $updates[] = "description = ?"; $params[] = $description; }
+        if ($videoUrl !== $video['video_url']) { $updates[] = "video_url = ?"; $params[] = $videoUrl; }
+        if ($documentUrl !== $video['document_url']) { $updates[] = "document_url = ?"; $params[] = $documentUrl; }
+        if ($order !== intval($video['sort_order'])) { $updates[] = "sort_order = ?"; $params[] = $order; }
+        
+        if (!empty($updates)) {
+            $params[] = $id;
+            $stmt = DB::getConnection()->prepare("UPDATE course_videos SET " . implode(', ', $updates) . " WHERE id = ?");
+            if (!$stmt->execute($params)) {
+                set_flash_message('danger', 'Failed to update video.');
+                header("Location: video_edit.php?course_id=$courseId&id=$id");
+                exit;
+            }
         }
+        
+        set_flash_message('success', 'Video lesson updated successfully!');
+        header("Location: videos.php?course_id=$courseId");
+        exit;
     }
 }
 

@@ -299,4 +299,81 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
+
+    // 8. Global Form Submit Loader
+    // Automatically attach a spinner and disable submit buttons to prevent double-submissions
+    document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            // Use setTimeout to allow other submit listeners (like AJAX search) to run first and call preventDefault()
+            setTimeout(function() {
+                if (e.defaultPrevented) return;
+                
+                // If the form is already submitting, prevent duplicate submission
+                if (form.classList.contains('is-submitting')) {
+                    return;
+                }
+                
+                // Mark the form as submitting
+                form.classList.add('is-submitting');
+                
+                // Prevent all other user inputs on the form
+                form.style.pointerEvents = 'none';
+                form.style.opacity = '0.8';
+
+                // Create a full page visual overlay to lock the screen
+                var overlay = document.createElement('div');
+                overlay.id = 'submit-block-overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.zIndex = '9999999';
+                overlay.style.cursor = 'wait';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+                overlay.style.backdropFilter = 'blur(3px)';
+                overlay.style.display = 'flex';
+                overlay.style.flexDirection = 'column';
+                overlay.style.justifyContent = 'center';
+                overlay.style.alignItems = 'center';
+                
+                // Add a large spinner in the center of the screen
+                overlay.innerHTML = '<i class="comet-spinner" style="font-size: 3rem; color: #6f42c1;"></i><h5 class="mt-3 text-dark fw-bold">Please wait...</h5>';
+                document.body.appendChild(overlay);
+                
+                // Block keyboard interactions (Tab, Enter, etc.) while processing
+                document.addEventListener('keydown', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, { capture: true });
+                
+                // Find the submit button for this form
+                var submitBtn = form.querySelector('button[type="submit"], input[type="submit"], button:not([type="button"]):not([type="reset"])');
+                
+                if (submitBtn && !submitBtn.hasAttribute('data-no-loader')) {
+                    if (submitBtn.tagName.toLowerCase() === 'input') {
+                        submitBtn.value = 'Processing...';
+                    } else {
+                        // If it doesn't already have the comet-spinner
+                        if (submitBtn.innerHTML.indexOf('comet-spinner') === -1 && submitBtn.innerHTML.indexOf('fa-spinner') === -1) {
+                            var originalText = submitBtn.innerHTML;
+                            submitBtn.setAttribute('data-original-text', originalText);
+                            
+                            var loadText = "Processing...";
+                            var lowerText = originalText.toLowerCase();
+                            if (lowerText.includes("upload") || lowerText.includes("add video") || lowerText.includes("import")) {
+                                loadText = "Uploading...";
+                            } else if (lowerText.includes("save") || lowerText.includes("update") || lowerText.includes("create") || lowerText.includes("add")) {
+                                loadText = "Saving...";
+                            }
+                            
+                            // Using the user-requested comet-spinner class
+                            submitBtn.innerHTML = '<i class="comet-spinner me-2"></i>' + loadText;
+                        }
+                    }
+                    submitBtn.classList.add('disabled');
+                }
+            }, 10);
+        });
+    });
 });

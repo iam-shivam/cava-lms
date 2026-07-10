@@ -86,20 +86,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
       $stmt->execute([generate_uuid(), $categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status]);
       set_flash_message('success', 'Course created successfully!');
     } elseif ($action === 'edit' && !empty($id)) {
+      // Fetch only required fields for comparison
+      $oldCourse = DB::fetch("SELECT title, category_id, description, price, course_duration, allow_partial_payment, min_installment, status, thumbnail FROM courses WHERE id = ?", [$id]);
+
+      $updates = [];
+      $params = [];
+      
+      // Compare and build update query only for modified fields
+      if ($title !== $oldCourse['title']) {
+          $updates[] = "title = ?";
+          $params[] = $title;
+          
+          // Only generate a new slug if the title actually changed
+          $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $title));
+          $exists = DB::fetch("SELECT id FROM courses WHERE slug = ? AND id != ?", [$slug, $id]);
+          if ($exists) {
+              $slug .= '-' . time();
+          }
+          $updates[] = "slug = ?";
+          $params[] = $slug;
+      }
+      if ($categoryId !== $oldCourse['category_id']) { $updates[] = "category_id = ?"; $params[] = $categoryId; }
+      if ($description !== $oldCourse['description']) { $updates[] = "description = ?"; $params[] = $description; }
+      if (floatval($price) !== floatval($oldCourse['price'])) { $updates[] = "price = ?"; $params[] = $price; }
+      if (intval($courseDuration) !== intval($oldCourse['course_duration'])) { $updates[] = "course_duration = ?"; $params[] = $courseDuration; }
+      if (intval($allowPartialPayment) !== intval($oldCourse['allow_partial_payment'])) { $updates[] = "allow_partial_payment = ?"; $params[] = $allowPartialPayment; }
+      if (floatval($minInstallment) !== floatval($oldCourse['min_installment'])) { $updates[] = "min_installment = ?"; $params[] = $minInstallment; }
+      if ($status !== $oldCourse['status']) { $updates[] = "status = ?"; $params[] = $status; }
+
       // If new thumbnail uploaded, remove old one if exists
       if ($thumbnailName) {
-        $oldThumbnail = DB::fetch("SELECT thumbnail FROM courses WHERE id = ?", [$id])['thumbnail'];
-        if ($oldThumbnail && file_exists(BASE_PATH . '/uploads/' . $oldThumbnail)) {
-          unlink(BASE_PATH . '/uploads/' . $oldThumbnail);
+        if ($oldCourse['thumbnail'] && file_exists(BASE_PATH . '/uploads/' . $oldCourse['thumbnail'])) {
+          unlink(BASE_PATH . '/uploads/' . $oldCourse['thumbnail']);
         }
-        
-        $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, thumbnail = ?, description = ?, price = ?, course_duration = ?, allow_partial_payment = ?, min_installment = ?, status = ? WHERE id = ?";
+        $updates[] = "thumbnail = ?";
+        $params[] = $thumbnailName;
+      }
+      
+      if (!empty($updates)) {
+        $params[] = $id;
+        $sql = "UPDATE courses SET " . implode(', ', $updates) . " WHERE id = ?";
         $stmt = DB::getConnection()->prepare($sql);
-        $stmt->execute([$categoryId, $title, $slug, $thumbnailName, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status, $id]);
-      } else {
-        $sql = "UPDATE courses SET category_id = ?, title = ?, slug = ?, description = ?, price = ?, course_duration = ?, allow_partial_payment = ?, min_installment = ?, status = ? WHERE id = ?";
-        $stmt = DB::getConnection()->prepare($sql);
-        $stmt->execute([$categoryId, $title, $slug, $description, $price, $courseDuration, $allowPartialPayment, $minInstallment, $status, $id]);
+        $stmt->execute($params);
       }
       set_flash_message('success', 'Course updated successfully!');
     }
@@ -228,7 +256,8 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
   $editCourse = null;
   if ($action === 'edit' && !empty($id)) {
-    $editCourse = DB::fetch("SELECT * FROM courses WHERE id = ?", [$id]);
+    // Fetch only the required fields needed by the frontend form
+    $editCourse = DB::fetch("SELECT id, title, description, category_id, price, course_duration, allow_partial_payment, min_installment, status, thumbnail FROM courses WHERE id = ?", [$id]);
   }
 ?>
   <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
