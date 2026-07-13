@@ -38,7 +38,7 @@ $queries = Query::getAll();
                     <th style="max-width: 300px;">Query Message</th>
                     <th>Status</th>
                     <th>Submitted</th>
-                    <th class="text-end">Actions</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>

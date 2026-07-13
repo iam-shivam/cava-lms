@@ -3,7 +3,7 @@
 require_once __DIR__ . '/admin_header.php';
 
 $courseId = trim($_GET['course_id'] ?? '');
-$course = DB::fetch("SELECT * FROM courses WHERE id = ?", [$courseId]);
+$course = DB::fetch("SELECT id, title FROM courses WHERE id = ?", [$courseId]);
 
 if (!$course) {
     set_flash_message('danger', 'Course not found.');
@@ -41,9 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sectionId = trim($_POST['section_id'] ?? '');
             $title = trim($_POST['section_title'] ?? '');
             if (!empty($sectionId) && !empty($title)) {
-                $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ? AND course_id = ?");
-                $stmt->execute([$title, $sectionId, $courseId]);
-                set_flash_message('success', 'Section name updated!');
+                $oldSection = DB::fetch("SELECT title FROM course_sections WHERE id = ? AND course_id = ?", [$sectionId, $courseId]);
+                if ($oldSection && $oldSection['title'] !== $title) {
+                    $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ? AND course_id = ?");
+                    $stmt->execute([$title, $sectionId, $courseId]);
+                    set_flash_message('success', 'Section name updated!');
+                } else {
+                    set_flash_message('success', 'No changes made to section name.');
+                }
             }
         } elseif ($formType === 'add_video') {
             $sectionId = trim($_POST['section_id'] ?? '');
