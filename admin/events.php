@@ -75,20 +75,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             $stmt->execute([generate_uuid(), $title, $description, $date, $imageName]);
             set_flash_message('success', 'Event created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
+            $oldEvent = DB::fetch("SELECT title, description, date, event_image FROM events WHERE id = ?", [$id]);
+            
+            $updates = [];
+            $params = [];
+            
+            if ($title !== $oldEvent['title']) { $updates[] = "title = ?"; $params[] = $title; }
+            if ($description !== $oldEvent['description']) { $updates[] = "description = ?"; $params[] = $description; }
+            if ($date !== $oldEvent['date']) { $updates[] = "date = ?"; $params[] = $date; }
+            
             if ($imageName) {
-                // Delete old image
-                $oldImage = DB::fetch("SELECT event_image FROM events WHERE id = ?", [$id])['event_image'];
-                if ($oldImage && file_exists(BASE_PATH . '/uploads/' . $oldImage)) {
-                    unlink(BASE_PATH . '/uploads/' . $oldImage);
+                if ($oldEvent['event_image'] && file_exists(BASE_PATH . '/uploads/' . $oldEvent['event_image'])) {
+                    unlink(BASE_PATH . '/uploads/' . $oldEvent['event_image']);
                 }
-                
-                $sql = "UPDATE events SET title = ?, description = ?, date = ?, event_image = ? WHERE id = ?";
+                $updates[] = "event_image = ?";
+                $params[] = $imageName;
+            }
+            
+            if (!empty($updates)) {
+                $params[] = $id;
+                $sql = "UPDATE events SET " . implode(', ', $updates) . " WHERE id = ?";
                 $stmt = DB::getConnection()->prepare($sql);
-                $stmt->execute([$title, $description, $date, $imageName, $id]);
-            } else {
-                $sql = "UPDATE events SET title = ?, description = ?, date = ? WHERE id = ?";
-                $stmt = DB::getConnection()->prepare($sql);
-                $stmt->execute([$title, $description, $date, $id]);
+                $stmt->execute($params);
             }
             set_flash_message('success', 'Event updated successfully!');
         }
@@ -181,11 +189,11 @@ $csrfToken = generate_csrf_token();
                                     <?php endif; ?>
                                 </td>
                                 <td class="text-end">
-                                    <a href="events.php?action=edit&id=<?php echo $ev['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+                                    <a href="events.php?action=edit&id=<?php echo $ev['id']; ?>" class="btn btn-outline-primary btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <a href="events.php?action=delete&id=<?php echo $ev['id']; ?>" 
-                                       class="btn btn-outline-danger btn-sm" 
+                                       class="btn btn-outline-danger btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;" 
                                        onclick="confirmAction(event, 'Delete this event?', this.href);" 
                                        title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>
@@ -203,7 +211,7 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
     $editEvent = null;
     if ($action === 'edit' && !empty($id)) {
-        $editEvent = DB::fetch("SELECT * FROM events WHERE id = ?", [$id]);
+        $editEvent = DB::fetch("SELECT id, title, description, date, event_image FROM events WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">

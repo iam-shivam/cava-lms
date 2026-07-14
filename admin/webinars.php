@@ -42,9 +42,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             $stmt->execute([generate_uuid(), $title, $description, $date, $time, $price, $status]);
             set_flash_message('success', 'Webinar created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
-            $sql = "UPDATE webinars SET title = ?, description = ?, date = ?, time = ?, price = ?, status = ? WHERE id = ?";
-            $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([$title, $description, $date, $time, $price, $status, $id]);
+            $oldWebinar = DB::fetch("SELECT title, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+            
+            $updates = [];
+            $params = [];
+            
+            if ($title !== $oldWebinar['title']) { $updates[] = "title = ?"; $params[] = $title; }
+            if ($description !== $oldWebinar['description']) { $updates[] = "description = ?"; $params[] = $description; }
+            if ($date !== $oldWebinar['date']) { $updates[] = "date = ?"; $params[] = $date; }
+            if ($time !== $oldWebinar['time']) { $updates[] = "time = ?"; $params[] = $time; }
+            if (floatval($price) !== floatval($oldWebinar['price'])) { $updates[] = "price = ?"; $params[] = $price; }
+            if ($status !== $oldWebinar['status']) { $updates[] = "status = ?"; $params[] = $status; }
+            
+            if (!empty($updates)) {
+                $params[] = $id;
+                $sql = "UPDATE webinars SET " . implode(', ', $updates) . " WHERE id = ?";
+                $stmt = DB::getConnection()->prepare($sql);
+                $stmt->execute($params);
+            }
             set_flash_message('success', 'Webinar details updated successfully!');
         }
     } catch (Exception $e) {
@@ -102,7 +117,7 @@ $csrfToken = generate_csrf_token();
                         <th>Registrations</th>
                         <th>Status</th>
                         <th>Export</th>
-<th class="text-end">Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,11 +151,12 @@ $csrfToken = generate_csrf_token();
     </a>
 </td>
 <td class="text-end">
-    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm me-1" title="Edit">
+    <a href="webinars.php?action=edit&id=<?php echo $w['id']; ?>" class="btn btn-outline-primary btn-sm" style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;"  title="Edit">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
     <a href="webinars.php?action=delete&id=<?php echo $w['id']; ?>" 
-        class="btn btn-outline-danger btn-sm" 
+        class="btn btn-outline-danger btn-sm"
+        style="width: 32px; height: 32px; padding: 0; display: inline-flex; justify-content: center; align-items: center;"
         onclick="confirmAction(event, 'Are you sure you want to delete this webinar?', this.href);"
         title="Delete">
         <i class="fa-solid fa-trash-can"></i>
@@ -158,7 +174,7 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
     $editWebinar = null;
     if ($action === 'edit' && !empty($id)) {
-        $editWebinar = DB::fetch("SELECT * FROM webinars WHERE id = ?", [$id]);
+        $editWebinar = DB::fetch("SELECT id, title, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">

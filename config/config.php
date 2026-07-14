@@ -142,8 +142,10 @@ require_once __DIR__ . '/db.php';
 // Inactivity Session Timeout & Single-Session Enforcement
 $isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
 if ($isLoggedIn) {
-    // 1. Session Inactivity Timeout (15 minutes = 900 seconds)
-    $timeout_duration = 900; 
+    // 1. Session Inactivity Timeout (User: 15 minutes = 900s, Admin: 30 minutes = 1800s)
+    $isAdminLoggedInOnly = isset($_SESSION['admin_id']) && !isset($_SESSION['user_id']);
+    $timeout_duration = $isAdminLoggedInOnly ? 1800 : 900; 
+
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
         $isAdminRoute = strpos($_SERVER['REQUEST_URI'], '/admin/') !== false;
         
@@ -162,16 +164,8 @@ if ($isLoggedIn) {
         }
         
         $_SESSION = [];
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
-            );
-        }
-        session_destroy();
-        session_start();
-        set_flash_message('warning', 'Your session has expired due to inactivity. Please log in again.');
+        session_regenerate_id(true);
+        set_flash_message('warning', 'You were inactive for too long, please log in again.');
         
         if ($isAdminRoute) {
             header("Location: " . SITE_URL . "/admin/login.php");
@@ -198,7 +192,7 @@ if ($isLoggedIn) {
                     DB::query("UPDATE users SET session_id = ? WHERE id = ?", [$currentSessionId, $userId]);
                 } elseif ($dbSession['session_id'] !== $currentSessionId) {
                     $loggedOut = true;
-                    $logoutMessage = 'You have been logged out because your account was logged in from another device/browser.';
+                    $logoutMessage = 'Another login detected. You have been logged out from this device.';
                 }
             }
         }
@@ -211,7 +205,7 @@ if ($isLoggedIn) {
                     DB::query("UPDATE admins SET session_id = ? WHERE id = ?", [$currentSessionId, $adminId]);
                 } elseif ($dbSession['session_id'] !== $currentSessionId) {
                     $loggedOut = true;
-                    $logoutMessage = 'You have been logged out because your admin account was logged in from another device/browser.';
+                    $logoutMessage = 'Another login detected. You have been logged out from this device.';
                 }
             }
         }
@@ -223,15 +217,7 @@ if ($isLoggedIn) {
                 } catch (Exception $ex) {}
             }
             $_SESSION = [];
-            if (ini_get("session.use_cookies")) {
-                $params = session_get_cookie_params();
-                setcookie(session_name(), '', time() - 42000,
-                    $params["path"], $params["domain"],
-                    $params["secure"], $params["httponly"]
-                );
-            }
-            session_destroy();
-            session_start();
+            session_regenerate_id(true);
             set_flash_message('danger', $logoutMessage);
             
             if ($isAdminRoute) {

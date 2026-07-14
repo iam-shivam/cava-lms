@@ -214,15 +214,6 @@ CREATE TABLE IF NOT EXISTS `user_video_progress` (
   FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `video_otp_sessions` (
-  `id` CHAR(36) PRIMARY KEY,
-  `user_id` CHAR(36) NOT NULL,
-  `video_id` CHAR(36) NOT NULL,
-  `expires_at` DATETIME NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`video_id`) REFERENCES `course_videos` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `video_documents` (
     `id` CHAR(36) PRIMARY KEY,
