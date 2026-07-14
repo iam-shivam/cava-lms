@@ -362,8 +362,7 @@ class AuthController {
     // Helpers
     private static function logRegistrationEmail($email, $name) {
         require_once dirname(__DIR__) . '/helpers/EmailHelper.php';
-        $subject = "Welcome to CAVA LMS!";
-        $body = "<h3>Hi " . htmlspecialchars($name) . ",</h3><p>Thank you for registering with CAVA LMS Portal. Explore our courses today!</p>";
-        EmailHelper::sendEmail($email, $name, $subject, $body);
+        EmailHelper::sendTemplateEmail($email, $name, 'welcome_email', ['user_name' => $name]);
     }
 }
+

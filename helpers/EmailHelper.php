@@ -52,6 +52,73 @@ class EmailHelper {
         }
     }
     
+    public static function sendTemplateEmail($recipientEmail, $recipientName, $templateKey, $customPlaceholders = []) {
+        try {
+            $db = DB::getConnection();
+            $stmt = $db->prepare("SELECT * FROM email_templates WHERE template_key = ?");
+            $stmt->execute([$templateKey]);
+            $template = $stmt->fetch();
+            
+            // If template doesn't exist, fall back to a generic fallback or return false
+            if (!$template) {
+                // Build a fallback simple email
+                $subject = "Notification: " . ucwords(str_replace('_', ' ', $templateKey));
+                $body = "<h3>Hello " . htmlspecialchars($recipientName) . ",</h3><p>This is a system notification for: " . htmlspecialchars($templateKey) . "</p>";
+                if (!empty($customPlaceholders)) {
+                    $body .= "<ul>";
+                    foreach ($customPlaceholders as $k => $v) {
+                        $body .= "<li><strong>" . htmlspecialchars($k) . ":</strong> " . htmlspecialchars($v) . "</li>";
+                    }
+                    $body .= "</ul>";
+                }
+                return self::sendEmail($recipientEmail, $recipientName, $subject, $body);
+            }
+            
+            // Fetch global settings
+            $settings = [];
+            try {
+                $settingsRows = DB::fetchAll("SELECT setting_key, setting_value FROM settings");
+                foreach ($settingsRows as $row) {
+                    $settings[$row['setting_key']] = $row['setting_value'];
+                }
+            } catch (\Exception $ex) {
+                // Ignore settings errors, use defaults
+            }
+            
+            // Build default global placeholders
+            $globalPlaceholders = [
+                'company_name' => $settings['site_title'] ?? 'CAVA LMS Portal',
+                'support_email' => $settings['contact_email'] ?? 'support@cavalms.com',
+                'phone' => $settings['contact_phone'] ?? '+91 98765 43210',
+                'website' => SITE_URL,
+                'current_year' => date('Y'),
+                'dashboard_url' => SITE_URL . '/login.php',
+                'company_logo' => SITE_URL . '/assets/images/logo.png'
+            ];
+            
+            // Merge custom placeholders over global ones
+            $placeholders = array_merge($globalPlaceholders, $customPlaceholders);
+            
+            // Process subject and body placeholders
+            $subject = $template['subject'];
+            $body = $template['body'];
+            
+            foreach ($placeholders as $key => $value) {
+                $placeholderStr = '{{' . $key . '}}';
+                $subject = str_replace($placeholderStr, $value ?? '', $subject);
+                $body = str_replace($placeholderStr, $value ?? '', $body);
+            }
+            
+            // Send email using primary sendEmail function
+            return self::sendEmail($recipientEmail, $recipientName, $subject, $body);
+            
+        } catch (\Exception $e) {
+            $errorMsg = "Template send error for " . $templateKey . ": " . $e->getMessage();
+            self::logToDatabase($recipientEmail, 'Template Error: ' . $templateKey, 'Error during template compilation', 'Failed', $errorMsg);
+            return false;
+        }
+    }
+
     private static function logToDatabase($recipient, $subject, $body, $status, $errorMessage = null) {
         try {
             $db = DB::getConnection();

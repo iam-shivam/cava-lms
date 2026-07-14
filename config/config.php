@@ -71,6 +71,11 @@ if (file_exists(BASE_PATH . '/vendor/autoload.php')) {
 define('MASTER_OTP', $_ENV['MASTER_OTP'] ?? '');
 // Google Sheets Web App Webhook URL
 define('GOOGLE_SHEETS_WEBHOOK', $_ENV['GOOGLE_SHEETS_WEBHOOK'] ?? '');
+
+// Bunny Stream Credentials
+define('BUNNY_STREAM_LIBRARY_ID', $_ENV['BUNNY_STREAM_LIBRARY_ID'] ?? '');
+define('BUNNY_STREAM_API_KEY', $_ENV['BUNNY_STREAM_API_KEY'] ?? '');
+define('BUNNY_STREAM_CDN_HOSTNAME', $_ENV['BUNNY_STREAM_CDN_HOSTNAME'] ?? '');
 if (file_exists(BASE_PATH . '/vendor/autoload.php')) {
     require_once BASE_PATH . '/vendor/autoload.php';
 }

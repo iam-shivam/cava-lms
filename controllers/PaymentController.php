@@ -180,17 +180,22 @@ class PaymentController {
             
             if ($type === 'course') {
                 $course = Course::getById($itemId);
-                $subject = "Course Purchased: " . $course['title'];
-                $body = "<h3>Hi " . htmlspecialchars($name) . ",</h3><p>Thank you for purchasing <strong>" . htmlspecialchars($course['title']) . "</strong>. Go to your dashboard to start learning immediately!</p>";
+                EmailHelper::sendTemplateEmail($recipient, $name, 'course_purchase', [
+                    'user_name' => $name,
+                    'course_title' => $course['title']
+                ]);
             } else {
                 $webinar = Webinar::getById($itemId);
-                $subject = "Webinar Registration: " . $webinar['title'];
-                $body = "<h3>Hi " . htmlspecialchars($name) . ",</h3><p>You have successfully registered for the webinar: <strong>" . htmlspecialchars($webinar['title']) . "</strong>.</p><p><strong>Date:</strong> " . date('d M, Y', strtotime($webinar['date'])) . "<br><strong>Time:</strong> " . date('h:i A', strtotime($webinar['time'])) . "</p><p>See you there!</p>";
+                EmailHelper::sendTemplateEmail($recipient, $name, 'webinar_registration', [
+                    'user_name' => $name,
+                    'webinar_title' => $webinar['title'],
+                    'webinar_date' => date('d M, Y', strtotime($webinar['date'])),
+                    'webinar_time' => date('h:i A', strtotime($webinar['time']))
+                ]);
             }
-            
-            EmailHelper::sendEmail($recipient, $name, $subject, $body);
         } catch (Exception $e) {
             // Fail silently
         }
     }
+
 }

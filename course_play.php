@@ -4,6 +4,7 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/models/Course.php';
 require_once __DIR__ . '/models/VideoOTP.php';
+require_once __DIR__ . '/services/BunnyStreamService.php';
 
 // 1. Require Login
 if (!isset($_SESSION['user_id'])) {
@@ -135,8 +136,31 @@ require_once __DIR__ . '/views/layout/header.php';
                     $hasAccess = VideoOTP::hasValidSession($userId, $activeVideo['id']);
                     ?>
                     
-                    <?php if ($hasAccess): ?>
-                        <?php if (!empty($activeVideo['video_url'])): ?>
+                    <?php if ($enrollmentStatus === 'Pending' && $activeVideoIndex >= 2): ?>
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white rounded-4" style="min-height: 450px;">
+                            <div class="text-center p-4">
+                                <i class="fa-solid fa-lock fs-1 text-warning mb-3"></i>
+                                <h4>Restricted Access</h4>
+                                <p class="text-light fs-7 mb-4">You have reached the end of your preview. Please pay the remaining balance to unlock the rest of the course videos.</p>
+                                <a href="course.php?slug=<?php echo urlencode($slug); ?>" class="btn btn-warning fw-bold px-4 rounded-pill">Pay Remaining Balance</a>
+                            </div>
+                        </div>
+                    <?php elseif ($hasAccess): ?>
+                        <?php if ($activeVideo['video_provider'] === 'bunny' && !empty($activeVideo['bunny_video_id'])): 
+                            $bunnyService = new BunnyStreamService();
+                            $bunnyEmbedUrl = $bunnyService->getPlaybackUrl($activeVideo['bunny_video_id']);
+                        ?>
+                            <div style="position: relative; padding-top: 56.25%; width: 100%; min-height: 450px; background: #000;">
+                                <iframe 
+                                    id="bunnyPlayerIframe"
+                                    src="<?php echo htmlspecialchars($bunnyEmbedUrl); ?>?autoplay=false" 
+                                    loading="lazy" 
+                                    style="border: none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;" 
+                                    allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" 
+                                    allowfullscreen="true">
+                                </iframe>
+                            </div>
+                        <?php elseif (!empty($activeVideo['video_url'])): ?>
                             <video controls controlsList="nodownload" style="width: 100%; height: 100%; min-height: 450px; background: #000;">
                                 <source src="video_stream.php?id=<?php echo $activeVideo['id']; ?>" type="video/mp4">
                                 Your browser does not support the video tag.
@@ -345,37 +369,60 @@ function toggleProgress(videoId, courseId, action) {
 }
 
 // Auto-track video completion on ended event
+function handleVideoEnded() {
+    console.log('Video ended. Automatically marking as completed.');
+    const videoId = "<?php echo $activeVideo['id']; ?>";
+    const courseId = "<?php echo $courseId; ?>";
+    
+    // Only auto-complete if not already completed
+    const isAlreadyCompleted = <?php echo in_array($activeVideo['id'], $completedVideoIds) ? 'true' : 'false'; ?>;
+    if (!isAlreadyCompleted) {
+        const formData = new FormData();
+        formData.append('video_id', videoId);
+        formData.append('course_id', courseId);
+        formData.append('action', 'complete');
+
+        fetch('api/track_progress.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Auto-track error:', error);
+        });
+    }
+}
+
+</script>
+<script src="https://assets.mediadelivery.net/playerjs/player-0.1.0.min.js"></script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
+    // For local HTML5 video
     const video = document.querySelector('video');
     if (video) {
-        video.addEventListener('ended', function() {
-            console.log('Video ended. Automatically marking as completed.');
-            const videoId = "<?php echo $activeVideo['id']; ?>";
-            const courseId = "<?php echo $courseId; ?>";
-            
-            // Only auto-complete if not already completed
-            const isAlreadyCompleted = <?php echo in_array($activeVideo['id'], $completedVideoIds) ? 'true' : 'false'; ?>;
-            if (!isAlreadyCompleted) {
-                const formData = new FormData();
-                formData.append('video_id', videoId);
-                formData.append('course_id', courseId);
-                formData.append('action', 'complete');
-
-                fetch('api/track_progress.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Auto-track error:', error);
-                });
-            }
-        });
+        video.addEventListener('ended', handleVideoEnded);
+    }
+    
+    // For Bunny Stream Player via Player.js API
+    const iframe = document.getElementById('bunnyPlayerIframe');
+    if (iframe) {
+        try {
+            const player = new playerjs.Player(iframe);
+            player.on('ready', function() {
+                console.log('PlayerJS: Bunny Player is ready');
+            });
+            player.on('ended', function() {
+                console.log('PlayerJS: Video ended event received');
+                handleVideoEnded();
+            });
+        } catch(e) {
+            console.error('PlayerJS initialization error:', e);
+        }
     }
 });
 </script>

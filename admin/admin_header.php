@@ -91,6 +91,9 @@ $adminUsername = $_SESSION['admin_username'];
                 <a href="<?php echo SITE_URL; ?>/admin/settings.php" class="admin-nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
                     <i class="fa-solid fa-gears"></i> Settings
                 </a>
+                <a href="<?php echo SITE_URL; ?>/admin/email_templates.php" class="admin-nav-link <?php echo in_array(basename($_SERVER['PHP_SELF']), ['email_templates.php', 'email_template_edit.php']) ? 'active' : ''; ?>">
+                    <i class="fa-solid fa-envelope"></i> Email Templates
+                </a>
                 <hr class="text-secondary mx-3">
                 <a href="<?php echo SITE_URL; ?>/admin/logout.php" class="admin-nav-link text-danger">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
