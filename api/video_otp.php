@@ -86,9 +86,11 @@ if ($action === 'send') {
     // Simulate sending to mobile by sending an email
     try {
         $userName = $_SESSION['user_name'] ?? 'Student';
-        $subject = "Video Access OTP";
-        $body = "<h3>Hi $userName,</h3><p>Your OTP to unlock the video '<strong>" . htmlspecialchars($video['title']) . "</strong>' is: <strong>$otp</strong></p><p>It will expire in 5 minutes.</p>";
-        EmailHelper::sendEmail($userEmail, $userName, $subject, $body);
+        EmailHelper::sendTemplateEmail($userEmail, $userName, 'video_otp', [
+            'user_name' => $userName,
+            'video_title' => $video['title'],
+            'otp' => $otp
+        ]);
     } catch (Exception $e) {
         // Silently continue
     }
