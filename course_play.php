@@ -146,7 +146,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             </div>
                         </div>
                     <?php elseif ($hasAccess): ?>
-                        <?php if ($activeVideo['video_provider'] === 'bunny' && !empty($activeVideo['bunny_video_id'])): 
+                        <?php if (($activeVideo['video_provider'] ?? '') === 'bunny' && !empty($activeVideo['bunny_video_id'])): 
                             $bunnyService = new BunnyStreamService();
                             $bunnyEmbedUrl = $bunnyService->getPlaybackUrl($activeVideo['bunny_video_id']);
                         ?>
