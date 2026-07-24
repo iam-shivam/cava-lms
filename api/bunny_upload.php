@@ -46,6 +46,17 @@ if ($isEdit && empty($videoId)) {
     exit;
 }
 
+// 4.5. Check for duplicate video title
+if ($isEdit) {
+    $existingTitle = DB::fetch("SELECT id FROM course_videos WHERE title = ? AND course_id = ? AND id != ?", [$videoTitle, $courseId, $videoId]);
+} else {
+    $existingTitle = DB::fetch("SELECT id FROM course_videos WHERE title = ? AND course_id = ?", [$videoTitle, $courseId]);
+}
+if ($existingTitle) {
+    echo json_encode(['success' => false, 'message' => 'A video lesson with this title already exists in the course.']);
+    exit;
+}
+
 // 5. File size validation (configurable max size, e.g. 500MB)
 $maxSize = 524288000; // 500MB
 if ($_FILES['video_file']['size'] > $maxSize) {

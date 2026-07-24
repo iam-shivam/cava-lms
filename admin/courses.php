@@ -30,6 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     exit;
   }
   
+  if ($status === 'Published' && $price <= 0.00) {
+    set_flash_message('danger', 'A published course must have a price greater than 0.00. You can save it as Draft instead.');
+    header("Location: courses.php?action=" . $action . (!empty($id) ? "&id=$id" : ""));
+    exit;
+  }
+  
   $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $title));
   
   // File Upload Handling
@@ -265,7 +271,7 @@ $csrfToken = generate_csrf_token();
       <?php echo $action === 'edit' ? 'Edit Course Details' : 'Create New Course'; ?>
     </h5>
     
-    <form action="courses.php?action=<?php echo $action; ?>&id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data">
+    <form id="course_form" action="courses.php?action=<?php echo $action; ?>&id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
       
       <div class="row">
@@ -353,6 +359,18 @@ $csrfToken = generate_csrf_token();
         <a href="courses.php" class="btn btn-outline-secondary rounded-pill px-4 me-2">Cancel</a>
         <button type="submit" class="btn btn-primary rounded-pill px-5">Save Course</button>
       </div>
+      
+      <script>
+      document.getElementById('course_form').addEventListener('submit', function(e) {
+          const status = document.getElementById('status').value;
+          const price = parseFloat(document.getElementById('price').value || 0);
+          if (status === 'Published' && price <= 0) {
+              e.preventDefault();
+              alert('A published course must have a price greater than 0.');
+              document.getElementById('price').focus();
+          }
+      });
+      </script>
     </form>
   </div>
 <?php endif; ?>

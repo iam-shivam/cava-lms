@@ -71,9 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($title)) {
                 set_flash_message('danger', 'Section title cannot be empty.');
             } else {
-                $stmt = DB::getConnection()->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
-                $stmt->execute([generate_uuid(), $courseId, $title, $order]);
-                set_flash_message('success', 'Section created successfully!');
+                $existing = DB::fetch("SELECT id FROM course_sections WHERE title = ? AND course_id = ?", [$title, $courseId]);
+                if ($existing) {
+                    set_flash_message('danger', 'A section with this title already exists in the course.');
+                } else {
+                    $stmt = DB::getConnection()->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([generate_uuid(), $courseId, $title, $order]);
+                    set_flash_message('success', 'Section created successfully!');
+                }
             }
         } elseif ($formType === 'edit_section_inline') {
             $sectionId = trim($_POST['section_id'] ?? '');
@@ -81,9 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($sectionId) && !empty($title)) {
                 $oldSection = DB::fetch("SELECT title FROM course_sections WHERE id = ? AND course_id = ?", [$sectionId, $courseId]);
                 if ($oldSection && $oldSection['title'] !== $title) {
-                    $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ? AND course_id = ?");
-                    $stmt->execute([$title, $sectionId, $courseId]);
-                    set_flash_message('success', 'Section name updated!');
+                    $existing = DB::fetch("SELECT id FROM course_sections WHERE title = ? AND course_id = ?", [$title, $courseId]);
+                    if ($existing) {
+                        set_flash_message('danger', 'A section with this title already exists in the course.');
+                    } else {
+                        $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ? AND course_id = ?");
+                        $stmt->execute([$title, $sectionId, $courseId]);
+                        set_flash_message('success', 'Section name updated!');
+                    }
                 } else {
                     set_flash_message('success', 'No changes made to section name.');
                 }
@@ -97,8 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($sectionId) || empty($title) || empty($_FILES['video_file']['name'])) {
                 set_flash_message('danger', 'Please complete all required fields and select a video.');
             } else {
-                $videoUrl = '';
-                $documentUrl = null;
+                $existing = DB::fetch("SELECT id FROM course_videos WHERE title = ? AND course_id = ?", [$title, $courseId]);
+                if ($existing) {
+                    set_flash_message('danger', 'A video lesson with this title already exists in the course.');
+                } else {
+                    $videoUrl = '';
+                    $documentUrl = null;
                 
                 // Ensure upload directories exist
                 $videoDir = BASE_PATH . '/uploads/videos/';
@@ -142,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 set_flash_message('success', 'Video lesson and resources added successfully!');
+                }
             }
         }
     } catch (Exception $e) {
@@ -194,47 +209,44 @@ foreach ($sections as $sec) {
                         $headingId = "headingSec_" . $sec['id'];
                     ?>
                         <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
-                            <h2 class="accordion-header" id="<?php echo $headingId; ?>">
-                                <div class="accordion-button bg-light fw-bold py-3 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="true">
-                                    <div class="w-100 me-3 position-relative">
-                                        <!-- View Mode -->
-                                        <div id="view_sec_<?php echo $sec['id']; ?>" class="d-flex align-items-center justify-content-between w-100">
-                                            <span>
-                                                <i class="fa-solid fa-folder me-2 text-warning"></i>
-                                                <span id="text_sec_<?php echo $sec['id']; ?>"><?php echo htmlspecialchars($sec['title']); ?></span>
-                                                <small class="text-muted ms-2 fs-8">(Sort: <?php echo $sec['sort_order']; ?>)</small>
-                                            </span>
-                                            <div>
-                                                <button type="button" 
-                                                   class="btn btn-sm btn-outline-primary py-1 px-2 border-0" 
-                                                   title="Edit Section"
-                                                   onclick="toggleSectionEdit(<?php echo $sec['id']; ?>, event)">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </button>
-                                                <a href="videos.php?course_id=<?php echo $courseId; ?>&action=delete_section&id=<?php echo $sec['id']; ?>" 
-                                                   class="btn btn-sm btn-outline-danger py-1 px-2 border-0" 
-                                                   onclick="confirmAction(event, 'Are you sure you want to delete this section and all its lesson videos?', this.href);"
-                                                   title="Delete Section">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Edit Mode -->
-                                        <div id="edit_sec_<?php echo $sec['id']; ?>" class="d-none align-items-center gap-2 w-100" onclick="event.stopPropagation();">
-                                            <i class="fa-solid fa-folder me-2 text-warning"></i>
-                                            <input type="text" class="form-control form-control-sm w-auto flex-grow-1" id="input_sec_<?php echo $sec['id']; ?>" value="<?php echo htmlspecialchars($sec['title']); ?>" onkeydown="if(event.key === 'Enter') saveSection(<?php echo $sec['id']; ?>, event);">
-                                            <button type="button" class="btn btn-sm btn-success py-1 px-2" onclick="saveSection(<?php echo $sec['id']; ?>, event)" title="Save">
-                                                <i class="fa-solid fa-check"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-secondary py-1 px-2" onclick="toggleSectionEdit(<?php echo $sec['id']; ?>, event)" title="Cancel">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </button>
-                                        </div>
+                            <h2 class="accordion-header position-relative" id="<?php echo $headingId; ?>">
+                                <!-- View Mode -->
+                                <div id="view_sec_<?php echo $sec['id']; ?>" class="d-flex w-100 position-relative">
+                                    <button class="accordion-button collapsed bg-light fw-bold py-3 w-100" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="false">
+                                        <i class="fa-solid fa-folder me-2 text-warning"></i>
+                                        <span id="text_sec_<?php echo $sec['id']; ?>"><?php echo htmlspecialchars($sec['title']); ?></span>
+                                        <small class="text-muted ms-2 fs-8 pe-5 me-5">(Sort: <?php echo $sec['sort_order']; ?>)</small>
+                                    </button>
+                                    <!-- View Actions Overlay (Outside the button) -->
+                                    <div class="position-absolute top-50 translate-middle-y" style="right: 50px; z-index: 10;">
+                                        <button type="button" 
+                                           class="btn btn-outline-primary btn-sm border-0" 
+                                           title="Edit Section"
+                                           onclick="toggleSectionEdit('<?php echo $sec['id']; ?>', event);">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <a href="videos.php?course_id=<?php echo $courseId; ?>&action=delete_section&id=<?php echo $sec['id']; ?>" 
+                                           class="btn btn-outline-danger btn-sm border-0" 
+                                           onclick="confirmAction(event, 'Are you sure you want to delete this section and all its lesson videos?', this.href);"
+                                           title="Delete Section">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
                                     </div>
                                 </div>
+                                
+                                <!-- Edit Mode -->
+                                <div id="edit_sec_<?php echo $sec['id']; ?>" class="d-none bg-light fw-bold py-3 px-4 align-items-center gap-2 w-100">
+                                    <i class="fa-solid fa-folder me-2 text-warning"></i>
+                                    <input type="text" class="form-control form-control-sm w-auto flex-grow-1" id="input_sec_<?php echo $sec['id']; ?>" value="<?php echo htmlspecialchars($sec['title']); ?>" onkeydown="if(event.key === 'Enter') { event.preventDefault(); saveSection('<?php echo $sec['id']; ?>', event); }">
+                                    <button type="button" class="btn btn-sm btn-success py-1 px-2" onclick="saveSection('<?php echo $sec['id']; ?>', event);" title="Save">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-secondary py-1 px-2" onclick="toggleSectionEdit('<?php echo $sec['id']; ?>', event);" title="Cancel">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
                             </h2>
-                            <div id="<?php echo $collapseId; ?>" class="accordion-collapse collapse show" data-bs-parent="#adminSyllabus">
+                            <div id="<?php echo $collapseId; ?>" class="accordion-collapse collapse">
                                 <div class="accordion-body bg-white p-0">
                                     <div class="list-group list-group-flush">
                                         <?php if (empty($videos)): ?>

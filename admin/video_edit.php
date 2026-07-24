@@ -6,7 +6,7 @@ $courseId = trim($_GET['course_id'] ?? '');
 $id = trim($_GET['id'] ?? '');
 
 $course = DB::fetch("SELECT id FROM courses WHERE id = ?", [$courseId]);
-$video = DB::fetch("SELECT id, section_id, title, description, video_url, document_url, sort_order FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
+$video = DB::fetch("SELECT id, section_id, title, description, video_url, document_url, video_source, video_provider, bunny_video_id, sort_order FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
 
 if (!$course || !$video) {
     set_flash_message('danger', 'Video or Course not found.');
@@ -54,7 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: video_edit.php?course_id=$courseId&id=$id");
         exit;
     } else {
-        $videoUrl = $video['video_url'];
+        $existingTitle = DB::fetch("SELECT id FROM course_videos WHERE title = ? AND course_id = ? AND id != ?", [$title, $courseId, $id]);
+        if ($existingTitle) {
+            set_flash_message('danger', 'A video lesson with this title already exists in the course.');
+        } else {
+            $videoUrl = $video['video_url'];
         $documentUrl = $video['document_url'];
 
         $videoDir = BASE_PATH . '/uploads/videos/';
@@ -70,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $videoName = 'vid_' . time() . '_' . uniqid() . '.' . $videoExt;
             if (move_uploaded_file($_FILES['video_file']['tmp_name'], $videoDir . $videoName)) {
                 // Delete old video if local
-                if ($video['video_source'] === 'local' && !empty($videoUrl) && file_exists(BASE_PATH . '/' . $videoUrl)) {
-                    @unlink(BASE_PATH . '/' . $videoUrl);
+                if ((($video['video_provider'] ?? '') === 'local' || ($video['video_source'] ?? '') === 'local') && !empty($video['video_url']) && file_exists(BASE_PATH . '/' . $video['video_url'])) {
+                    @unlink(BASE_PATH . '/' . $video['video_url']);
                 }
                 $videoUrl = 'uploads/videos/' . $videoName;
             }
@@ -115,6 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($videoUrl !== $video['video_url']) {
             $updates[] = "video_url = ?";
             $params[] = $videoUrl;
+            $updates[] = "video_provider = ?";
+            $params[] = 'local';
+            $updates[] = "bunny_video_id = ?";
+            $params[] = null;
         }
         if ($documentUrl !== $video['document_url']) {
             $updates[] = "document_url = ?";
@@ -136,6 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         set_flash_message('success', 'Video lesson updated successfully!');
+        }
+        
         header("Location: videos.php?course_id=$courseId");
         exit;
     }
@@ -151,8 +161,8 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
     <h1 class="h3 fw-bold text-dark">Edit Video Lesson</h1>
 </div>
 
-<div class="row">
-    <div class="col-lg-6">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
         <div class="card shadow-sm border-0 rounded-4 bg-white p-4">
             <form id="edit_video_form" action="video_edit.php?course_id=<?php echo $courseId; ?>&id=<?php echo $id; ?>"
                 method="POST" enctype="multipart/form-data">
@@ -180,12 +190,12 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
                     <label class="form-label fw-semibold">Current Video</label>
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 bg-light border rounded">
                         <i class="fa-solid fa-video text-muted"></i>
-                        <?php if ($video['video_provider'] === 'bunny'): ?>
+                        <?php if (($video['video_provider'] ?? '') === 'bunny'): ?>
                             <span class="fs-8 text-dark text-truncate" style="max-width: 300px;"><strong>[Bunny
-                                    Stream]</strong> <?php echo htmlspecialchars($video['bunny_video_id']); ?></span>
+                                    Stream]</strong> <?php echo htmlspecialchars($video['bunny_video_id'] ?? ''); ?></span>
                         <?php else: ?>
                             <span class="fs-8 text-dark text-truncate" style="max-width: 300px;"><strong>[Local
-                                    File]</strong> <?php echo htmlspecialchars($video['video_url']); ?></span>
+                                    File]</strong> <?php echo htmlspecialchars($video['video_url'] ?? ''); ?></span>
                         <?php endif; ?>
                     </div>
                     <label for="video_file" class="form-label fw-semibold mt-2">Replace Video File (Optional)</label>
