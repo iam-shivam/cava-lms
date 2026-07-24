@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($title)) {
         set_flash_message('danger', 'Section title cannot be empty.');
+        header("Location: section_edit.php?course_id=$courseId&id=$id");
+        exit;
     } else {
         $updates = [];
         $params = [];
