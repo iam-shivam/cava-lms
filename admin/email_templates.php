@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    $action = $_POST['action'] ?? '';
+    $action = $_POST['action'] ?? $_GET['action'] ?? '';
     if ($action === 'delete') {
         set_flash_message('danger', 'Template deletion is disabled by system policy.');
         header("Location: email_templates.php");
@@ -75,13 +75,20 @@ try {
                                 ?>
                             </td>
                             <td class="text-end">
-                                <div class="d-inline-flex gap-2">
-                                    <a href="email_template_edit.php?key=<?php echo urlencode($t['template_key']); ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                        <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                                <div class="d-inline-flex gap-2 align-items-center justify-content-end">
+                                    <a href="email_template_edit.php?key=<?php echo urlencode($t['template_key']); ?>" 
+                                       class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center" 
+                                       style="width: 38px; height: 38px; padding: 0; border-radius: 10px; font-size: 1.05rem;" 
+                                       title="Edit Template">
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button class="btn btn-sm btn-light rounded-pill px-3 text-muted border" disabled title="Template Deletion is Disabled by System Policy">
-                                        <i class="fa-solid fa-lock me-1"></i> Locked
-                                    </button>
+                                    <a href="email_templates.php?action=delete&key=<?php echo urlencode($t['template_key']); ?>" 
+                                       class="btn btn-outline-danger d-inline-flex align-items-center justify-content-center" 
+                                       style="width: 38px; height: 38px; padding: 0; border-radius: 10px; font-size: 1.05rem;" 
+                                       onclick="confirmAction(event, 'Are you sure you want to delete this email template?', this.href);"
+                                       title="Delete Template">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>

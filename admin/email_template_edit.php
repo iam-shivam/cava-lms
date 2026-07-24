@@ -50,9 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     [$subject, $body, $key]
                 );
                 set_flash_message('success', 'Email template updated successfully!');
-                // Reload template data
-                $template['subject'] = $subject;
-                $template['body'] = $body;
             } catch (Exception $e) {
                 set_flash_message('danger', 'Failed to update template: ' . $e->getMessage());
             }
@@ -81,6 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    
+    header("Location: email_template_edit.php?key=" . urlencode($key));
+    exit;
 }
 
 // Convert placeholders string to array for display

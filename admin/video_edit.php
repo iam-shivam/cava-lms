@@ -27,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if it's a delete doc action
-    $action = $_POST['action'] ?? '';
+    $action = $_POST['action'] ?? $_GET['action'] ?? '';
     if ($action === 'delete_doc') {
-        $docIdToDelete = $_POST['doc_id'] ?? '';
+        $docIdToDelete = $_POST['doc_id'] ?? $_GET['doc_id'] ?? '';
         if ($docIdToDelete) {
             $docToDelete = DB::fetch("SELECT file_path FROM video_documents WHERE id = ? AND video_id = ?", [$docIdToDelete, $id]);
             if ($docToDelete) {
@@ -51,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($sectionId) || empty($title)) {
         set_flash_message('danger', 'Please complete all required fields.');
+        header("Location: video_edit.php?course_id=$courseId&id=$id");
+        exit;
     } else {
         $videoUrl = $video['video_url'];
         $documentUrl = $video['document_url'];
@@ -200,10 +202,11 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
                                         <i class="fa-solid fa-file text-secondary me-2"></i>
                                         <?php echo htmlspecialchars($doc['title'] . '.' . $doc['file_type']); ?>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        onclick="deleteDocument('<?php echo $doc['id']; ?>')">
+                                    <a href="video_edit.php?course_id=<?php echo $courseId; ?>&id=<?php echo $id; ?>&action=delete_doc&doc_id=<?php echo urlencode($doc['id']); ?>"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="confirmAction(event, 'Are you sure you want to delete this document?', this.href)">
                                         <i class="fa-solid fa-trash"></i>
-                                    </button>
+                                    </a>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -234,21 +237,6 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
     </div>
 </div>
 
-<form id="deleteDocForm" action="video_edit.php?course_id=<?php echo $courseId; ?>&id=<?php echo $id; ?>" method="POST"
-    style="display:none;">
-    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-    <input type="hidden" name="action" value="delete_doc">
-    <input type="hidden" name="doc_id" id="deleteDocId">
-</form>
-
-<script>
-    function deleteDocument(docId) {
-        if (confirm('Are you sure you want to delete this document?')) {
-            document.getElementById('deleteDocId').value = docId;
-            document.getElementById('deleteDocForm').submit();
-        }
-    }
-</script>
 <!-- Bunny Upload Progress Modal -->
 <div class="modal fade" id="bunnyUploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="bunnyUploadModalLabel" aria-hidden="true">
