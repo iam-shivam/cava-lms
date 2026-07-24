@@ -113,12 +113,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $videoUrl = '';
                     $documentUrl = null;
+                    $lessonThumbnailName = null;
                 
                 // Ensure upload directories exist
                 $videoDir = BASE_PATH . '/uploads/videos/';
                 $docDir = BASE_PATH . '/uploads/documents/';
+                $thumbDir = BASE_PATH . '/uploads/thumbnails/';
                 if (!is_dir($videoDir)) mkdir($videoDir, 0755, true);
                 if (!is_dir($docDir)) mkdir($docDir, 0755, true);
+                if (!is_dir($thumbDir)) mkdir($thumbDir, 0755, true);
+
+                // Process Lesson Thumbnail Upload (optional)
+                if (isset($_FILES['lesson_thumbnail']) && $_FILES['lesson_thumbnail']['error'] === UPLOAD_ERR_OK) {
+                    $thumbTmpPath = $_FILES['lesson_thumbnail']['tmp_name'];
+                    $thumbFileName = $_FILES['lesson_thumbnail']['name'];
+                    $thumbExt = strtolower(pathinfo($thumbFileName, PATHINFO_EXTENSION));
+                    $allowedThumbExts = ['jpg', 'jpeg', 'png', 'gif'];
+                    $allowedThumbMimes = ['image/jpeg', 'image/png', 'image/gif'];
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $detectedMime = finfo_file($finfo, $thumbTmpPath);
+                    finfo_close($finfo);
+                    if (in_array($thumbExt, $allowedThumbExts) && in_array($detectedMime, $allowedThumbMimes)) {
+                        $newThumbName = 'thumb_' . time() . '_' . uniqid() . '.' . $thumbExt;
+                        if (move_uploaded_file($thumbTmpPath, $thumbDir . $newThumbName)) {
+                            $lessonThumbnailName = 'uploads/thumbnails/' . $newThumbName;
+                        }
+                    } else {
+                        set_flash_message('danger', 'Thumbnail upload failed. Allowed formats: JPG, PNG, GIF.');
+                        header("Location: videos.php?course_id=$courseId");
+                        exit;
+                    }
+                }
                 
                 // Process Video Upload
                 $videoExt = strtolower(pathinfo($_FILES['video_file']['name'], PATHINFO_EXTENSION));
@@ -132,8 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // We insert the video first to get the video UUID
                 $videoId = generate_uuid();
                 
-                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (id, section_id, course_id, title, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, ?, 'local', NULL, 0, ?)");
-                $stmt->execute([$videoId, $sectionId, $courseId, $title, $description, $videoUrl, $order]);
+                $stmt = DB::getConnection()->prepare("INSERT INTO course_videos (id, section_id, course_id, title, thumbnail, description, video_url, video_source, document_url, video_access_duration, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 'local', NULL, 0, ?)");
+                $stmt->execute([$videoId, $sectionId, $courseId, $title, $lessonThumbnailName, $description, $videoUrl, $order]);
                 
                 // Process Multiple Document Uploads
                 if (!empty($_FILES['document_files']['name'][0])) {
@@ -255,7 +280,12 @@ foreach ($sections as $sec) {
                                             <?php foreach ($videos as $video): ?>
                                                 <div class="list-group-item d-flex align-items-center justify-content-between py-3 px-4 border-0 border-bottom">
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <i class="fa-regular fa-circle-play text-primary"></i>
+                                                        <?php if (!empty($video['thumbnail']) && file_exists(BASE_PATH . '/' . $video['thumbnail'])): ?>
+                                                            <img src="<?php echo SITE_URL . '/' . htmlspecialchars($video['thumbnail']); ?>" alt="Thumbnail" class="rounded" style="width:48px;height:32px;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block';">
+                                                            <i class="fa-regular fa-circle-play text-primary" style="display:none;"></i>
+                                                        <?php else: ?>
+                                                            <i class="fa-regular fa-circle-play text-primary"></i>
+                                                        <?php endif; ?>
                                                         <div>
                                                             <span class="fw-medium text-dark d-block"><?php echo htmlspecialchars($video['title']); ?></span>
                                                             <span class="text-muted fs-8 d-block text-truncate" style="max-width: 300px;">
@@ -338,6 +368,12 @@ foreach ($sections as $sec) {
                     <input type="text" class="form-control" id="video_title" name="video_title" placeholder="e.g. What is ECA Evaluation?" required>
                 </div>
                 
+                <div class="mb-3">
+                    <label for="lesson_thumbnail" class="form-label fw-semibold">Lesson Thumbnail <span class="text-muted fw-normal">(Optional)</span></label>
+                    <input type="file" class="form-control" id="lesson_thumbnail" name="lesson_thumbnail" accept="image/*">
+                    <div class="form-text">Recommended: 16:9 ratio. Max 2MB. Formats: JPG, PNG, GIF.</div>
+                </div>
+
                 <div class="mb-3">
                     <label for="video_file" class="form-label fw-semibold">Upload Video File (MP4/WebM/Ogg)</label>
                     <input type="file" class="form-control" id="video_file" name="video_file" accept="video/*" required>
