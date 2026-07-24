@@ -6,7 +6,7 @@ $courseId = trim($_GET['course_id'] ?? '');
 $id = trim($_GET['id'] ?? '');
 
 $course = DB::fetch("SELECT id FROM courses WHERE id = ?", [$courseId]);
-$video = DB::fetch("SELECT id, section_id, title, description, video_url, document_url, video_source, video_provider, bunny_video_id, sort_order FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
+$video = DB::fetch("SELECT id, section_id, title, description, video_url, document_url, thumbnail, video_source, video_provider, bunny_video_id, sort_order FROM course_videos WHERE id = ? AND course_id = ?", [$id, $courseId]);
 
 if (!$course || !$video) {
     set_flash_message('danger', 'Video or Course not found.');
@@ -81,6 +81,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // Process new lesson thumbnail upload (optional)
+        $thumbDir = BASE_PATH . '/uploads/thumbnails/';
+        if (!is_dir($thumbDir)) mkdir($thumbDir, 0755, true);
+        $newLessonThumbnail = null;
+        $thumbnailUpdated = false;
+        if (isset($_FILES['lesson_thumbnail']) && $_FILES['lesson_thumbnail']['error'] === UPLOAD_ERR_OK) {
+            $thumbTmpPath = $_FILES['lesson_thumbnail']['tmp_name'];
+            $thumbExt = strtolower(pathinfo($_FILES['lesson_thumbnail']['name'], PATHINFO_EXTENSION));
+            $allowedThumbExts = ['jpg', 'jpeg', 'png', 'gif'];
+            $allowedThumbMimes = ['image/jpeg', 'image/png', 'image/gif'];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $detectedMime = finfo_file($finfo, $thumbTmpPath);
+            finfo_close($finfo);
+            if (in_array($thumbExt, $allowedThumbExts) && in_array($detectedMime, $allowedThumbMimes)) {
+                $newThumbName = 'thumb_' . time() . '_' . uniqid() . '.' . $thumbExt;
+                if (move_uploaded_file($thumbTmpPath, $thumbDir . $newThumbName)) {
+                    // Delete old thumbnail if it exists
+                    if (!empty($video['thumbnail']) && file_exists(BASE_PATH . '/' . $video['thumbnail'])) {
+                        @unlink(BASE_PATH . '/' . $video['thumbnail']);
+                    }
+                    $newLessonThumbnail = 'uploads/thumbnails/' . $newThumbName;
+                    $thumbnailUpdated = true;
+                }
+            } else {
+                set_flash_message('danger', 'Thumbnail upload failed. Allowed formats: JPG, PNG, GIF.');
+                header("Location: video_edit.php?course_id=$courseId&id=$id");
+                exit;
+            }
+        }
+        
         // Process new multiple document uploads (optional)
         if (!empty($_FILES['document_files']['name'][0])) {
             $docCount = count($_FILES['document_files']['name']);
@@ -127,6 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($documentUrl !== $video['document_url']) {
             $updates[] = "document_url = ?";
             $params[] = $documentUrl;
+        }
+        if ($thumbnailUpdated) {
+            $updates[] = "thumbnail = ?";
+            $params[] = $newLessonThumbnail;
         }
         if ($order !== intval($video['sort_order'])) {
             $updates[] = "sort_order = ?";
@@ -184,6 +218,19 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
                     <label for="video_title" class="form-label fw-semibold">Lesson Title</label>
                     <input type="text" class="form-control" id="video_title" name="video_title"
                         value="<?php echo htmlspecialchars($video['title']); ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Lesson Thumbnail</label>
+                    <?php if (!empty($video['thumbnail']) && file_exists(BASE_PATH . '/' . $video['thumbnail'])): ?>
+                        <div class="mb-2">
+                            <span class="d-block fs-8 text-muted mb-1">Current Thumbnail:</span>
+                            <img src="<?php echo SITE_URL . '/' . htmlspecialchars($video['thumbnail']); ?>" alt="Current thumbnail" class="img-fluid rounded-3 border" style="max-width:200px;max-height:120px;object-fit:cover;" onerror="this.src='https://placehold.co/200x120/6f42c1/ffffff?text=No+Thumbnail'">
+                        </div>
+                    <?php endif; ?>
+                    <label for="lesson_thumbnail" class="form-label fw-semibold mt-1"><?php echo !empty($video['thumbnail']) ? 'Replace Thumbnail (Optional)' : 'Upload Thumbnail (Optional)'; ?></label>
+                    <input type="file" class="form-control" id="lesson_thumbnail" name="lesson_thumbnail" accept="image/*">
+                    <div class="form-text">Recommended: 16:9 ratio. Max 2MB. Formats: JPG, PNG, GIF.</div>
                 </div>
 
                 <div class="mb-3">
