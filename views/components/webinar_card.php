@@ -8,24 +8,24 @@ $webinarTimestamp = strtotime($webinar['date'] . ' ' . $webinar['time']);
 $isPastWebinar = $webinarTimestamp < time();
 ?>
 <div class="col-md-6 col-lg-6 mb-4">
-    <div class="custom-card border-0 p-4 bg-white shadow-sm rounded-4 animate-fade-in-up h-100 d-flex flex-column">
+    <div class="custom-card border-0 p-4 p-md-4 bg-white shadow-sm rounded-4 h-100 d-flex flex-column">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <?php if ($isPastWebinar): ?>
-                <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold">
+                <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold fs-8">
                     <i class="fa-solid fa-video-slash me-1"></i> Closed Webinar
                 </span>
             <?php else: ?>
-                <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-semibold">
-                    <i class="fa-solid fa-video me-1"></i> Live Webinar
+                <span class="badge bg-danger-light text-danger px-3 py-2 rounded-pill fw-semibold fs-8 d-inline-flex align-items-center gap-1">
+                    <span class="spinner-grow spinner-grow-sm text-danger" role="status" style="width: 8px; height: 8px;"></span> Live Session
                 </span>
             <?php endif; ?>
-            <span class="text-muted"><i class="fa-regular fa-clock me-1"></i><?php echo $timeFormatted; ?></span>
+            <span class="text-muted fs-7"><i class="fa-regular fa-clock me-1 text-primary"></i><?php echo $timeFormatted; ?></span>
         </div>
         
-        <h4 class="fw-bold mb-2 text-dark"><?php echo htmlspecialchars($webinar['title']); ?></h4>
-        <p class="text-muted mb-4"><?php echo htmlspecialchars($webinar['description'] ?? ''); ?></p>
+        <h4 class="fw-bold mb-2 text-dark fs-5"><?php echo htmlspecialchars($webinar['title']); ?></h4>
+        <p class="text-muted fs-7 mb-4"><?php echo htmlspecialchars($webinar['description'] ?? ''); ?></p>
         
-        <div class="bg-light p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between mt-auto">
+        <div class="bg-light p-3 rounded-4 mb-4 d-flex align-items-center justify-content-between mt-auto">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-regular fa-calendar text-primary fs-5"></i>
                 <div>
@@ -66,10 +66,10 @@ $isPastWebinar = $webinarTimestamp < time();
                     <form action="payment_process.php" method="POST" class="m-0">
                         <input type="hidden" name="item_type" value="webinar">
                         <input type="hidden" name="item_id" value="<?php echo $webinar['id']; ?>">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Register Now</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">Register Now</button>
                     </form>
                 <?php else: ?>
-                    <a href="login.php" class="btn btn-primary rounded-pill px-4">Login to Register</a>
+                    <a href="login.php" class="btn btn-primary rounded-pill px-4 fw-semibold">Login to Register</a>
                 <?php endif; ?>
             <?php endif; ?>
         </div>

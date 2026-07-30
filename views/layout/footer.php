@@ -1,63 +1,64 @@
 <?php
 // Layout Footer Component
 ?>
-    <!-- Footer -->
-    <footer class="bg-dark text-white pt-5 pb-4 mt-5">
-        <div class="container text-md-left">
-            <div class="row text-md-left">
-                <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">
+    <!-- Hero-Matched Premium Footer -->
+    <footer class="lp-footer pt-5 pb-4 mt-0">
+        <div class="container">
+            <div class="row g-4 justify-content-between">
+                <!-- Brand Identity Column -->
+                <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                    <a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-brand text-decoration-none mb-3 d-inline-block">
                         <i class="fa-solid fa-graduation-cap me-2"></i>CAVA LMS
-                    </h5>
-                    <p class="text-white-50">
+                    </a>
+                    <p class="text-white-50 fs-7" style="max-width: 320px; line-height: 1.65;">
                         A modern and premium learning management system offering expert-led courses, webinars, and masterclasses to help you level up your career.
                     </p>
                 </div>
 
-                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
-                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Quick Links</h5>
-                    <p><a href="<?php echo SITE_URL; ?>/index.php" class="text-white-50" style="text-decoration: none;">Home</a></p>
-                    <p><a href="<?php echo SITE_URL; ?>/courses.php" class="text-white-50" style="text-decoration: none;">Courses</a></p>
-                    <p><a href="<?php echo SITE_URL; ?>/webinars.php" class="text-white-50" style="text-decoration: none;">Webinars</a></p>
-                    <p><a href="<?php echo SITE_URL; ?>/events.php" class="text-white-50" style="text-decoration: none;">Events</a></p>
+                <!-- Navigation Quick Links -->
+                <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
+                    <h6 class="lp-footer-heading">Quick Links</h6>
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                        <li><a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Home</a></li>
+                        <li><a href="<?php echo SITE_URL; ?>/courses.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Courses</a></li>
+                        <li><a href="<?php echo SITE_URL; ?>/webinars.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Webinars</a></li>
+                        <li><a href="<?php echo SITE_URL; ?>/events.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Events</a></li>
+                        <li><a href="<?php echo SITE_URL; ?>/support.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Support Center</a></li>
+                    </ul>
                 </div>
 
-
-
-                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
-                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Contact</h5>
-                    <p class="text-white-50"><i class="fas fa-home mr-3 me-2"></i> Delhi, India</p>
-                    <p class="text-white-50"><i class="fas fa-envelope mr-3 me-2"></i> support@cavalms.com</p>
-                    <p class="text-white-50"><i class="fas fa-phone mr-3 me-2"></i> +91 98765 43210</p>
+                <!-- Contact & Location Info -->
+                <div class="col-lg-4 col-md-12">
+                    <h6 class="lp-footer-heading">Contact & Support</h6>
+                    <div class="d-flex flex-column gap-2 text-white-50 fs-7">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-home text-primary me-1"></i> Delhi, India
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-envelope text-primary me-1"></i> support@cavalms.com
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-phone text-primary me-1"></i> +91 98765 43210
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <hr class="mb-4">
+            <!-- Bottom Divider -->
+            <div class="lp-footer-divider"></div>
 
             <div class="row align-items-center">
-                <div class="col-md-7 col-lg-8">
-                    <p class="text-white-50">Copyright © 2026 All rights reserved by:
-                        <a href="#" style="text-decoration: none;">
-                            <strong class="text-primary">CAVA LMS Portal</strong>
-                        </a>
+                <div class="col-md-7 text-center text-md-start mb-3 mb-md-0">
+                    <p class="text-white-50 fs-7 mb-0">Copyright © 2026 All rights reserved by 
+                        <strong class="text-white">CAVA LMS Portal</strong>.
                     </p>
                 </div>
-                <div class="col-md-5 col-lg-4">
-                    <div class="text-center text-md-right">
-                        <ul class="list-unstyled list-inline">
-                            <li class="list-inline-item">
-                                <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i class="fab fa-facebook"></i></a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i class="fab fa-twitter"></i></a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i class="fab fa-linkedin-in"></i></a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i class="fab fa-instagram"></i></a>
-                            </li>
-                        </ul>
+                <div class="col-md-5 text-center text-md-end">
+                    <div class="d-inline-flex gap-2">
+                        <a href="#" class="lp-footer-social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="lp-footer-social-btn" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="lp-footer-social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="lp-footer-social-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -68,5 +69,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="<?php echo SITE_URL; ?>/assets/js/main.js"></script>
+
+    <?php if (basename($_SERVER['PHP_SELF']) === 'index.php'): ?>
+        <!-- GSAP and ScrollTrigger -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        <!-- Premium Landing Page Script -->
+        <script src="<?php echo SITE_URL; ?>/assets/js/landing-premium.js"></script>
+    <?php endif; ?>
 </body>
 </html>

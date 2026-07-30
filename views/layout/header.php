@@ -57,6 +57,13 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom Style Sheet -->
     <link href="<?php echo SITE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Premium Design System CSS -->
+    <link href="<?php echo SITE_URL; ?>/assets/css/landing-premium.css" rel="stylesheet">
 </head>
 <body>
 
