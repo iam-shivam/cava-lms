@@ -12,8 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    $settingsKeys = ['site_title', 'contact_email', 'contact_phone', 'about_us', 'hero_title', 'hero_subtitle'];
-    $heroImgKeys  = ['hero_img_1', 'hero_img_2', 'hero_img_3', 'hero_img_4', 'hero_img_5'];
+    $settingsKeys = [
+        'site_title', 'contact_email', 'contact_phone', 'about_us', 
+        'hero_eyebrow', 'hero_title', 'hero_subtitle', 
+        'hero_stat_1_title', 'hero_stat_1_desc', 
+        'hero_stat_2_title', 'hero_stat_2_desc', 
+        'hero_stat_3_title', 'hero_stat_3_desc'
+    ];
+    $heroImgKeys  = ['hero_img_1'];
     
     try {
         $currentSettings = [];
@@ -35,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Process Hero Image Uploads
+        // Process Hero Image Upload
         $uploadFileDir = BASE_PATH . '/uploads/';
         if (!is_dir($uploadFileDir)) {
             mkdir($uploadFileDir, 0755, true);
@@ -68,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         if ($changesMade) {
-            set_flash_message('success', 'Portal configurations and hero images updated successfully!');
+            set_flash_message('success', 'Portal configurations and hero media updated successfully!');
         } else {
             set_flash_message('success', 'No changes were made.');
         }
@@ -132,63 +138,93 @@ try {
             <!-- Hero Layout Text Section -->
             <div class="col-md-6 mb-4">
                 <div class="border-bottom pb-2 mb-3">
-                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-pager text-primary me-2"></i>Landing Hero Content</h6>
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-pager text-primary me-2"></i>Landing Hero Content & Copy</h6>
+                </div>
+
+                <div class="mb-3">
+                    <label for="hero_eyebrow" class="form-label fw-semibold">Hero Eyebrow (Top Small Text)</label>
+                    <input type="text" class="form-control" id="hero_eyebrow" name="hero_eyebrow" 
+                           value="<?php echo htmlspecialchars($currentSettings['hero_eyebrow'] ?? 'Cava Career Abroad Visa Academy'); ?>" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="hero_title" class="form-label fw-semibold">Hero Heading</label>
+                    <label for="hero_title" class="form-label fw-semibold">Hero Main Heading</label>
                     <input type="text" class="form-control" id="hero_title" name="hero_title" 
-                           value="<?php echo htmlspecialchars($currentSettings['hero_title'] ?? ''); ?>" required>
+                           value="<?php echo htmlspecialchars($currentSettings['hero_title'] ?? 'Upgrade Your Skills with CAVA LMS'); ?>" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="hero_subtitle" class="form-label fw-semibold">Hero Subheading / Subtitle</label>
-                    <textarea class="form-control" id="hero_subtitle" name="hero_subtitle" rows="3" required><?php echo htmlspecialchars($currentSettings['hero_subtitle'] ?? ''); ?></textarea>
+                    <label for="hero_subtitle" class="form-label fw-semibold">Hero Subtitle / Description</label>
+                    <textarea class="form-control" id="hero_subtitle" name="hero_subtitle" rows="3" required><?php echo htmlspecialchars($currentSettings['hero_subtitle'] ?? 'Access high-quality courses, webinars, and masterclasses designed by industry experts to boost your career.'); ?></textarea>
                 </div>
             </div>
 
-            <!-- Hero Collage Images Management Section -->
-            <div class="col-12 mt-3">
-                <div class="border-bottom pb-2 mb-4">
-                    <h6 class="fw-bold text-dark"><i class="fa-regular fa-images text-primary me-2"></i>Landing Hero Collage Student Images (5 Capsules)</h6>
-                    <small class="text-muted">Upload custom photos for each capsule in the homepage hero collage. Supported formats: JPG, PNG, WEBP, GIF.</small>
+            <!-- Hero Statistics Row Controls -->
+            <div class="col-12 mb-4">
+                <div class="border-bottom pb-2 mb-3">
+                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-chart-simple text-primary me-2"></i>Hero Highlights & Statistics Row</h6>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-4 border">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 1 Title</label>
+                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_1_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_1_title'] ?? 'Global Students'); ?>">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 1 Subtitle</label>
+                            <input type="text" class="form-control form-control-sm" name="hero_stat_1_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_1_desc'] ?? 'Ages 12-18'); ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-4 border">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 2 Title</label>
+                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_2_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_2_title'] ?? 'Top Instructors'); ?>">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 2 Subtitle</label>
+                            <input type="text" class="form-control form-control-sm" name="hero_stat_2_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_2_desc'] ?? 'Ivy League Experts'); ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-4 border">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 3 Title</label>
+                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_3_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_3_title'] ?? 'Tailored Guidance'); ?>">
+                            <label class="form-label fw-semibold text-dark mb-1">Highlight 3 Subtitle</label>
+                            <input type="text" class="form-control form-control-sm" name="hero_stat_3_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_3_desc'] ?? 'Micro-group classes'); ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Hero Image Management Section -->
+            <div class="col-12 mt-2">
+                <div class="border-bottom pb-2 mb-3">
+                    <h6 class="fw-bold text-dark"><i class="fa-regular fa-image text-primary me-2"></i>Landing Hero Banner Image</h6>
+                    <small class="text-muted">Upload high-resolution single hero image banner displayed on homepage. Formats: JPG, PNG, WEBP, GIF.</small>
                 </div>
 
-                <div class="row g-4">
-                    <?php 
-                    $capsuleLabels = [
-                        'hero_img_1' => ['label' => 'Capsule 1 (Left Tall Pill)', 'default' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=500&h=700'],
-                        'hero_img_2' => ['label' => 'Capsule 2 (Top Circle)', 'default' => 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=400&h=400'],
-                        'hero_img_3' => ['label' => 'Capsule 3 (Center Tall Pill)', 'default' => 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?auto=format&fit=crop&q=80&w=500&h=700'],
-                        'hero_img_4' => ['label' => 'Capsule 4 (Bottom Circle)', 'default' => 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=400&h=400'],
-                        'hero_img_5' => ['label' => 'Capsule 5 (Right Tall Pill)', 'default' => 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&q=80&w=500&h=700'],
-                    ];
-
-                    foreach ($capsuleLabels as $key => $meta):
-                        $currentImg = $meta['default'];
-                        if (!empty($currentSettings[$key])) {
-                            if (file_exists(BASE_PATH . '/uploads/' . $currentSettings[$key])) {
-                                $currentImg = SITE_URL . '/uploads/' . $currentSettings[$key];
-                            }
-                        }
-                    ?>
-                        <div class="col-md-4 col-lg-2-4 mb-3">
-                            <div class="card h-100 border p-3 rounded-4 bg-light text-center">
-                                <label class="form-label fw-semibold fs-7 mb-2 text-dark"><?php echo $meta['label']; ?></label>
-                                <div class="mb-3 d-flex align-items-center justify-content-center overflow-hidden rounded-3 bg-white border" style="height: 120px;">
-                                    <img src="<?php echo $currentImg; ?>" alt="Hero preview" class="img-fluid h-100 w-100" style="object-fit: cover;">
-                                </div>
-                                <input type="file" class="form-control form-control-sm" name="<?php echo $key; ?>" accept="image/*">
-                            </div>
+                <?php 
+                $heroSingleImg = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000&h=600';
+                if (!empty($currentSettings['hero_img_1']) && file_exists(BASE_PATH . '/uploads/' . $currentSettings['hero_img_1'])) {
+                    $heroSingleImg = SITE_URL . '/uploads/' . $currentSettings['hero_img_1'];
+                }
+                ?>
+                <div class="row align-items-center g-4">
+                    <div class="col-md-6">
+                        <div class="card border p-3 rounded-4 bg-light text-center">
+                            <label class="form-label fw-semibold text-dark mb-2">Upload Hero Image</label>
+                            <input type="file" class="form-control" name="hero_img_1" accept="image/*">
+                            <span class="fs-8 text-muted mt-2 d-block">Recommended size: 1000x600px or 16:9 ratio.</span>
                         </div>
-                    <?php endforeach; ?>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="rounded-4 overflow-hidden border shadow-sm" style="max-height: 220px;">
+                            <img src="<?php echo $heroSingleImg; ?>" alt="Hero Banner Preview" class="w-100 h-100" style="object-fit: cover;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         
         <div class="text-end border-top pt-4 mt-4">
             <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-semibold">
-                <i class="fa-solid fa-floppy-disk me-2"></i>Save Portal Settings & Images
+                <i class="fa-solid fa-floppy-disk me-2"></i>Save Portal Settings & Hero Image
             </button>
         </div>
     </form>

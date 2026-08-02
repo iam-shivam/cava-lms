@@ -124,15 +124,19 @@ document.addEventListener('DOMContentLoaded', function () {
         toast.show();
     }
 
-    // 4. Security (disable inspect elements on specific pages)
+    // 4. Security (disable context menu & inspect shortcuts on Courses, Webinars, Events, and Document Viewers)
     var path = window.location.pathname.toLowerCase();
-    if (path.includes('course.php') || path.includes('course_play.php')) {
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.key === "F12") return false;
-            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
-            if (e.ctrlKey && e.key === "U") return false;
-        };
+    if (path.includes('course.php') || path.includes('course_play.php') || path.includes('webinars.php') || path.includes('webinar') || path.includes('events.php') || path.includes('event') || path.includes('document_viewer.php')) {
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            return false;
+        });
+        document.addEventListener('keydown', function(e) {
+            // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U, Ctrl+S, Ctrl+P
+            if (e.key === "F12") { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j" || e.key === "C" || e.key === "c")) { e.preventDefault(); return false; }
+            if (e.ctrlKey && (e.key === "U" || e.key === "u" || e.key === "S" || e.key === "s" || e.key === "P" || e.key === "p")) { e.preventDefault(); return false; }
+        });
     }
 
     // 5. Admin Course Form Partial Payment toggle

@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS `enrollments` (
 CREATE TABLE IF NOT EXISTS `webinars` (
   `id` CHAR(36) PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
+  `thumbnail` VARCHAR(255) DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
   `date` DATE NOT NULL,
   `time` TIME NOT NULL,

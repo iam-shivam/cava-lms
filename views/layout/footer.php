@@ -32,13 +32,10 @@
                     <h6 class="lp-footer-heading">Contact & Support</h6>
                     <div class="d-flex flex-column gap-2 text-white-50 fs-7">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-home text-primary me-1"></i> Delhi, India
+                            <i class="fas fa-home text-primary me-1"></i> Bengaluru, India
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <i class="fas fa-envelope text-primary me-1"></i> support@cavalms.com
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-phone text-primary me-1"></i> +91 98765 43210
                         </div>
                     </div>
                 </div>
@@ -70,12 +67,10 @@
     <!-- Custom JavaScript -->
     <script src="<?php echo SITE_URL; ?>/assets/js/main.js"></script>
 
-    <?php if (basename($_SERVER['PHP_SELF']) === 'index.php'): ?>
-        <!-- GSAP and ScrollTrigger -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-        <!-- Premium Landing Page Script -->
-        <script src="<?php echo SITE_URL; ?>/assets/js/landing-premium.js"></script>
-    <?php endif; ?>
+    <!-- GSAP and ScrollTrigger CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Premium Interactive Page Animations Script -->
+    <script src="<?php echo SITE_URL; ?>/assets/js/landing-premium.js"></script>
 </body>
 </html>

@@ -53,7 +53,9 @@ require_once __DIR__ . '/views/layout/header.php';
                     <li class="breadcrumb-item active" aria-current="page">Webinars</li>
                 </ol>
             </nav>
-            <h1 class="lp-page-hero-title">Live Webinars</h1>
+            <h1 class="lp-page-hero-title">
+                Live Webinars
+            </h1>
             <p class="lp-page-hero-subtitle">Interact live with regulated consultants and career advisors. Ask questions in real-time and get personalized guidance.</p>
         </div>
     </section>

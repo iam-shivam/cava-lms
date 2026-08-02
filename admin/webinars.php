@@ -35,14 +35,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
         exit;
     }
     
+    // Thumbnail file upload processing
+    $thumbnailName = null;
+    if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['thumbnail']['tmp_name'];
+        $fileName = $_FILES['thumbnail']['name'];
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+        
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detectedMime = finfo_file($finfo, $fileTmpPath);
+        finfo_close($finfo);
+        
+        if (in_array($fileExtension, $allowedExtensions) && in_array($detectedMime, $allowedMimeTypes)) {
+            $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+            $uploadFileDir = BASE_PATH . '/uploads/';
+            
+            if (!is_dir($uploadFileDir)) {
+                mkdir($uploadFileDir, 0755, true);
+            }
+            
+            $destPath = $uploadFileDir . $newFileName;
+            if (move_uploaded_file($fileTmpPath, $destPath)) {
+                $thumbnailName = $newFileName;
+            }
+        }
+    }
+
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO webinars (id, title, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO webinars (id, title, thumbnail, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([generate_uuid(), $title, $description, $date, $time, $price, $status]);
+            $stmt->execute([generate_uuid(), $title, $thumbnailName, $description, $date, $time, $price, $status]);
             set_flash_message('success', 'Webinar created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
-            $oldWebinar = DB::fetch("SELECT title, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+            $oldWebinar = DB::fetch("SELECT title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
             
             $updates = [];
             $params = [];
@@ -54,6 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             if (floatval($price) !== floatval($oldWebinar['price'])) { $updates[] = "price = ?"; $params[] = $price; }
             if ($status !== $oldWebinar['status']) { $updates[] = "status = ?"; $params[] = $status; }
             
+            if ($thumbnailName) {
+                if ($oldWebinar['thumbnail'] && file_exists(BASE_PATH . '/uploads/' . $oldWebinar['thumbnail'])) {
+                    @unlink(BASE_PATH . '/uploads/' . $oldWebinar['thumbnail']);
+                }
+                $updates[] = "thumbnail = ?";
+                $params[] = $thumbnailName;
+            }
+
             if (!empty($updates)) {
                 $params[] = $id;
                 $sql = "UPDATE webinars SET " . implode(', ', $updates) . " WHERE id = ?";
@@ -174,7 +212,7 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
     $editWebinar = null;
     if ($action === 'edit' && !empty($id)) {
-        $editWebinar = DB::fetch("SELECT id, title, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+        $editWebinar = DB::fetch("SELECT id, title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
@@ -182,7 +220,7 @@ $csrfToken = generate_csrf_token();
             <?php echo $action === 'edit' ? 'Edit Webinar Details' : 'Create New Webinar'; ?>
         </h5>
         
-        <form action="webinars.php?action=<?php echo $action; ?>&id=<?php echo $id; ?>" method="POST">
+        <form action="webinars.php?action=<?php echo $action; ?>&id=<?php echo $id; ?>" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
             
             <div class="row">
@@ -217,6 +255,20 @@ $csrfToken = generate_csrf_token();
                         <label for="price" class="form-label fw-semibold">Ticket Price (INR)</label>
                         <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" 
                                value="<?php echo $editWebinar ? htmlspecialchars($editWebinar['price']) : '0.00'; ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="thumbnail" class="form-label fw-semibold">Webinar Banner/Thumbnail</label>
+                        <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                        <span class="fs-8 text-muted mt-1 d-block font-medium">JPG, PNG, GIF, WEBP formats only.</span>
+                        
+                        <?php if ($editWebinar && !empty($editWebinar['thumbnail'])): ?>
+                            <div class="mt-2">
+                                <span class="d-block fs-8 text-muted mb-1">Current Banner:</span>
+                                <img src="<?php echo (file_exists(BASE_PATH . '/uploads/' . $editWebinar['thumbnail'])) ? SITE_URL . '/uploads/' . $editWebinar['thumbnail'] : SITE_URL . '/assets/images/' . $editWebinar['thumbnail']; ?>" 
+                                     alt="Current webinar thumbnail" class="img-fluid rounded-3 border" style="max-width: 150px; max-height: 90px; object-fit: cover;" onerror="this.src='https://placehold.co/150x90/6f42c1/ffffff?text=No+Thumbnail'">
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="mb-3">

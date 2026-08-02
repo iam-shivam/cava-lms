@@ -8,7 +8,15 @@ $webinarTimestamp = strtotime($webinar['date'] . ' ' . $webinar['time']);
 $isPastWebinar = $webinarTimestamp < time();
 ?>
 <div class="col-md-6 col-lg-6 mb-4">
-    <div class="custom-card border-0 p-4 p-md-4 bg-white shadow-sm rounded-4 h-100 d-flex flex-column">
+    <div class="custom-card webinar-prism-card border-0 p-4 p-md-4 bg-white shadow-sm rounded-4 h-100 d-flex flex-column">
+        <?php if (!empty($webinar['thumbnail'])): 
+            $webinarImgUrl = (file_exists(BASE_PATH . '/uploads/' . $webinar['thumbnail'])) ? SITE_URL . '/uploads/' . $webinar['thumbnail'] : SITE_URL . '/assets/images/' . $webinar['thumbnail'];
+        ?>
+            <div class="mb-3 rounded-4 overflow-hidden border" style="height: 160px;">
+                <img src="<?php echo $webinarImgUrl; ?>" alt="<?php echo htmlspecialchars($webinar['title']); ?>" class="w-100 h-100" style="object-fit: cover;" onerror="this.parentElement.style.display='none';">
+            </div>
+        <?php endif; ?>
+        
         <div class="d-flex align-items-center justify-content-between mb-3">
             <?php if ($isPastWebinar): ?>
                 <span class="badge bg-secondary-light text-secondary px-3 py-2 rounded-pill fw-semibold fs-8">

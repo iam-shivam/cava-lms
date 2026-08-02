@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/helpers/SecurityHelper.php';
 
 $docId = trim($_GET['id'] ?? '');
 
@@ -77,11 +78,14 @@ $watermarkText = 'CAVA LMS';
             display: flex;
             justify-content: center;
             padding: 20px;
+            user-select: none;
+            -webkit-user-select: none;
         }
         canvas {
             border: 1px solid #000;
             box-shadow: 0 4px 8px rgba(0,0,0,0.5);
             background: white;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -104,18 +108,9 @@ $watermarkText = 'CAVA LMS';
         <canvas id="pdf-render"></canvas>
     </div>
 
+    <?php echo SecurityHelper::renderAntiPiracyScript(); ?>
+
     <script>
-        // Disable right-click context menu to prevent easy downloads
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // Block keyboard shortcuts for Inspect Element
-        document.onkeydown = function(e) {
-            if (e.key === "F12") return false;
-            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) return false;
-            if (e.ctrlKey && e.key === "U") return false;
-            if (e.ctrlKey && e.key === "P") return false; // Block printing
-        };
-
         const url = '<?php echo $pdfUrl; ?>';
         
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';

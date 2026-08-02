@@ -10,12 +10,12 @@ header("Pragma: no-cache");
 
 $docId = trim($_GET['id'] ?? '');
 
-if (empty($docId) || empty($_SESSION['user_id'])) {
+if (empty($docId) || (empty($_SESSION['user_id']) && empty($_SESSION['admin_id']))) {
     http_response_code(403);
     die('Unauthorized: Please log in to view this document.');
 }
 
-$userId = $_SESSION['user_id'];
+$userId = $_SESSION['user_id'] ?? null;
 
 try {
     // Verify document exists and get metadata
@@ -38,6 +38,11 @@ try {
     $isAdmin = isset($_SESSION['admin_id']);
 
     if (!$isAdmin) {
+        if (empty($userId)) {
+            http_response_code(403);
+            die('Unauthorized: User session required.');
+        }
+
         // Verify course is purchased, active, and not expired
         $enrollment = DB::fetch("
             SELECT * FROM enrollments 
@@ -59,9 +64,6 @@ try {
         if ($course && $course['allow_partial_payment']) {
             $payment = DB::fetch("SELECT * FROM payments WHERE user_id = ? AND item_id = ? AND item_type = 'course' AND status = 'Success' ORDER BY created_at DESC LIMIT 1", [$userId, $courseId]);
             if ($payment && $payment['payment_type'] === 'Partial') {
-                // Determine if this specific section/video is unlocked (simplified check - assume 50% sections are locked for partial)
-                // In cava-lms, partial payment usually unlocks only first half of sections.
-                // We'll rely on the existing logic:
                 $sections = DB::fetchAll("SELECT id FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, id ASC", [$courseId]);
                 $totalSections = count($sections);
                 $allowedSections = ceil($totalSections / 2);
@@ -91,14 +93,14 @@ try {
         $mimeType = 'application/octet-stream';
     }
 
-    // Force PDF to show inline, others as attachment or inline depending on browser support
-    $disposition = ($doc['file_type'] === 'pdf') ? 'inline' : 'attachment';
+    // Force ALL document resources to be served inline only - direct downloads strictly prohibited
+    $disposition = 'inline';
     
-    // Enforce custom header for PDFs to block direct network tab downloads
-    if ($doc['file_type'] === 'pdf' && !$isAdmin) {
+    // Enforce custom X-Viewer-Auth header for all requests to block direct URL pastes and download tools
+    if (!$isAdmin) {
         if (!isset($_SERVER['HTTP_X_VIEWER_AUTH']) || $_SERVER['HTTP_X_VIEWER_AUTH'] !== 'true') {
             http_response_code(403);
-            die('Unauthorized: Direct downloading of PDFs is disabled. Please view the document securely through the course player.');
+            die('Unauthorized: Direct downloading of resource files is disabled. Please view documents securely through the course player.');
         }
     }
 
@@ -107,6 +109,11 @@ try {
     header('Content-Disposition: ' . $disposition . '; filename="' . $filename . '"');
     header('Content-Length: ' . filesize($filePath));
     header('Accept-Ranges: bytes');
+    header('X-Content-Type-Options: nosniff');
+    header('Content-Security-Policy: default-src \'none\';');
+
+    readfile($filePath);
+    exit;
 
     readfile($filePath);
     exit;

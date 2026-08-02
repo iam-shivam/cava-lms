@@ -31,6 +31,37 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- Main Container -->
     <section class="py-5 bg-white">
         <div class="container">
+            <!-- Support Category Spring Cards -->
+            <div class="row g-4 mb-5 text-start">
+                <div class="col-md-4">
+                    <div class="custom-card border p-4 rounded-4 bg-white support-cat-card">
+                        <div class="lp-empty-icon mb-3">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Academic & Courses</h5>
+                        <p class="text-muted fs-7 mb-0">Help with locked syllabus, video player, resources & certificates.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="custom-card border p-4 rounded-4 bg-white support-cat-card">
+                        <div class="lp-empty-icon mb-3">
+                            <i class="fa-solid fa-passport"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Visa & Immigration</h5>
+                        <p class="text-muted fs-7 mb-0">Doubts on ECA, CRS calculation, FSW draws, and profile evaluation.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="custom-card border p-4 rounded-4 bg-white support-cat-card">
+                        <div class="lp-empty-icon mb-3">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Payments & Invoices</h5>
+                        <p class="text-muted fs-7 mb-0">Razorpay transaction status, GST receipts, and installment support.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="row g-4">
                 <!-- Left Column: Submit Query Form -->
                 <div class="col-lg-6">

@@ -145,7 +145,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 <!-- Sidebar Checkout/Enrollment Card Column -->
                 <div class="col-lg-4">
                     <div class="sticky-top" style="top: 90px; z-index: 100;">
-                        <div class="custom-card border-0 p-4 p-md-5 shadow-sm rounded-4 bg-white">
+                        <div class="custom-card sticky-sidebar-card border-0 p-4 p-md-5 shadow-sm rounded-4 bg-white">
                             <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="img-fluid rounded-4 mb-4 shadow-sm" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
                             
                             <?php if ($isEnrolled): ?>
@@ -153,7 +153,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                     <h5 class="alert-heading fw-bold mb-1"><i class="fa-solid fa-circle-check me-2"></i>You are Enrolled</h5>
                                     <p class="mb-0 fs-7">Access to all course content is unlocked.</p>
                                 </div>
-                                <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="lp-btn-primary w-100 py-3 text-center" style="border-radius: 100px;">
+                                <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="lp-btn-primary btn-enroll-sweep w-100 py-3 text-center" style="border-radius: 100px;">
                                     <i class="fa-solid fa-circle-play me-2"></i>Go to Course Player
                                 </a>
                             <?php else: ?>

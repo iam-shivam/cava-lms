@@ -17,30 +17,22 @@ try {
     // Fail silently
 }
 
-$heroTitle = $settings['hero_title'] ?? 'Upgrade Your Skills with CAVA LMS';
+$heroEyebrow  = $settings['hero_eyebrow'] ?? 'Cava Career Abroad Visa Academy';
+$heroTitle    = $settings['hero_title'] ?? 'Upgrade Your Skills with CAVA LMS';
 $heroSubtitle = $settings['hero_subtitle'] ?? 'Access high-quality courses, webinars, and masterclasses designed by industry experts.';
-$aboutUs = $settings['about_us'] ?? 'CAVA LMS is a premium e-learning portal designed to provide quality, affordable education for career development.';
+$aboutUs      = $settings['about_us'] ?? 'CAVA LMS is a premium e-learning portal designed to provide quality, affordable education for career development.';
 
-// Dynamic Hero Collage Images (DB settings with fallback defaults)
+$heroStat1Title = $settings['hero_stat_1_title'] ?? 'Global Students';
+$heroStat1Desc  = $settings['hero_stat_1_desc'] ?? 'Ages 12-18';
+$heroStat2Title = $settings['hero_stat_2_title'] ?? 'Top Instructors';
+$heroStat2Desc  = $settings['hero_stat_2_desc'] ?? 'Ivy League Experts';
+$heroStat3Title = $settings['hero_stat_3_title'] ?? 'Tailored Guidance';
+$heroStat3Desc  = $settings['hero_stat_3_desc'] ?? 'Micro-group classes';
+
+// Dynamic Hero Banner Single Image
 $heroImg1 = (!empty($settings['hero_img_1']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_1']))
     ? SITE_URL . '/uploads/' . $settings['hero_img_1']
-    : 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=500&h=700';
-
-$heroImg2 = (!empty($settings['hero_img_2']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_2']))
-    ? SITE_URL . '/uploads/' . $settings['hero_img_2']
-    : 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=400&h=400';
-
-$heroImg3 = (!empty($settings['hero_img_3']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_3']))
-    ? SITE_URL . '/uploads/' . $settings['hero_img_3']
-    : 'https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?auto=format&fit=crop&q=80&w=500&h=700';
-
-$heroImg4 = (!empty($settings['hero_img_4']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_4']))
-    ? SITE_URL . '/uploads/' . $settings['hero_img_4']
-    : 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=400&h=400';
-
-$heroImg5 = (!empty($settings['hero_img_5']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_5']))
-    ? SITE_URL . '/uploads/' . $settings['hero_img_5']
-    : 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&q=80&w=500&h=700';
+    : 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000&h=600';
 
 // Fetch dynamic data
 $userId = $_SESSION['user_id'] ?? null;
@@ -57,11 +49,10 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- Hero Section (World Academy Green / Wix Studio Layout) -->
     <section class="lp-hero-wa">
         <div class="container position-relative" style="z-index: 1;">
-            <div class="row align-items-center py-2">
-                <div class="col-lg-6 text-center text-lg-start">
+            <div class="row align-items-center g-4 g-lg-5 py-2">
+                <div class="col-lg-6 pe-lg-4 text-center text-lg-start">
                     <h1 class="lp-hero-wa-title">
-                        <span class="hero-eyebrow">Cava Career<span class="hero-dot">&nbsp;</span>Abroad Visa
-                            Academy</span>
+                        <span class="hero-eyebrow"><?php echo htmlspecialchars($heroEyebrow); ?></span>
                         <span class="hero-main-line"><?php echo htmlspecialchars($heroTitle); ?></span>
                     </h1>
                     <p class="lp-hero-wa-subtitle"><?php echo htmlspecialchars($heroSubtitle); ?></p>
@@ -69,10 +60,10 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div
                         class="lp-hero-cta-group d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3">
                         <a href="#featured-courses" class="lp-btn-pill-white">
-                            Explore Courses <i class="fa-solid fa-arrow-right-long ms-1"></i>
+                            <i class="fa-solid fa-book-open me-1"></i> Explore Courses <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
-                        <a href="#contact-section" class="lp-btn-pill-outline">
-                            Contact Us <i class="fa-regular fa-paper-plane ms-1"></i>
+                        <a href="webinars.php" class="lp-btn-pill-outline">
+                            <i class="fa-solid fa-tower-broadcast me-1"></i> Join Live Webinar <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
                     </div>
 
@@ -80,48 +71,29 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div class="lp-hero-stats-row row g-3 mt-4">
                         <div class="col-4">
                             <div class="lp-hero-stat-item">
-                                <div class="lp-hero-stat-heading">Global Students</div>
-                                <div class="lp-hero-stat-desc">Ages 12-18</div>
+                                <div class="lp-hero-stat-heading"><?php echo htmlspecialchars($heroStat1Title); ?></div>
+                                <div class="lp-hero-stat-desc"><?php echo htmlspecialchars($heroStat1Desc); ?></div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="lp-hero-stat-item">
-                                <div class="lp-hero-stat-heading">Top Instructors</div>
-                                <div class="lp-hero-stat-desc">Ivy League Experts</div>
+                                <div class="lp-hero-stat-heading"><?php echo htmlspecialchars($heroStat2Title); ?></div>
+                                <div class="lp-hero-stat-desc"><?php echo htmlspecialchars($heroStat2Desc); ?></div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="lp-hero-stat-item">
-                                <div class="lp-hero-stat-heading">Tailored Guidance</div>
-                                <div class="lp-hero-stat-desc">Micro-group classes</div>
+                                <div class="lp-hero-stat-heading"><?php echo htmlspecialchars($heroStat3Title); ?></div>
+                                <div class="lp-hero-stat-desc"><?php echo htmlspecialchars($heroStat3Desc); ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Collage representation -->
-                <div class="col-lg-6 mt-5 mt-lg-0">
-                    <div class="student-collage-wrapper">
-                        <!-- Capsule 1 - Large left tall capsule -->
-                        <div class="collage-capsule capsule-1">
-                            <img src="<?php echo $heroImg1; ?>" alt="Student" loading="eager">
-                        </div>
-                        <!-- Capsule 2 - Top circle -->
-                        <div class="collage-capsule capsule-2">
-                            <img src="<?php echo $heroImg2; ?>" alt="Student" loading="eager">
-                        </div>
-                        <!-- Capsule 3 - Center tall capsule -->
-                        <div class="collage-capsule capsule-3">
-                            <img src="<?php echo $heroImg3; ?>" alt="Student" loading="eager">
-                        </div>
-                        <!-- Capsule 4 - Bottom circle -->
-                        <div class="collage-capsule capsule-4">
-                            <img src="<?php echo $heroImg4; ?>" alt="Student" loading="eager">
-                        </div>
-                        <!-- Capsule 5 - Right tall capsule -->
-                        <div class="collage-capsule capsule-5">
-                            <img src="<?php echo $heroImg5; ?>" alt="Student" loading="eager">
-                        </div>
+                <!-- Single Hero Banner Image representation with gap -->
+                <div class="col-lg-6 ps-lg-4 mt-4 mt-lg-0">
+                    <div class="lp-hero-single-img-wrapper">
+                        <img src="<?php echo $heroImg1; ?>" alt="Hero Banner" class="lp-hero-single-img" loading="eager">
                     </div>
                 </div>
             </div>

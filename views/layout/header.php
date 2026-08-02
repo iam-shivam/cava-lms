@@ -159,6 +159,4 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
         </div>
     </nav>
     
-    <div class="container mt-3">
-        <?php display_flash_message(); ?>
-    </div>
+    <?php display_flash_message(); ?>
