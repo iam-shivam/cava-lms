@@ -153,9 +153,24 @@
 
         // ---------- Settings ----------
         $settings = [
-            'site_title' => 'CAVA LMS Portal',
-            'contact_email' => 'contact@cavalms.com',
-            'contact_phone' => '+91 98765 43210'
+            // General
+            'site_title'      => 'CAVA LMS Portal',
+            'contact_email'   => 'contact@cavalms.com',
+            'contact_phone'   => '+91 98765 43210',
+            'about_us'        => 'CAVA LMS is a premium e-learning portal designed to provide quality, affordable education for career development.',
+
+            // Landing Hero Copy
+            'hero_eyebrow'    => 'Cava Career Abroad Visa Academy',
+            'hero_title'      => 'Upgrade Your Skills with CAVA LMS',
+            'hero_subtitle'   => 'Access high-quality courses, webinars, and masterclasses designed by industry experts to boost your career.',
+
+            // Hero Statistics / Highlights
+            'hero_stat_1_title' => 'Global Students',
+            'hero_stat_1_desc'  => 'Ages 12-18',
+            'hero_stat_2_title' => 'Top Instructors',
+            'hero_stat_2_desc'  => 'Ivy League Experts',
+            'hero_stat_3_title' => 'Tailored Guidance',
+            'hero_stat_3_desc'  => 'Micro-group classes',
         ];
         foreach ($settings as $k => $val) {
             insert("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?", [$k, $val, $val]);
