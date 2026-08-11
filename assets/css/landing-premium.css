@@ -70,9 +70,35 @@
 }
 
 .navbar-brand {
-    font-weight: 900 !important;
+    font-weight: 800 !important;
     color: var(--wa-highlight) !important;
-    letter-spacing: -0.03em !important;
+    letter-spacing: -0.02em !important;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+}
+
+.lp-nav-logo {
+    height: 42px;
+    width: 42px;
+    object-fit: contain;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border: 1.5px solid rgba(109, 40, 217, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: #ffffff;
+}
+
+.navbar-brand:hover .lp-nav-logo {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25);
+}
+
+.lp-brand-text {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: var(--wa-highlight, #581c87);
 }
 
 .nav-link {
@@ -1236,4 +1262,613 @@ textarea:focus-visible {
 .dashboard-stat-card:hover {
     transform: translateY(-6px) scale(1.02) !important;
     box-shadow: 0 14px 28px rgba(111, 66, 193, 0.14) !important;
+}
+
+/* ==========================================================================
+   ABOUT CAVA LMS & FLEXIBLE LEARNING & FOUNDER SPOTLIGHT SECTIONS
+   ========================================================================== */
+
+.lp-overview-section {
+    padding: 85px 0 !important;
+    position: relative !important;
+    background-color: #ffffff !important;
+    overflow: visible !important;
+}
+
+/* Layered Image Container with Backdrop Card & Dot Matrix */
+.lp-about-img-box {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    margin: 0 auto !important;
+    z-index: 1 !important;
+}
+
+/* Offset Pastel Layer underneath */
+.lp-about-backdrop-card {
+    position: absolute !important;
+    width: 95% !important;
+    height: 95% !important;
+    background: #ede9fe !important;
+    border-radius: 28px !important;
+    z-index: 0 !important;
+    transition: transform 0.3s ease !important;
+}
+
+.lp-backdrop-offset-br {
+    right: -18px !important;
+    bottom: -18px !important;
+}
+
+.lp-backdrop-offset-bl {
+    left: -18px !important;
+    bottom: -18px !important;
+}
+
+.lp-about-img-box:hover .lp-about-backdrop-card {
+    transform: translate(3px, 3px) !important;
+}
+
+/* Main Image Frame */
+.lp-about-img-frame {
+    position: relative !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+    background: #ffffff !important;
+    z-index: 1 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.lp-about-img-frame:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.16) !important;
+}
+
+.lp-about-img-frame img {
+    width: 100% !important;
+    height: 340px !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Dot Matrix Grid Decorations */
+.lp-img-decor-dots {
+    position: absolute !important;
+    width: 60px !important;
+    height: 80px !important;
+    background-image: radial-gradient(#6366f1 1.5px, transparent 1.5px) !important;
+    background-size: 10px 10px !important;
+    opacity: 0.65 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+.lp-decor-dots-tl {
+    top: -18px !important;
+    left: -20px !important;
+}
+.lp-decor-dots-mr {
+    top: 32% !important;
+    right: -20px !important;
+}
+
+/* Typography Tokens */
+.lp-content-badge {
+    display: inline-block !important;
+    color: #6366f1 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    margin-bottom: 8px !important;
+}
+
+.lp-content-title {
+    font-size: 2.65rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.025em !important;
+    margin-bottom: 16px !important;
+}
+
+.lp-content-desc {
+    font-size: 0.95rem !important;
+    color: #475569 !important;
+    line-height: 1.65 !important;
+    margin-bottom: 24px !important;
+    max-width: 490px !important;
+}
+
+/* Checklist with NO default discs and Solid Purple Circle with White Checkmark */
+.lp-content-checklist {
+    list-style: none !important;
+    list-style-type: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-bottom: 28px !important;
+}
+
+.lp-content-checklist-item {
+    list-style: none !important;
+    list-style-type: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin-bottom: 12px !important;
+}
+
+.lp-content-checklist-item::before,
+.lp-content-checklist-item::marker {
+    display: none !important;
+    content: "" !important;
+}
+
+/* Know More About Us CTA Button */
+.lp-btn-purple-pill {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 12px 28px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+    transition: all 0.25s ease !important;
+    border: none !important;
+}
+
+.lp-btn-purple-pill:hover {
+    background-color: #4f46e5 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45) !important;
+    color: #ffffff !important;
+}
+
+/* Flexible Learning 3 Feature Columns */
+.lp-feature-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 18px !important;
+    margin-top: 24px !important;
+}
+
+.lp-feature-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+.lp-feature-icon-badge {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    background: #faf5ff !important;
+    border: 1.5px solid #d8b4fe !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #6366f1 !important;
+    font-size: 1.15rem !important;
+    margin-bottom: 10px !important;
+    transition: all 0.25s ease !important;
+}
+
+.lp-feature-item:hover .lp-feature-icon-badge {
+    background: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: #ffffff !important;
+    transform: scale(1.06) !important;
+}
+
+.lp-feature-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 3px !important;
+}
+
+.lp-feature-desc {
+    font-size: 0.82rem !important;
+    color: #64748b !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+}
+
+/* ==========================================================================
+   IMMIGRATION OPPORTUNITIES SECTION (Australia & Canada)
+   ========================================================================== */
+
+.lp-immi-section {
+    padding: 90px 0 !important;
+    position: relative !important;
+    background-color: #ffffff !important;
+}
+
+.lp-immi-visual-box {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 460px !important;
+    margin: 0 auto !important;
+    z-index: 1 !important;
+}
+
+.lp-immi-backdrop-card {
+    position: absolute !important;
+    width: 95% !important;
+    height: 95% !important;
+    background: #ede9fe !important;
+    border-radius: 28px !important;
+    right: -18px !important;
+    bottom: -18px !important;
+    z-index: 0 !important;
+    transition: transform 0.3s ease !important;
+}
+
+.lp-immi-visual-box:hover .lp-immi-backdrop-card {
+    transform: translate(3px, 3px) !important;
+}
+
+.lp-immi-img-frame {
+    position: relative !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08) !important;
+    background: #ffffff !important;
+    z-index: 1 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.lp-immi-img-frame:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 18px 38px rgba(99, 102, 241, 0.16) !important;
+}
+
+.lp-immi-img-frame img {
+    width: 100% !important;
+    height: 330px !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Floating Overlay Pill Badge */
+.lp-immi-floating-badge {
+    position: absolute !important;
+    bottom: -22px !important;
+    right: -15px !important;
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    padding: 13px 18px !important;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 13px !important;
+    z-index: 3 !important;
+    border: 1px solid #f1f5f9 !important;
+    max-width: 270px !important;
+    transition: transform 0.3s ease !important;
+}
+
+.lp-immi-floating-badge:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+}
+
+.lp-immi-floating-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: #6366f1 !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.05rem !important;
+    flex-shrink: 0 !important;
+}
+
+.lp-immi-floating-title {
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    color: #6366f1 !important;
+    margin-bottom: 2px !important;
+    line-height: 1.2 !important;
+}
+
+.lp-immi-floating-sub {
+    font-size: 0.74rem !important;
+    color: #64748b !important;
+    margin: 0 !important;
+    line-height: 1.3 !important;
+}
+
+/* 2x3 Grid for 6 Immigration Features */
+.lp-immi-features-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 22px 24px !important;
+    margin-top: 28px !important;
+}
+
+.lp-immi-feature-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 13px !important;
+}
+
+.lp-immi-feature-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: #f5f3ff !important;
+    border: 1px solid #ede9fe !important;
+    color: #6366f1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+    flex-shrink: 0 !important;
+    transition: all 0.25s ease !important;
+}
+
+.lp-immi-feature-item:hover .lp-immi-feature-icon {
+    background: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: #ffffff !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25) !important;
+}
+
+.lp-immi-feature-content {
+    flex: 1 !important;
+}
+
+.lp-immi-feature-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #4338ca !important;
+    margin-bottom: 3px !important;
+    line-height: 1.3 !important;
+}
+
+.lp-immi-feature-desc {
+    font-size: 0.82rem !important;
+    color: #64748b !important;
+    line-height: 1.38 !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 991.98px) {
+    .lp-immi-visual-box {
+        margin-bottom: 45px !important;
+    }
+}
+@media (max-width: 767.98px) {
+    .lp-immi-section {
+        padding: 60px 0 !important;
+    }
+    .lp-immi-features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+    }
+    .lp-immi-floating-badge {
+        right: 0 !important;
+        bottom: -15px !important;
+    }
+}
+
+/* Founder Spotlight Section - Contained Card with Clean Page Background */
+.lp-founder-section {
+    padding: 75px 0 !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    position: relative !important;
+}
+
+.lp-founder-card-wrap {
+    background: linear-gradient(135deg, #1e0d38 0%, #100424 100%) !important;
+    border: 1px solid rgba(168, 85, 247, 0.25) !important;
+    border-radius: 28px !important;
+    padding: 55px 50px !important;
+    box-shadow: 0 20px 50px rgba(17, 5, 36, 0.18) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.lp-founder-card-wrap::before {
+    content: "" !important;
+    position: absolute !important;
+    top: -40% !important;
+    right: -15% !important;
+    width: 450px !important;
+    height: 450px !important;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, transparent 70%) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+
+.lp-founder-card-wrap > .row {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.lp-founder-badge {
+    display: inline-block !important;
+    background: rgba(168, 85, 247, 0.18) !important;
+    color: #e9d5ff !important;
+    padding: 6px 16px !important;
+    border-radius: 100px !important;
+    border: 1px solid rgba(192, 132, 252, 0.35) !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 16px !important;
+}
+
+.lp-founder-title {
+    font-size: 2.6rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    line-height: 1.2 !important;
+    margin-bottom: 14px !important;
+    letter-spacing: -0.02em !important;
+}
+
+.lp-founder-title .gold-accent {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 800 !important;
+}
+
+.lp-founder-quote {
+    font-size: 1.15rem !important;
+    color: #e2e8f0 !important;
+    font-weight: 600 !important;
+    font-style: italic !important;
+    margin-bottom: 26px !important;
+}
+
+.lp-founder-points {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 0 32px 0 !important;
+}
+
+.lp-founder-point-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    font-size: 0.96rem !important;
+    color: #f1f5f9 !important;
+    margin-bottom: 16px !important;
+    line-height: 1.55 !important;
+}
+
+.lp-founder-point-item strong {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+.lp-founder-point-item i {
+    color: #fbbf24 !important;
+    font-size: 1.15rem !important;
+    margin-top: 3px !important;
+    flex-shrink: 0 !important;
+}
+
+.lp-founder-img-box {
+    text-align: center !important;
+    position: relative !important;
+}
+
+.lp-founder-avatar-frame {
+    position: relative !important;
+    width: 250px !important;
+    height: 250px !important;
+    margin: 0 auto 20px auto !important;
+    border-radius: 50% !important;
+    padding: 6px !important;
+    background: linear-gradient(135deg, #a855f7 0%, #fbbf24 100%) !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4) !important;
+}
+
+.lp-founder-avatar-frame img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    background-color: #1e1035 !important;
+    display: block !important;
+}
+
+.lp-founder-name {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin-bottom: 4px !important;
+}
+
+.lp-founder-role {
+    font-size: 0.92rem !important;
+    color: #c084fc !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    margin: 0 !important;
+}
+
+/* White Pill Button for Founder Section */
+.lp-btn-pill-white {
+    background: #ffffff !important;
+    color: #1e0d38 !important;
+    border-radius: 100px !important;
+    padding: 13px 32px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.25s ease !important;
+    border: none !important;
+}
+
+.lp-btn-pill-white:hover {
+    background: #f8fafc !important;
+    color: #4f46e5 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+@media (max-width: 991.98px) {
+    .lp-founder-card-wrap {
+        padding: 40px 25px !important;
+    }
+    .lp-founder-avatar-frame {
+        width: 200px !important;
+        height: 200px !important;
+        margin-top: 20px !important;
+    }
+}
+
+/* Responsive Overrides */
+@media (max-width: 991.98px) {
+    .lp-content-title, .lp-founder-title {
+        font-size: 2.2rem;
+    }
+    .lp-about-img-box {
+        margin-bottom: 40px;
+    }
+    .lp-founder-avatar-frame {
+        width: 220px;
+        height: 220px;
+    }
+}
+@media (max-width: 767.98px) {
+    .lp-overview-section, .lp-founder-section {
+        padding: 60px 0;
+    }
+    .lp-content-title, .lp-founder-title {
+        font-size: 1.85rem;
+    }
+    .lp-about-img-frame img {
+        height: 280px;
+    }
+    .lp-founder-card-wrap {
+        padding: 30px 20px;
+    }
+    .lp-feature-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 }

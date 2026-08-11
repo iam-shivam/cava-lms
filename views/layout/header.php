@@ -58,6 +58,10 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
     <!-- Custom Style Sheet -->
     <link href="<?php echo SITE_URL; ?>/assets/css/style.css" rel="stylesheet">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
+
     <!-- Premium Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,8 +74,9 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
     <!-- Header / Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="<?php echo SITE_URL; ?>/index.php">
-                <i class="fa-solid fa-graduation-cap me-2"></i>CAVA LMS
+            <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo SITE_URL; ?>/index.php">
+                <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="lp-nav-logo">
+                <span class="lp-brand-text">CAVA LMS</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

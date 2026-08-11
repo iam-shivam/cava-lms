@@ -93,7 +93,7 @@ class EmailHelper {
                 'website' => SITE_URL,
                 'current_year' => date('Y'),
                 'dashboard_url' => SITE_URL . '/login.php',
-                'company_logo' => SITE_URL . '/assets/images/logo.png'
+                'company_logo' => SITE_URL . '/assets/images/logo.jpeg'
             ];
             
             // Merge custom placeholders over global ones

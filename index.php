@@ -159,6 +159,329 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
     </section>
 
+    <!-- =========================================================================
+         SECTION: ABOUT CAVA LMS (Learn. Grow. Succeed.)
+         ========================================================================= -->
+    <section class="lp-overview-section" id="about-cava">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <!-- Left Column: Layered Image with offset backdrop & dot grid -->
+                <div class="col-lg-6 text-center text-lg-start">
+                    <div class="lp-about-img-box">
+                        <div class="lp-img-decor-dots lp-decor-dots-tl"></div>
+                        <div class="lp-about-backdrop-card lp-backdrop-offset-br"></div>
+                        <div class="lp-about-img-frame">
+                            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80" 
+                                 alt="Student Learning at CAVA LMS" 
+                                 loading="lazy" 
+                                 onerror="this.src='assets/images/study_abroad.jpeg'">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Content -->
+                <div class="col-lg-6">
+                    <span class="lp-content-badge">ABOUT CAVA LMS</span>
+                    <h2 class="lp-content-title">Learn. Grow. Succeed.</h2>
+                    <p class="lp-content-desc">
+                        CAVA LMS is your one-stop platform for career growth and skill development. We provide expert-led learning, interactive sessions, and real-world knowledge to help you achieve your goals.
+                    </p>
+
+                    <ul class="lp-content-checklist">
+                        <li class="lp-content-checklist-item">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                                <circle cx="10" cy="10" r="10" fill="#6366F1"/>
+                                <path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Industry-relevant, up-to-date content</span>
+                        </li>
+                        <li class="lp-content-checklist-item">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                                <circle cx="10" cy="10" r="10" fill="#6366F1"/>
+                                <path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Interactive learning experience</span>
+                        </li>
+                        <li class="lp-content-checklist-item">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                                <circle cx="10" cy="10" r="10" fill="#6366F1"/>
+                                <path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Learn anytime, anywhere</span>
+                        </li>
+                        <li class="lp-content-checklist-item">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                                <circle cx="10" cy="10" r="10" fill="#6366F1"/>
+                                <path d="M6 10L8.5 12.5L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>Certificates to boost your profile</span>
+                        </li>
+                    </ul>
+
+                    <div>
+                        <a href="about.php" class="lp-btn-purple-pill">
+                            Know More About Us 
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left:4px;">
+                                <path d="M3.33334 8H12.6667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 3.33334L12.6667 8L8 12.6667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION: FLEXIBLE LEARNING (Learn From Anywhere, Anytime)
+         ========================================================================= -->
+    <section class="lp-overview-section" id="flexible-learning">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <!-- Left Column: Content -->
+                <div class="col-lg-6 order-2 order-lg-1">
+                    <span class="lp-content-badge">FLEXIBLE LEARNING</span>
+                    <h2 class="lp-content-title">Learn From Anywhere,<br>Anytime</h2>
+                    <p class="lp-content-desc">
+                        Access our courses, webinars, and events on any device, anytime you want. Flexible learning that fits your schedule and lifestyle.
+                    </p>
+
+                    <div class="lp-feature-grid">
+                        <!-- Mini Feature 1 -->
+                        <div class="lp-feature-item">
+                            <div class="lp-feature-icon-badge">
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+                            <h5 class="lp-feature-title">Anytime Access</h5>
+                            <p class="lp-feature-desc">Learn at your own pace</p>
+                        </div>
+
+                        <!-- Mini Feature 2 -->
+                        <div class="lp-feature-item">
+                            <div class="lp-feature-icon-badge">
+                                <i class="fa-solid fa-headset"></i>
+                            </div>
+                            <h5 class="lp-feature-title">Expert Support</h5>
+                            <p class="lp-feature-desc">Get guidance whenever you need</p>
+                        </div>
+
+                        <!-- Mini Feature 3 -->
+                        <div class="lp-feature-item">
+                            <div class="lp-feature-icon-badge">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <h5 class="lp-feature-title">Mobile Friendly</h5>
+                            <p class="lp-feature-desc">Seamless learning on any device</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Layered Image with offset backdrop & dot grid -->
+                <div class="col-lg-6 order-1 order-lg-2 text-center text-lg-end">
+                    <div class="lp-about-img-box">
+                        <div class="lp-img-decor-dots lp-decor-dots-mr"></div>
+                        <div class="lp-about-backdrop-card lp-backdrop-offset-bl"></div>
+                        <div class="lp-about-img-frame">
+                            <img src="https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=1000&q=80" 
+                                 alt="Flexible Online Education" 
+                                 loading="lazy" 
+                                 onerror="this.src='assets/images/work_abroad.jpeg'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION: IMMIGRATION OPPORTUNITIES (Australia & Canada)
+         ========================================================================= -->
+    <section class="lp-immi-section" id="immigration-opportunities">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <!-- Left Column: Visual with Floating Badge, Dot Matrix & Backdrop -->
+                <div class="col-lg-5 text-center text-lg-start">
+                    <div class="lp-immi-visual-box">
+                        <div class="lp-img-decor-dots lp-decor-dots-tl"></div>
+                        <div class="lp-immi-backdrop-card"></div>
+                        <div class="lp-immi-img-frame">
+                            <img src="assets/images/immigration_opportunities.png" 
+                                 alt="Australia and Canada Immigration Opportunities" 
+                                 loading="lazy" 
+                                 onerror="this.src='https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80'">
+                        </div>
+
+                        <!-- Floating Overlay Pill Card -->
+                        <div class="lp-immi-floating-badge">
+                            <div class="lp-immi-floating-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h6 class="lp-immi-floating-title">Your Future, Our Guidance</h6>
+                                <p class="lp-immi-floating-sub">Expert support for a smooth immigration journey.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Content & 2x3 Feature Grid -->
+                <div class="col-lg-7">
+                    <span class="lp-content-badge">IMMIGRATION OPPORTUNITIES</span>
+                    <h2 class="lp-content-title">Australia & Canada</h2>
+                    <p class="lp-content-desc">
+                        Explore the best immigration pathways to build a secure future for you and your family in Australia or Canada.
+                    </p>
+
+                    <div class="lp-immi-features-grid">
+                        <!-- Item 1: Skilled Migration Pathways -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="8" r="6"></circle>
+                                    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Skilled Migration Pathways</h5>
+                                <p class="lp-immi-feature-desc">Multiple immigration programs for qualified professionals.</p>
+                            </div>
+                        </div>
+
+                        <!-- Item 2: Family Sponsorship -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Family Sponsorship</h5>
+                                <p class="lp-immi-feature-desc">Opportunities to sponsor eligible family members after meeting immigration requirements.</p>
+                            </div>
+                        </div>
+
+                        <!-- Item 3: Permanent Residency (PR) -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Permanent Residency (PR)</h5>
+                                <p class="lp-immi-feature-desc">Clear pathways to obtain permanent residency for eligible applicants.</p>
+                            </div>
+                        </div>
+
+                        <!-- Item 4: Healthcare & Education Benefits -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                                    <path d="M12 5v14"></path>
+                                    <path d="M5 12h14"></path>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Healthcare & Education Benefits</h5>
+                                <p class="lp-immi-feature-desc">Access to world-class healthcare and quality education systems.</p>
+                            </div>
+                        </div>
+
+                        <!-- Item 5: Work & Settle Abroad -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Work & Settle Abroad</h5>
+                                <p class="lp-immi-feature-desc">Live, work, and build a long-term career in Australia or Canada.</p>
+                            </div>
+                        </div>
+
+                        <!-- Item 6: Pathway to Citizenship -->
+                        <div class="lp-immi-feature-item">
+                            <div class="lp-immi-feature-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" x2="22" y1="12" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                            </div>
+                            <div class="lp-immi-feature-content">
+                                <h5 class="lp-immi-feature-title">Pathway to Citizenship</h5>
+                                <p class="lp-immi-feature-desc">Eligible permanent residents can apply for citizenship after fulfilling residency requirements.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION: WHY LEARN FROM AMARNATH? (Founder & Chief Mentor Spotlight)
+         ========================================================================= -->
+    <section class="lp-founder-section" id="founder-spotlight">
+        <div class="container">
+            <div class="lp-founder-card-wrap">
+                <div class="row align-items-center g-5">
+                    <!-- Left: Details -->
+                    <div class="col-lg-7">
+                        <span class="lp-founder-badge">FOUNDER & CHIEF MENTOR</span>
+                        <h2 class="lp-founder-title">Why Learn From <span class="gold-accent">Amarnath</span>?</h2>
+                        <p class="lp-founder-quote">"Experience Cannot Be Googled."</p>
+
+                        <ul class="lp-founder-points">
+                            <li class="lp-founder-point-item">
+                                <i class="fa-solid fa-certificate"></i>
+                                <span><strong>28 years of practical experience</strong> handling and guiding thousands of successful applicants globally every year.</span>
+                            </li>
+                            <li class="lp-founder-point-item">
+                                <i class="fa-solid fa-passport"></i>
+                                <span><strong>Thousands of Visa Applications</strong> processed with hands-on expertise across diverse international pathways.</span>
+                            </li>
+                            <li class="lp-founder-point-item">
+                                <i class="fa-solid fa-globe"></i>
+                                <span><strong>Global Footprint:</strong> Real-world experience across USA, United Kingdom, Australia, Canada, Germany, and 28 European Countries.</span>
+                            </li>
+                            <li class="lp-founder-point-item">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                <span><strong>Continuous Evolution:</strong> Learning never stops — every strategy is backed by dynamic policy updates and battle-tested industry systems.</span>
+                            </li>
+                        </ul>
+
+                        <div class="mt-4">
+                            <a href="#featured-courses" class="lp-btn-pill-white">
+                                Start Learning With Amarnath <i class="fa-solid fa-arrow-down ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Founder Portrait -->
+                    <div class="col-lg-5">
+                        <div class="lp-founder-img-box">
+                            <div class="lp-founder-avatar-frame">
+                                <img src="assets/images/amarnath.png" alt="Amarnath - Founder & Chief Mentor" loading="lazy" onerror="this.src='https://placehold.co/400x400/230d4a/ffffff?text=Amarnath'">
+                            </div>
+                            <h4 class="lp-founder-name">Amarnath Singh</h4>
+                            <p class="lp-founder-role">Founder & Chief Mentor, CAVA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Featured Courses Section (Directly following Why Choose) -->
     <section class="lp-section-padding" id="featured-courses">
         <div class="container">

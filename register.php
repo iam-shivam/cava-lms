@@ -25,8 +25,10 @@ require_once __DIR__ . '/views/layout/header.php';
                 <div class="col-md-6 col-lg-5">
                     <div class="lp-auth-card">
                         <div class="text-center mb-4">
-                            <div class="lp-auth-icon">
-                                <i class="fa-solid fa-user-plus"></i>
+                            <div class="mb-3">
+                                <a href="<?php echo SITE_URL; ?>/index.php" class="d-inline-block">
+                                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="rounded-circle shadow-sm" style="height: 68px; width: 68px; object-fit: contain; border: 2px solid rgba(109, 40, 217, 0.15);">
+                                </a>
                             </div>
                             <h2 class="fw-bold text-dark mb-1">Create Account</h2>
                             <p class="text-muted fs-7">Start your learning journey today on CAVA LMS</p>

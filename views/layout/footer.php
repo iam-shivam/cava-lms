@@ -7,8 +7,9 @@
             <div class="row g-4 justify-content-between">
                 <!-- Brand Identity Column -->
                 <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
-                    <a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-brand text-decoration-none mb-3 d-inline-block">
-                        <i class="fa-solid fa-graduation-cap me-2"></i>CAVA LMS
+                    <a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-brand text-decoration-none mb-3 d-inline-flex align-items-center gap-2">
+                        <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="lp-footer-logo" style="height: 48px; width: 48px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 14px rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.25);">
+                        <span class="fw-bold text-white fs-4">CAVA LMS</span>
                     </a>
                     <p class="text-white-50 fs-7" style="max-width: 320px; line-height: 1.65;">
                         A modern and premium learning management system offering expert-led courses, webinars, and masterclasses to help you level up your career.

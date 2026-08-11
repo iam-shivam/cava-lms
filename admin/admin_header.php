@@ -19,6 +19,9 @@ $adminUsername = $_SESSION['admin_username'];
     <title>CAVA LMS - Admin Panel</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom Style Sheet -->
@@ -54,10 +57,11 @@ $adminUsername = $_SESSION['admin_username'];
         <!-- Sidebar -->
         <div class="col-md-3 col-lg-2 px-0 bg-dark min-vh-100 position-sticky top-0" style="z-index: 1000; height: 100vh; overflow-y: auto;">
             <div class="text-center py-4 border-bottom border-secondary mb-3">
-                <a href="<?php echo SITE_URL; ?>/admin/dashboard.php" class="text-white fs-4 fw-bold text-decoration-none">
-                    <i class="fa-solid fa-graduation-cap me-2 text-primary"></i>CAVA LMS
+                <a href="<?php echo SITE_URL; ?>/admin/dashboard.php" class="text-white fs-5 fw-bold text-decoration-none d-flex flex-column align-items-center gap-2">
+                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" style="height: 52px; width: 52px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2);">
+                    <span>CAVA LMS</span>
                 </a>
-                <span class="badge bg-secondary mt-2">Admin Portal</span>
+                <span class="badge bg-secondary mt-1">Admin Portal</span>
             </div>
             
             <nav class="nav flex-column">
