@@ -21,6 +21,9 @@ $csrfToken = generate_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAVA LMS - Admin Login</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
+    <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -37,10 +40,9 @@ $csrfToken = generate_csrf_token();
             <div class="col-md-5 col-lg-4">
                 <div class="card border-0 shadow-lg p-4 p-md-5 rounded-4 animate-fade-in-up bg-white">
                     <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary-light text-primary rounded-circle mb-3"
-                            style="width: 60px; height: 60px; font-size: 24px;">
-                            <i class="fa-solid fa-lock"></i>
-                        </div>
+                        <a href="<?php echo SITE_URL; ?>/index.php" class="d-inline-block mb-3">
+                            <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="rounded-circle shadow-sm" style="height: 72px; width: 72px; object-fit: contain; border: 2px solid rgba(99, 102, 241, 0.2);">
+                        </a>
                         <h2 class="fw-bold">Admin Portal</h2>
                         <p class="text-muted">Enter credentials to log in</p>
                     </div>

@@ -5,6 +5,7 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/models/Course.php';
 require_once __DIR__ . '/models/VideoOTP.php';
 require_once __DIR__ . '/services/BunnyStreamService.php';
+require_once __DIR__ . '/helpers/SecurityHelper.php';
 
 // 1. Require Login
 if (!isset($_SESSION['user_id'])) {
@@ -14,6 +15,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
+$currentUser = DB::fetch("SELECT email, full_name FROM users WHERE id = ?", [$userId]);
+$userEmail = $currentUser['email'] ?? ($_SESSION['user_email'] ?? 'student@cava.com');
 $slug = trim($_GET['slug'] ?? '');
 $course = Course::getBySlug($slug);
 
@@ -146,11 +149,18 @@ require_once __DIR__ . '/views/layout/header.php';
                             </div>
                         </div>
                     <?php elseif ($hasAccess): ?>
+                        <?php 
+                        $videoWatermarkSvg = 'data:image/svg+xml;utf8,' . rawurlencode('
+                        <svg xmlns="http://www.w3.org/2000/svg" width="360" height="230">
+                            <text x="50%" y="30%" fill="rgba(255, 255, 255, 0.16)" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle" transform="rotate(-30, 180, 69)">' . htmlspecialchars($userEmail) . '</text>
+                            <text x="50%" y="80%" fill="rgba(255, 255, 255, 0.12)" font-size="20" font-family="sans-serif" font-weight="900" text-anchor="middle" transform="rotate(-40, 180, 184)">' . htmlspecialchars($userEmail) . '</text>
+                        </svg>');
+                        ?>
                         <?php if (($activeVideo['video_provider'] ?? '') === 'bunny' && !empty($activeVideo['bunny_video_id'])): 
                             $bunnyService = new BunnyStreamService();
                             $bunnyEmbedUrl = $bunnyService->getPlaybackUrl($activeVideo['bunny_video_id']);
                         ?>
-                            <div style="position: relative; padding-top: 56.25%; width: 100%; min-height: 450px; background: #000;">
+                            <div style="position: relative; padding-top: 56.25%; width: 100%; min-height: 450px; background: #000; overflow: hidden;">
                                 <iframe 
                                     id="bunnyPlayerIframe"
                                     src="<?php echo htmlspecialchars($bunnyEmbedUrl); ?>?autoplay=false" 
@@ -159,12 +169,16 @@ require_once __DIR__ . '/views/layout/header.php';
                                     allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" 
                                     allowfullscreen="true">
                                 </iframe>
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; background-image: url('<?php echo $videoWatermarkSvg; ?>'); background-repeat: repeat;"></div>
                             </div>
                         <?php elseif (!empty($activeVideo['video_url'])): ?>
-                            <video controls controlsList="nodownload" style="width: 100%; height: 100%; min-height: 450px; background: #000;">
-                                <source src="video_stream.php?id=<?php echo $activeVideo['id']; ?>" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
+                            <div style="position: relative; width: 100%; height: 100%; min-height: 450px; background: #000; overflow: hidden;">
+                                <video controls controlsList="nodownload" style="width: 100%; height: 100%; min-height: 450px; background: #000;">
+                                    <source src="video_stream.php?id=<?php echo $activeVideo['id']; ?>" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; background-image: url('<?php echo $videoWatermarkSvg; ?>'); background-repeat: repeat;"></div>
+                            </div>
                         <?php else: ?>
                             <div class="d-flex align-items-center justify-content-center text-white h-100 bg-dark" style="min-height: 450px;">
                                 <div><i class="fa-solid fa-video-slash fs-1 mb-2 d-block text-center"></i>Video URL is not set.</div>
@@ -247,10 +261,12 @@ require_once __DIR__ . '/views/layout/header.php';
                         <?php if ($hasAccess): ?>
                             <?php if (!empty($activeVideoDocuments)): ?>
                                 <h5 class="fw-bold mb-3">Lesson Resources</h5>
-                                <p class="text-muted fs-7 mb-4">View or download the supplementary materials for this lesson below.</p>
+                                <p class="text-muted fs-7 mb-4">View supplementary materials for this lesson below in the secure in-page viewer.</p>
                                 <div class="list-group">
                                     <?php foreach ($activeVideoDocuments as $doc): ?>
-                                        <a href="document_viewer.php?id=<?php echo urlencode($doc['id']); ?>" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border">
+                                        <button type="button" 
+                                                onclick="openSecureDocumentViewer('<?php echo urlencode($doc['id']); ?>', '<?php echo htmlspecialchars(addslashes($doc['title'] . '.' . $doc['file_type'])); ?>', '<?php echo strtolower($doc['file_type']); ?>')" 
+                                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center rounded-3 mb-2 border py-3 px-3">
                                             <div class="d-flex align-items-center">
                                                 <?php 
                                                     $icon = 'fa-file';
@@ -262,13 +278,13 @@ require_once __DIR__ . '/views/layout/header.php';
                                                     elseif (in_array($doc['file_type'], ['zip'])) { $icon = 'fa-file-zipper'; $textClass = 'text-muted'; }
                                                 ?>
                                                 <i class="fa-solid <?php echo $icon; ?> <?php echo $textClass; ?> fs-4 me-3"></i>
-                                                <div>
+                                                <div class="text-start">
                                                     <h6 class="mb-0 fw-semibold text-dark"><?php echo htmlspecialchars($doc['title'] . '.' . $doc['file_type']); ?></h6>
                                                     <small class="text-muted"><?php echo number_format($doc['file_size'] / 1024 / 1024, 2); ?> MB</small>
                                                 </div>
                                             </div>
-                                            <i class="fa-solid fa-arrow-up-right-from-square text-muted"></i>
-                                        </a>
+                                            <span class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-medium"><i class="fa-solid fa-eye me-1"></i> View Resource</span>
+                                        </button>
                                     <?php endforeach; ?>
                                 </div>
                             <?php else: ?>
@@ -426,5 +442,348 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<!-- Secure Document Viewer Modal (No Download / Anti-Piracy Protections) -->
+<div class="modal fade" id="secureDocModal" tabindex="-1" aria-labelledby="secureDocModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width: 92vw; height: 88vh;">
+        <div class="modal-content border-0 rounded-4 shadow-lg bg-dark text-white h-100">
+            <div class="modal-header border-secondary py-2 px-3 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-success fs-5"></i>
+                    <h6 class="modal-title fw-bold text-white mb-0 text-truncate" id="secureDocTitle" style="max-width: 350px;">Document Viewer</h6>
+                    <span class="badge bg-secondary text-light fs-8 ms-2"><i class="fa-solid fa-lock me-1"></i>Protected View</span>
+                </div>
+                
+                <!-- Toolbar Controls -->
+                <div class="d-flex align-items-center gap-2" id="docViewerControls">
+                    <button type="button" class="btn btn-sm btn-outline-light d-none" id="btnPrevPage" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span class="fs-8 text-light fw-medium d-none" id="docPageCounter"><span id="docPageNum">1</span> / <span id="docPageCount">--</span></span>
+                    <button type="button" class="btn btn-sm btn-outline-light d-none" id="btnNextPage" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="vr bg-secondary mx-1 d-none" id="docToolbarVR" style="height:20px;"></div>
+                    <button type="button" class="btn btn-sm btn-outline-light d-none" id="btnZoomOut" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-light d-none" id="btnZoomIn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                    <button type="button" class="btn-close btn-close-white ms-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            
+            <div class="modal-body p-0 d-flex justify-content-center align-items-start position-relative overflow-auto bg-dark" id="docCanvasContainer" style="user-select: none; -webkit-user-select: none;">
+                <div id="docLoadingSpinner" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <p class="text-light fs-7">Loading secure document...</p>
+                </div>
+                <div id="docErrorAlert" class="alert alert-danger m-4 d-none"></div>
+                <canvas id="docCanvas" class="shadow-lg my-3 rounded d-none" style="pointer-events: none;"></canvas>
+                <div id="docTextContainer" class="p-4 m-3 bg-white text-dark rounded shadow-lg d-none w-100 position-relative" style="user-select: none; -webkit-user-select: none; max-width: 900px; min-height: 500px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PDF.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<!-- Mammoth.js library for DOCX rendering -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+let currentPdfDoc = null;
+let currentDocPage = 1;
+let currentScale = 1.2;
+let pageIsRendering = false;
+let pageNumPending = null;
+let currentFileType = 'pdf';
+let currentLoadedImage = null;
+const watermarkText = <?php echo json_encode($userEmail); ?>;
+
+function getMultiLayerSvgWatermark(email) {
+    const svgStr = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="380" height="240">
+            <text x="50%" y="28%" fill="rgba(100, 100, 100, 0.18)" font-size="15" font-family="sans-serif" font-weight="bold" text-anchor="middle" transform="rotate(-30, 190, 67)">${email}</text>
+            <text x="50%" y="78%" fill="rgba(70, 70, 70, 0.14)" font-size="22" font-family="sans-serif" font-weight="900" text-anchor="middle" transform="rotate(-42, 190, 187)">${email}</text>
+        </svg>
+    `;
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+}
+
+function drawWatermarkOnCanvas(canvas, ctx) {
+    ctx.save();
+    const text = watermarkText;
+    const width = canvas.width;
+    const height = canvas.height;
+    const diag = Math.sqrt(width * width + height * height);
+
+    // Layer 1: Dense grid, angle -30 deg, font 22px
+    ctx.save();
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillStyle = "rgba(110, 110, 110, 0.20)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.rotate(-Math.PI / 6);
+
+    const stepX1 = 260;
+    const stepY1 = 150;
+    for (let y = -diag; y < diag * 2; y += stepY1) {
+        for (let x = -diag; x < diag * 2; x += stepX1) {
+            ctx.fillText(text, x, y);
+        }
+    }
+    ctx.restore();
+
+    // Layer 2: Off-grid large text, angle -42 deg, font 36px
+    ctx.save();
+    ctx.font = "900 36px sans-serif";
+    ctx.fillStyle = "rgba(80, 80, 80, 0.15)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.rotate(-Math.PI / 4.2);
+
+    const stepX2 = 380;
+    const stepY2 = 230;
+    for (let y = -diag + 60; y < diag * 2; y += stepY2) {
+        for (let x = -diag + 80; x < diag * 2; x += stepX2) {
+            ctx.fillText(text, x, y);
+        }
+    }
+    ctx.restore();
+
+    // Layer 3: Micro detail grid, angle -18 deg, font 15px
+    ctx.save();
+    ctx.font = "600 15px sans-serif";
+    ctx.fillStyle = "rgba(130, 130, 130, 0.13)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.rotate(-Math.PI / 10);
+
+    const stepX3 = 210;
+    const stepY3 = 110;
+    for (let y = -diag + 30; y < diag * 2; y += stepY3) {
+        for (let x = -diag + 40; x < diag * 2; x += stepX3) {
+            ctx.fillText(text, x, y);
+        }
+    }
+    ctx.restore();
+
+    ctx.restore();
+}
+
+function renderDocPage(num) {
+    if (!currentPdfDoc) return;
+    pageIsRendering = true;
+    currentPdfDoc.getPage(num).then(page => {
+        const canvas = document.getElementById('docCanvas');
+        const ctx = canvas.getContext('2d');
+        const viewport = page.getViewport({ scale: currentScale });
+        
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderCtx = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+
+        page.render(renderCtx).promise.then(() => {
+            pageIsRendering = false;
+            drawWatermarkOnCanvas(canvas, ctx);
+
+            if (pageNumPending !== null) {
+                renderDocPage(pageNumPending);
+                pageNumPending = null;
+            }
+        });
+
+        document.getElementById('docPageNum').textContent = num;
+    });
+}
+
+function renderImageCanvas() {
+    if (!currentLoadedImage) return;
+    const canvas = document.getElementById('docCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = currentLoadedImage.width * currentScale;
+    canvas.height = currentLoadedImage.height * currentScale;
+    ctx.drawImage(currentLoadedImage, 0, 0, canvas.width, canvas.height);
+    drawWatermarkOnCanvas(canvas, ctx);
+}
+
+function queueRenderPage(num) {
+    if (currentFileType === 'pdf') {
+        if (pageIsRendering) {
+            pageNumPending = num;
+        } else {
+            renderDocPage(num);
+        }
+    } else if (['jpg','jpeg','png','gif','webp'].includes(currentFileType)) {
+        renderImageCanvas();
+    }
+}
+
+function setToolbarState(type) {
+    const isPdf = (type === 'pdf');
+    const isImage = ['jpg','jpeg','png','gif','webp'].includes(type);
+    
+    document.getElementById('btnPrevPage').classList.toggle('d-none', !isPdf);
+    document.getElementById('docPageCounter').classList.toggle('d-none', !isPdf);
+    document.getElementById('btnNextPage').classList.toggle('d-none', !isPdf);
+    document.getElementById('docToolbarVR').classList.toggle('d-none', !(isPdf || isImage));
+    document.getElementById('btnZoomOut').classList.toggle('d-none', !(isPdf || isImage));
+    document.getElementById('btnZoomIn').classList.toggle('d-none', !(isPdf || isImage));
+}
+
+function openSecureDocumentViewer(docId, title, fileType) {
+    const modalEl = document.getElementById('secureDocModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    
+    document.getElementById('secureDocTitle').innerText = title;
+    const spinner = document.getElementById('docLoadingSpinner');
+    const errorAlert = document.getElementById('docErrorAlert');
+    const canvas = document.getElementById('docCanvas');
+    const textContainer = document.getElementById('docTextContainer');
+    
+    spinner.classList.remove('d-none');
+    errorAlert.classList.add('d-none');
+    canvas.classList.add('d-none');
+    textContainer.classList.add('d-none');
+    textContainer.innerHTML = '';
+    
+    modal.show();
+    
+    currentFileType = fileType ? fileType.toLowerCase() : 'pdf';
+    setToolbarState(currentFileType);
+    
+    const docUrl = 'serve_document.php?id=' + encodeURIComponent(docId);
+    currentDocPage = 1;
+    currentScale = 1.0;
+    currentPdfDoc = null;
+    currentLoadedImage = null;
+
+    // 1. PDF File Handling
+    if (currentFileType === 'pdf') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        const loadingTask = pdfjsLib.getDocument({
+            url: docUrl,
+            httpHeaders: { 'X-Viewer-Auth': 'true' }
+        });
+        
+        loadingTask.promise.then(pdf => {
+            currentPdfDoc = pdf;
+            document.getElementById('docPageCount').textContent = pdf.numPages;
+            spinner.classList.add('d-none');
+            canvas.classList.remove('d-none');
+            currentScale = 1.2;
+            renderDocPage(currentDocPage);
+        }).catch(err => {
+            spinner.classList.add('d-none');
+            errorAlert.innerText = 'Unable to load PDF document in secure viewer. Access denied or file error.';
+            errorAlert.classList.remove('d-none');
+        });
+    }
+    // 2. DOCX / DOC Handling via Mammoth.js
+    else if (['docx', 'doc'].includes(currentFileType)) {
+        fetch(docUrl, { headers: { 'X-Viewer-Auth': 'true' } })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.arrayBuffer();
+            })
+            .then(arrayBuffer => mammoth.convertToHtml({ arrayBuffer: arrayBuffer }))
+            .then(result => {
+                spinner.classList.add('d-none');
+                textContainer.innerHTML = `
+                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;background-image:url('${getMultiLayerSvgWatermark(watermarkText)}');background-repeat:repeat;"></div>
+                    <div class="p-3 fs-6 lh-base position-relative" style="z-index:1;">${result.value}</div>
+                `;
+                textContainer.classList.remove('d-none');
+            })
+            .catch(err => {
+                spinner.classList.add('d-none');
+                errorAlert.innerText = 'Unable to load Word document. File may be corrupted or permission denied.';
+                errorAlert.classList.remove('d-none');
+            });
+    }
+    // 3. Image File Handling (JPG, PNG, GIF, WEBP)
+    else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(currentFileType)) {
+        fetch(docUrl, { headers: { 'X-Viewer-Auth': 'true' } })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.blob();
+            })
+            .then(blob => {
+                const img = new Image();
+                const objectUrl = URL.createObjectURL(blob);
+                img.onload = function() {
+                    currentLoadedImage = img;
+                    spinner.classList.add('d-none');
+                    canvas.classList.remove('d-none');
+                    renderImageCanvas();
+                    URL.revokeObjectURL(objectUrl);
+                };
+                img.src = objectUrl;
+            })
+            .catch(err => {
+                spinner.classList.add('d-none');
+                errorAlert.innerText = 'Unable to load image in secure viewer.';
+                errorAlert.classList.remove('d-none');
+            });
+    }
+    // 4. Text / Code File Handling (TXT, MD, CSV, JSON)
+    else if (['txt', 'md', 'csv', 'json', 'log'].includes(currentFileType)) {
+        fetch(docUrl, { headers: { 'X-Viewer-Auth': 'true' } })
+            .then(res => res.text())
+            .then(text => {
+                spinner.classList.add('d-none');
+                const safeText = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                textContainer.innerHTML = `
+                    <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;background-image:url('${getMultiLayerSvgWatermark(watermarkText)}');background-repeat:repeat;"></div>
+                    <pre class="p-3 fs-7 text-dark m-0 position-relative" style="z-index:1;white-space:pre-wrap;font-family:monospace;">${safeText}</pre>
+                `;
+                textContainer.classList.remove('d-none');
+            })
+            .catch(err => {
+                spinner.classList.add('d-none');
+                errorAlert.innerText = 'Unable to load text document.';
+                errorAlert.classList.remove('d-none');
+            });
+    }
+    // 5. Fallback for other file types (XLSX, PPTX, ZIP)
+    else {
+        spinner.classList.add('d-none');
+        textContainer.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fa-solid fa-file-shield text-primary mb-3" style="font-size: 3.5rem;"></i>
+                <h5 class="fw-bold text-dark mb-2">Protected ${currentFileType.toUpperCase()} Resource</h5>
+                <p class="text-muted fs-7 mb-0" style="max-width: 500px; margin: 0 auto;">
+                    Direct downloading of files is disabled to protect course content. For optimal viewing, please convert PPTX/XLSX resources to PDF or DOCX format before uploading.
+                </p>
+            </div>
+        `;
+        textContainer.classList.remove('d-none');
+    }
+}
+
+// Viewer Control Handlers
+document.getElementById('btnPrevPage').addEventListener('click', () => {
+    if (!currentPdfDoc || currentDocPage <= 1) return;
+    currentDocPage--;
+    queueRenderPage(currentDocPage);
+});
+
+document.getElementById('btnNextPage').addEventListener('click', () => {
+    if (!currentPdfDoc || currentDocPage >= currentPdfDoc.numPages) return;
+    currentDocPage++;
+    queueRenderPage(currentDocPage);
+});
+
+document.getElementById('btnZoomIn').addEventListener('click', () => {
+    currentScale += 0.2;
+    queueRenderPage(currentDocPage);
+});
+
+document.getElementById('btnZoomOut').addEventListener('click', () => {
+    if (currentScale <= 0.4) return;
+    currentScale -= 0.2;
+    queueRenderPage(currentDocPage);
+});
+
+</script>
+
+<?php echo SecurityHelper::renderAntiPiracyScript(); ?>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

@@ -237,7 +237,7 @@ function updateLivePreview() {
         'phone': '+91 98765 43210',
         'website': '<?php echo SITE_URL; ?>',
         'dashboard_url': '<?php echo SITE_URL; ?>/login.php',
-        'company_logo': '<?php echo SITE_URL; ?>/assets/images/logo.png',
+        'company_logo': '<?php echo SITE_URL; ?>/assets/images/logo.jpeg',
         'current_year': new Date().getFullYear(),
         
         // Context mockup values

@@ -18,42 +18,49 @@ $csrfToken = generate_csrf_token();
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="custom-card border-0 shadow-lg p-4 p-md-5 animate-fade-in-up">
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-light text-primary rounded-circle mb-3"
-                        style="width: 60px; height: 60px; font-size: 24px;">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                    <h2 class="fw-bold">Welcome Back</h2>
-                    <p class="text-muted">Enter your registered email or mobile to log in via OTP</p>
-                </div>
-
-                <form action="login.php" method="POST" class="needs-validation">
-                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-
-                    <div class="mb-4">
-                        <label for="identifier" class="form-label fw-semibold">Email or Mobile Number</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i
-                                    class="fa-regular fa-envelope text-muted"></i></span>
-                            <input type="text" class="form-control bg-light border-start-0 ps-0" id="identifier"
-                                name="identifier" placeholder="Enter your email or phone number" required>
+<div class="lp-body-scope">
+    <section class="py-5 min-vh-75 d-flex align-items-center bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="lp-auth-card">
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <a href="<?php echo SITE_URL; ?>/index.php" class="d-inline-block">
+                                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="rounded-circle shadow-sm" style="height: 68px; width: 68px; object-fit: contain; border: 2px solid rgba(109, 40, 217, 0.15);">
+                                </a>
+                            </div>
+                            <h2 class="fw-bold text-dark mb-1">Welcome Back</h2>
+                            <p class="text-muted fs-7">Enter your registered email or mobile number to receive a secure OTP</p>
                         </div>
-                    </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-3 mb-3">Send OTP</button>
+                        <form action="login.php" method="POST" class="needs-validation">
+                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
 
-                    <div class="text-center mt-3">
-                        <p class="mb-0 text-muted">Don't have an account? <a href="register.php"
-                                class="fw-semibold text-primary">Register here</a></p>
+                            <div class="mb-4">
+                                <label for="identifier" class="lp-form-label">Email or Mobile Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border border-end-0 text-primary ps-3" style="border-radius: 10px 0 0 10px;">
+                                        <i class="fa-regular fa-envelope"></i>
+                                    </span>
+                                    <input type="text" class="form-control lp-form-control border-start-0 ps-2" id="identifier"
+                                        name="identifier" placeholder="e.g. aman@example.com or 9876543210" required style="border-radius: 0 10px 10px 0 !important;">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="lp-btn-primary w-100 py-3 mb-3 text-center" style="border-radius: 100px;">
+                                Send OTP <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <p class="mb-0 text-muted fs-7">Don't have an account? <a href="register.php" class="fw-bold text-primary">Register here</a></p>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

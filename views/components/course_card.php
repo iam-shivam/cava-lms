@@ -17,7 +17,7 @@ if (!empty($course['thumbnail'])) {
 <div class="col-md-6 col-lg-4 mb-4">
     <div class="custom-card">
         <div class="card-img-wrapper">
-            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
+            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" loading="lazy" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
             <span class="card-badge"><?php echo htmlspecialchars($course['category_name'] ?? 'Course'); ?></span>
             
             <div class="card-status-badge">
