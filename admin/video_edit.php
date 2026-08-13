@@ -14,7 +14,7 @@ if (!$course || !$video) {
     exit;
 }
 
-$sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC", [$courseId]);
+$sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC", [$courseId]);
 
 $csrfToken = generate_csrf_token();
 

@@ -64,7 +64,7 @@ try {
         if ($course && $course['allow_partial_payment']) {
             $payment = DB::fetch("SELECT * FROM payments WHERE user_id = ? AND item_id = ? AND item_type = 'course' AND status = 'Success' ORDER BY created_at DESC LIMIT 1", [$userId, $courseId]);
             if ($payment && $payment['payment_type'] === 'Partial') {
-                $sections = DB::fetchAll("SELECT id FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, id ASC", [$courseId]);
+                $sections = DB::fetchAll("SELECT id FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC", [$courseId]);
                 $totalSections = count($sections);
                 $allowedSections = ceil($totalSections / 2);
                 $isAllowed = false;

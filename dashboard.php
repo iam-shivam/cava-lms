@@ -25,6 +25,9 @@ if (!$user) {
 }
 
 $tab = trim($_GET['tab'] ?? 'courses');
+if ($tab === 'webinars') {
+    $tab = 'courses';
+}
 
 // Handle Profile Updates & Avatar Upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -146,6 +149,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
+            <?php if (false): ?>
             <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon blue"><i class="fa-solid fa-video"></i></div>
@@ -155,6 +159,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon amber"><i class="fa-solid fa-circle-question"></i></div>
@@ -205,9 +210,11 @@ require_once __DIR__ . '/views/layout/header.php';
                     <a href="dashboard.php?tab=courses" class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-book-open"></i> My Courses
                     </a>
+                    <?php if (false): ?>
                     <a href="dashboard.php?tab=webinars" class="dashboard-menu-link <?php echo $tab === 'webinars' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-video"></i> My Webinars
                     </a>
+                    <?php endif; ?>
                     <a href="dashboard.php?tab=queries" class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-circle-question"></i> Query History
                     </a>
@@ -335,6 +342,11 @@ require_once __DIR__ . '/views/layout/header.php';
                                             <span><i class="fa-regular fa-calendar me-1"></i><?php echo $webDate; ?></span>
                                             <span><i class="fa-regular fa-clock me-1"></i><?php echo $webTime; ?></span>
                                         </div>
+                                        <?php if (!$isPastWebinar && !empty($webinar['join_url'])): ?>
+                                            <div class="mt-3">
+                                                <a href="<?php echo htmlspecialchars($webinar['join_url']); ?>" target="_blank" class="btn btn-success btn-sm rounded-pill w-100 fw-semibold"><i class="fa-solid fa-video me-1"></i>Join Webinar</a>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <?php endforeach; ?>

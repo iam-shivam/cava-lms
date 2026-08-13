@@ -22,7 +22,9 @@
                     <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
                         <li><a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Home</a></li>
                         <li><a href="<?php echo SITE_URL; ?>/courses.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Courses</a></li>
+                        <?php if (false): ?>
                         <li><a href="<?php echo SITE_URL; ?>/webinars.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Webinars</a></li>
+                        <?php endif; ?>
                         <li><a href="<?php echo SITE_URL; ?>/events.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Events</a></li>
                         <li><a href="<?php echo SITE_URL; ?>/support.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Support Center</a></li>
                     </ul>

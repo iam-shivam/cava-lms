@@ -66,7 +66,11 @@ $isPastWebinar = $webinarTimestamp < time();
                 <div class="alert alert-success m-0 py-2 px-3 border-0 d-inline-flex align-items-center gap-2 rounded-pill fs-7">
                     <i class="fa-solid fa-circle-check"></i> Registered
                 </div>
-                <button class="btn btn-outline-primary btn-sm rounded-pill px-4" disabled>Join Link Emailed</button>
+                <?php if (!empty($webinar['join_url'])): ?>
+                    <a href="<?php echo htmlspecialchars($webinar['join_url']); ?>" target="_blank" class="btn btn-success btn-sm rounded-pill px-4 fw-semibold"><i class="fa-solid fa-video me-1"></i>Join Webinar</a>
+                <?php else: ?>
+                    <button class="btn btn-outline-primary btn-sm rounded-pill px-4" disabled>Join Link Emailed</button>
+                <?php endif; ?>
             <?php else: ?>
                 <span class="fw-bold text-primary fs-4">₹<?php echo number_format($webinar['price'], 2); ?></span>
                 

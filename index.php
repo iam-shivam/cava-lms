@@ -62,9 +62,11 @@ require_once __DIR__ . '/views/layout/header.php';
                         <a href="#featured-courses" class="lp-btn-pill-white">
                             <i class="fa-solid fa-book-open me-1"></i> Explore Courses <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
+                        <?php if (false): ?>
                         <a href="webinars.php" class="lp-btn-pill-outline">
                             <i class="fa-solid fa-tower-broadcast me-1"></i> Join Live Webinar <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Wix Studio Style Statistics Row inside left column -->
@@ -516,6 +518,7 @@ require_once __DIR__ . '/views/layout/header.php';
     </section>
 
     <!-- Upcoming Webinars Section -->
+    <?php if (false): ?>
     <section class="lp-section-padding bg-light border-top border-bottom" id="upcoming-webinars">
         <div class="container">
             <div class="lp-section-title-wrap text-center gsap-reveal">
@@ -547,6 +550,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <?php endif; ?>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- Upcoming Events Section -->
     <section class="lp-section-padding" id="upcoming-events">

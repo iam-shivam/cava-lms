@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $time = $_POST['time'] ?? '';
     $price = floatval($_POST['price'] ?? 0.00);
     $status = $_POST['status'] ?? 'Active';
+    $joinUrl = trim($_POST['join_url'] ?? '');
     
     if (empty($title) || empty($date) || empty($time)) {
         set_flash_message('danger', 'Title, date, and time are required.');
@@ -67,12 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO webinars (id, title, thumbnail, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO webinars (id, title, thumbnail, description, date, time, price, status, join_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([generate_uuid(), $title, $thumbnailName, $description, $date, $time, $price, $status]);
+            $stmt->execute([generate_uuid(), $title, $thumbnailName, $description, $date, $time, $price, $status, $joinUrl]);
             set_flash_message('success', 'Webinar created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
-            $oldWebinar = DB::fetch("SELECT title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+            $oldWebinar = DB::fetch("SELECT title, thumbnail, description, date, time, price, status, join_url FROM webinars WHERE id = ?", [$id]);
             
             $updates = [];
             $params = [];
@@ -83,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             if ($time !== $oldWebinar['time']) { $updates[] = "time = ?"; $params[] = $time; }
             if (floatval($price) !== floatval($oldWebinar['price'])) { $updates[] = "price = ?"; $params[] = $price; }
             if ($status !== $oldWebinar['status']) { $updates[] = "status = ?"; $params[] = $status; }
+            if ($joinUrl !== $oldWebinar['join_url']) { $updates[] = "join_url = ?"; $params[] = $joinUrl; }
             
             if ($thumbnailName) {
                 if ($oldWebinar['thumbnail'] && file_exists(BASE_PATH . '/uploads/' . $oldWebinar['thumbnail'])) {
@@ -212,7 +214,7 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
     $editWebinar = null;
     if ($action === 'edit' && !empty($id)) {
-        $editWebinar = DB::fetch("SELECT id, title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+        $editWebinar = DB::fetch("SELECT id, title, thumbnail, description, date, time, price, status, join_url FROM webinars WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
@@ -234,6 +236,11 @@ $csrfToken = generate_csrf_token();
                     <div class="mb-3">
                         <label for="description" class="form-label fw-semibold">Webinar Description</label>
                         <textarea class="form-control" id="description" name="description" rows="6" placeholder="Enter brief overview about what live webinar covers..." required><?php echo $editWebinar ? htmlspecialchars($editWebinar['description']) : ''; ?></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="join_url" class="form-label fw-semibold">Join Webinar URL (Optional)</label>
+                        <input type="url" class="form-control" id="join_url" name="join_url" value="<?php echo $editWebinar ? htmlspecialchars($editWebinar['join_url']) : ''; ?>" placeholder="https://zoom.us/j/...">
                     </div>
                 </div>
                 

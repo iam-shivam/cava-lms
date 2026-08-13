@@ -46,6 +46,7 @@ $users = DB::fetchAll("
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
+                    <th>Sl. No.</th>
                     <th>Full Name</th>
                     <th>Email Address</th>
                     <th>Mobile Number</th>
@@ -57,10 +58,11 @@ $users = DB::fetchAll("
             </thead>
             <tbody>
                 <?php if (empty($users)): ?>
-                    <tr><td colspan="7" class="text-center text-muted">No users registered yet.</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted">No users registered yet.</td></tr>
                 <?php else: ?>
-                    <?php foreach ($users as $u): ?>
+                    <?php $slNo = 1; foreach ($users as $u): ?>
                         <tr>
+                            <td><?php echo $slNo++; ?></td>
                             <td class="fw-semibold text-dark"><?php echo htmlspecialchars($u['full_name']); ?></td>
                             <td><?php echo htmlspecialchars($u['email']); ?></td>
                             <td><?php echo htmlspecialchars($u['mobile_number']); ?></td>

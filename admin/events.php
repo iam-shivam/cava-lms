@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $date = $_POST['date'] ?? '';
+    $joinUrl = trim($_POST['join_url'] ?? '');
     
     if (empty($title) || empty($date)) {
         set_flash_message('danger', 'Title and date are required.');
@@ -70,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO events (id, title, description, date, event_image) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO events (id, title, description, date, event_image, join_url) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([generate_uuid(), $title, $description, $date, $imageName]);
+            $stmt->execute([generate_uuid(), $title, $description, $date, $imageName, $joinUrl]);
             set_flash_message('success', 'Event created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
-            $oldEvent = DB::fetch("SELECT title, description, date, event_image FROM events WHERE id = ?", [$id]);
+            $oldEvent = DB::fetch("SELECT title, description, date, event_image, join_url FROM events WHERE id = ?", [$id]);
             
             $updates = [];
             $params = [];
@@ -83,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             if ($title !== $oldEvent['title']) { $updates[] = "title = ?"; $params[] = $title; }
             if ($description !== $oldEvent['description']) { $updates[] = "description = ?"; $params[] = $description; }
             if ($date !== $oldEvent['date']) { $updates[] = "date = ?"; $params[] = $date; }
+            if ($joinUrl !== $oldEvent['join_url']) { $updates[] = "join_url = ?"; $params[] = $joinUrl; }
             
             if ($imageName) {
                 if ($oldEvent['event_image'] && file_exists(BASE_PATH . '/uploads/' . $oldEvent['event_image'])) {
@@ -211,7 +213,7 @@ $csrfToken = generate_csrf_token();
 <?php if (in_array($action, ['add', 'edit'])): 
     $editEvent = null;
     if ($action === 'edit' && !empty($id)) {
-        $editEvent = DB::fetch("SELECT id, title, description, date, event_image FROM events WHERE id = ?", [$id]);
+        $editEvent = DB::fetch("SELECT id, title, description, date, event_image, join_url FROM events WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
@@ -233,6 +235,11 @@ $csrfToken = generate_csrf_token();
                     <div class="mb-3">
                         <label for="description" class="form-label fw-semibold">Event Description</label>
                         <textarea class="form-control" id="description" name="description" rows="6" placeholder="Provide general outline and schedules..." required><?php echo $editEvent ? htmlspecialchars($editEvent['description']) : ''; ?></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="join_url" class="form-label fw-semibold">Join URL (Optional)</label>
+                        <input type="url" class="form-control" id="join_url" name="join_url" value="<?php echo $editEvent ? htmlspecialchars($editEvent['join_url']) : ''; ?>" placeholder="https://zoom.us/j/...">
                     </div>
                 </div>
                 

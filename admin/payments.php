@@ -79,7 +79,7 @@ $payments = Payment::getAllPayments();
                                 <div class="row text-muted fs-7">
                                     <div class="col-md-3 mb-2 mb-md-0">
                                         <strong class="d-block mb-1 text-dark">Payment Method</strong>
-                                        <?php if ($p['payment_method']): ?>
+                                        <?php if (!empty($p['payment_method'])): ?>
                                             <span class="badge bg-secondary"><?php echo strtoupper(htmlspecialchars($p['payment_method'])); ?></span>
                                         <?php else: ?>
                                             <span class="text-muted">N/A</span>

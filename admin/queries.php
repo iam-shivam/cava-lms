@@ -32,21 +32,23 @@ $queries = Query::getAll();
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
+                    <th>Sl. No.</th>
                     <th>From</th>
                     <th>Email</th>
                     <th>Mobile</th>
                     <th style="max-width: 300px;">Query Message</th>
                     <th>Status</th>
-                    <th>Submitted</th>
+                    <th>Created Date</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($queries)): ?>
-                    <tr><td colspan="7" class="text-center text-muted">No support queries received yet.</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted">No support queries received yet.</td></tr>
                 <?php else: ?>
-                    <?php foreach ($queries as $q): ?>
+                    <?php $slNo = 1; foreach ($queries as $q): ?>
                         <tr class="<?php echo $q['status'] === 'Resolved' ? 'table-light text-muted' : ''; ?>">
+                            <td><?php echo $slNo++; ?></td>
                             <td class="fw-semibold text-dark"><?php echo htmlspecialchars($q['name']); ?></td>
                             <td><?php echo htmlspecialchars($q['email']); ?></td>
                             <td><?php echo htmlspecialchars($q['mobile_number']); ?></td>

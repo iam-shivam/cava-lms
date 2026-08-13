@@ -194,12 +194,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 // Fetch Sections
-$sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, id ASC", [$courseId]);
+$sections = DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC", [$courseId]);
 
 // Fetch Videos grouped by Section
 $syllabus = [];
 foreach ($sections as $sec) {
-    $videos = DB::fetchAll("SELECT * FROM course_videos WHERE section_id = ? ORDER BY sort_order ASC, id ASC", [$sec['id']]);
+    $videos = DB::fetchAll("SELECT * FROM course_videos WHERE section_id = ? ORDER BY sort_order ASC, created_at ASC", [$sec['id']]);
     $syllabus[] = [
         'section' => $sec,
         'videos' => $videos

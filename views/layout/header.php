@@ -89,9 +89,11 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo SITE_URL; ?>/courses.php">Courses</a>
                     </li>
+                    <?php if (false): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo SITE_URL; ?>/webinars.php">Webinars</a>
                     </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo SITE_URL; ?>/events.php">Events</a>
                     </li>

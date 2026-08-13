@@ -32,6 +32,7 @@ require_once __DIR__ . '/views/layout/header.php';
     <section class="py-5 bg-white">
         <div class="container">
             <!-- Support Category Spring Cards -->
+            <?php if (false): ?>
             <div class="row g-4 mb-5 text-start">
                 <div class="col-md-4">
                     <div class="custom-card border p-4 rounded-4 bg-white support-cat-card">
@@ -61,6 +62,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="row g-4">
                 <!-- Left Column: Submit Query Form -->
