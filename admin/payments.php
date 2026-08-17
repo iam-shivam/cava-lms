@@ -3,7 +3,28 @@
 require_once __DIR__ . '/admin_header.php';
 require_once dirname(__DIR__) . '/models/Payment.php';
 
-$payments = Payment::getAllPayments();
+// Pagination settings
+$perPage = isset($_GET['per_page']) ? intval($_GET['per_page']) : 10;
+if (!in_array($perPage, [10, 20, 50, 100])) $perPage = 10;
+$currentPage = isset($_GET['pg']) ? max(1, intval($_GET['pg'])) : 1;
+
+$totalRow = DB::fetch("SELECT COUNT(*) as total FROM payments");
+$totalPayments = intval($totalRow['total']);
+$totalPages = max(1, ceil($totalPayments / $perPage));
+if ($currentPage > $totalPages) $currentPage = $totalPages;
+$offset = ($currentPage - 1) * $perPage;
+
+$payments = DB::fetchAll("
+    SELECT p.*, u.full_name as user_name, u.email as user_email, u.mobile_number as user_mobile,
+           CASE 
+               WHEN p.item_type = 'course' THEN (SELECT title FROM courses WHERE id = p.item_id)
+               WHEN p.item_type = 'webinar' THEN (SELECT title FROM webinars WHERE id = p.item_id)
+           END as item_title
+    FROM payments p
+    JOIN users u ON p.user_id = u.id
+    ORDER BY p.created_at DESC
+    LIMIT $perPage OFFSET $offset
+");
 ?>
 
 <style>
@@ -30,6 +51,7 @@ $payments = Payment::getAllPayments();
         <table class="table table-hover align-middle payments-table">
             <thead>
                 <tr>
+                    <th style="width: 50px;">#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
@@ -43,12 +65,13 @@ $payments = Payment::getAllPayments();
             </thead>
             <tbody>
                 <?php if (empty($payments)): ?>
-                    <tr><td colspan="9" class="text-center text-muted">No transactions recorded yet.</td></tr>
+                    <tr><td colspan="10" class="text-center text-muted">No transactions recorded yet.</td></tr>
                 <?php else: ?>
-                    <?php foreach ($payments as $p): 
+                    <?php foreach ($payments as $index => $p): 
                         $collapseId = 'details_' . md5($p['id']);
                     ?>
                         <tr data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" style="cursor: pointer;" title="Click to view details">
+                            <td class="text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                             <td class="fw-semibold text-dark"><?php echo htmlspecialchars($p['user_name']); ?></td>
                             <td><?php echo htmlspecialchars($p['user_email']); ?></td>
                             <td><?php echo htmlspecialchars($p['user_mobile']); ?></td>
@@ -75,7 +98,7 @@ $payments = Payment::getAllPayments();
                         </tr>
                         <!-- Hidden Details Row -->
                         <tr class="collapse" id="<?php echo $collapseId; ?>">
-                            <td colspan="9" class="bg-light border-bottom-0 py-3 px-4">
+                            <td colspan="10" class="bg-light border-bottom-0 py-3 px-4">
                                 <div class="row text-muted fs-7">
                                     <div class="col-md-3 mb-2 mb-md-0">
                                         <strong class="d-block mb-1 text-dark">Payment Method</strong>
@@ -109,6 +132,53 @@ $payments = Payment::getAllPayments();
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination Controls -->
+    <?php if ($totalPayments > 0): ?>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted small">
+        Showing <?php echo $offset + 1; ?> to <?php echo min($offset + $perPage, $totalPayments); ?> of <?php echo $totalPayments; ?> entries
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted small mb-0">Show</label>
+          <select class="form-select form-select-sm" style="width: auto;" onchange="window.location.href='payments.php?per_page='+this.value+'&pg=1'">
+            <?php foreach ([10, 20, 50, 100] as $opt): ?>
+              <option value="<?php echo $opt; ?>" <?php echo $perPage == $opt ? 'selected' : ''; ?>><?php echo $opt; ?></option>
+            <?php endforeach; ?>
+          </select>
+          <span class="text-muted small">entries</span>
+        </div>
+        
+        <nav aria-label="Payments pagination">
+          <ul class="pagination mb-0">
+            <li class="page-item <?php echo $currentPage <= 1 ? 'disabled' : ''; ?>">
+              <a class="page-link" href="payments.php?pg=<?php echo $currentPage - 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Previous">&laquo;</a>
+            </li>
+            <?php
+            $startP = max(1, $currentPage - 2);
+            $endP = min($totalPages, $currentPage + 2);
+            if ($startP > 1): ?>
+              <li class="page-item"><a class="page-link" href="payments.php?pg=1&per_page=<?php echo $perPage; ?>">1</a></li>
+              <?php if ($startP > 2): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+            <?php endif; ?>
+            <?php for ($p = $startP; $p <= $endP; $p++): ?>
+              <li class="page-item <?php echo $p == $currentPage ? 'active' : ''; ?>">
+                <a class="page-link" href="payments.php?pg=<?php echo $p; ?>&per_page=<?php echo $perPage; ?>"><?php echo $p; ?></a>
+              </li>
+            <?php endfor; ?>
+            <?php if ($endP < $totalPages): ?>
+              <?php if ($endP < $totalPages - 1): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+              <li class="page-item"><a class="page-link" href="payments.php?pg=<?php echo $totalPages; ?>&per_page=<?php echo $perPage; ?>"><?php echo $totalPages; ?></a></li>
+            <?php endif; ?>
+            <li class="page-item <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?>">
+              <a class="page-link" href="payments.php?pg=<?php echo $currentPage + 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Next">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>

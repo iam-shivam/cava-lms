@@ -32,7 +32,6 @@ $courseId = trim($_POST['course_id'] ?? '');
 $sectionId = trim($_POST['section_id'] ?? '');
 $videoTitle = trim($_POST['video_title'] ?? '');
 $description = trim($_POST['description'] ?? '');
-$sortOrder = intval($_POST['sort_order'] ?? 0);
 $isEdit = (trim($_POST['is_edit'] ?? '0') === '1');
 $videoId = trim($_POST['video_id'] ?? ''); // only for edit mode
 
@@ -133,14 +132,20 @@ try {
             }
         }
 
+        // Preserve existing sort_order on edit (no manual sort input)
+        $sortOrderToSave = intval($existing['sort_order'] ?? 1);
         $sql = "UPDATE course_videos SET section_id = ?, title = ?, description = ?, video_url = NULL, video_provider = 'bunny', bunny_video_id = ?, document_url = ?, sort_order = ? WHERE id = ?";
         $stmt = $db->prepare($sql);
-        $stmt->execute([$sectionId, $videoTitle, $description, $bunnyVideoId, $documentUrl, $sortOrder, $videoId]);
+        $stmt->execute([$sectionId, $videoTitle, $description, $bunnyVideoId, $documentUrl, $sortOrderToSave, $videoId]);
     } else {
+        // Automatic sequencing: calculate MAX(sort_order) + 1 within that specific section
+        $maxVidRow = DB::fetch("SELECT MAX(sort_order) as max_order FROM course_videos WHERE section_id = ?", [$sectionId]);
+        $autoOrder = ($maxVidRow && $maxVidRow['max_order'] !== null) ? intval($maxVidRow['max_order']) + 1 : 1;
+
         $newId = generate_uuid();
         $sql = "INSERT INTO course_videos (id, section_id, course_id, title, description, video_url, video_provider, bunny_video_id, document_url, sort_order) VALUES (?, ?, ?, ?, ?, NULL, 'bunny', ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->execute([$newId, $sectionId, $courseId, $videoTitle, $description, $bunnyVideoId, $documentUrl, $sortOrder]);
+        $stmt->execute([$newId, $sectionId, $courseId, $videoTitle, $description, $bunnyVideoId, $documentUrl, $autoOrder]);
     }
 
     echo json_encode([

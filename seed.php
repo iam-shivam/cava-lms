@@ -97,7 +97,7 @@
                 $vidId = $existingVid['id'];
             } else {
                 $vidId = generate_uuid();
-                $videoInsert = "INSERT INTO course_videos (id, section_id, course_id, title, thumbnail, video_url, video_source, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                $videoInsert = "INSERT INTO course_videos (id, section_id, course_id, title, thumbnail, video_url, video_source, video_provider, bunny_video_id, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, 'local', NULL, ?)";
                 insert($videoInsert, [
                     $vidId,
                     $sectionId,

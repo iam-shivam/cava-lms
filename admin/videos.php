@@ -63,11 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $formType = $_POST['form_type'] ?? '';
+    $openSectionId = ''; // Track which section to auto-expand after redirect
     
     try {
         if ($formType === 'add_section') {
             $title = trim($_POST['section_title'] ?? '');
-            $order = intval($_POST['sort_order'] ?? 0);
             if (empty($title)) {
                 set_flash_message('danger', 'Section title cannot be empty.');
             } else {
@@ -75,13 +75,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($existing) {
                     set_flash_message('danger', 'A section with this title already exists in the course.');
                 } else {
+                    // Automatic sequencing: calculate MAX(sort_order) + 1 for the course
+                    $maxSectionRow = DB::fetch("SELECT MAX(sort_order) as max_order FROM course_sections WHERE course_id = ?", [$courseId]);
+                    $order = ($maxSectionRow && $maxSectionRow['max_order'] !== null) ? intval($maxSectionRow['max_order']) + 1 : 1;
+
+                    $newSectionId = generate_uuid();
                     $stmt = DB::getConnection()->prepare("INSERT INTO course_sections (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)");
-                    $stmt->execute([generate_uuid(), $courseId, $title, $order]);
+                    $stmt->execute([$newSectionId, $courseId, $title, $order]);
+                    $openSectionId = $newSectionId;
                     set_flash_message('success', 'Section created successfully!');
                 }
             }
         } elseif ($formType === 'edit_section_inline') {
             $sectionId = trim($_POST['section_id'] ?? '');
+            $openSectionId = $sectionId;
             $title = trim($_POST['section_title'] ?? '');
             if (!empty($sectionId) && !empty($title)) {
                 $oldSection = DB::fetch("SELECT title FROM course_sections WHERE id = ? AND course_id = ?", [$sectionId, $courseId]);
@@ -100,9 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($formType === 'add_video') {
             $sectionId = trim($_POST['section_id'] ?? '');
+            $openSectionId = $sectionId;
             $title = trim($_POST['video_title'] ?? '');
             $description = trim($_POST['description'] ?? '');
-            $order = intval($_POST['sort_order'] ?? 0);
             
             if (empty($sectionId) || empty($title) || empty($_FILES['video_file']['name'])) {
                 set_flash_message('danger', 'Please complete all required fields and select a video.');
@@ -111,6 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($existing) {
                     set_flash_message('danger', 'A video lesson with this title already exists in the course.');
                 } else {
+                    // Automatic sequencing: calculate MAX(sort_order) + 1 within that specific section
+                    $maxVidRow = DB::fetch("SELECT MAX(sort_order) as max_order FROM course_videos WHERE section_id = ?", [$sectionId]);
+                    $order = ($maxVidRow && $maxVidRow['max_order'] !== null) ? intval($maxVidRow['max_order']) + 1 : 1;
                     $videoUrl = '';
                     $documentUrl = null;
                     $lessonThumbnailName = null;
@@ -188,7 +198,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         set_flash_message('danger', 'Database Error: ' . $e->getMessage());
     }
     
-    header("Location: videos.php?course_id=$courseId");
+    $redirectUrl = "videos.php?course_id=$courseId";
+    if (!empty($openSectionId)) {
+        $redirectUrl .= "&open_section=" . urlencode($openSectionId);
+    }
+    header("Location: $redirectUrl");
     exit;
 }
 
@@ -240,7 +254,6 @@ foreach ($sections as $sec) {
                                     <button class="accordion-button collapsed bg-light fw-bold py-3 w-100" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="false">
                                         <i class="fa-solid fa-folder me-2 text-warning"></i>
                                         <span id="text_sec_<?php echo $sec['id']; ?>"><?php echo htmlspecialchars($sec['title']); ?></span>
-                                        <small class="text-muted ms-2 fs-8 pe-5 me-5">(Sort: <?php echo $sec['sort_order']; ?>)</small>
                                     </button>
                                     <!-- View Actions Overlay (Outside the button) -->
                                     <div class="position-absolute top-50 translate-middle-y" style="right: 50px; z-index: 10;">
@@ -337,11 +350,6 @@ foreach ($sections as $sec) {
                     <input type="text" class="form-control" id="section_title" name="section_title" placeholder="e.g. Section 1: Introduction" required>
                 </div>
                 
-                <div class="mb-3">
-                    <label for="sort_order" class="form-label fw-semibold">Sort Order</label>
-                    <input type="number" class="form-control" id="sort_order" name="sort_order" value="1">
-                </div>
-                
                 <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Create Section</button>
             </form>
         </div>
@@ -388,11 +396,6 @@ foreach ($sections as $sec) {
                 <div class="mb-3">
                     <label for="description" class="form-label fw-semibold">Video Description</label>
                     <textarea class="form-control" id="description" name="description" rows="3" placeholder="Brief description of this video..."></textarea>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="sort_order_vid" class="form-label fw-semibold">Sort Order</label>
-                    <input type="number" class="form-control" id="sort_order_vid" name="sort_order" value="1">
                 </div>
                 
                 <div class="d-flex flex-column gap-2">
@@ -526,7 +529,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     spinner.classList.add('d-none');
                     
                     setTimeout(function() {
-                        window.location.reload();
+                        const selectedSection = sectionSelect.value;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('open_section', selectedSection);
+                        window.location.href = url.toString();
                     }, 1500);
                 } else {
                     statusTitle.innerText = "Upload Failed";
@@ -553,6 +559,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Auto-expand section from URL param (after add/edit redirect)
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    const openSection = params.get('open_section');
+    if (openSection) {
+        const collapseEl = document.getElementById('collapseSec_' + openSection);
+        if (collapseEl) {
+            const bsCollapse = new bootstrap.Collapse(collapseEl, { show: true });
+            // Scroll the section into view after it expands
+            collapseEl.addEventListener('shown.bs.collapse', function() {
+                const header = document.getElementById('headingSec_' + openSection);
+                if (header) {
+                    header.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, { once: true });
+        }
+        // Clean up URL without reload
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('open_section');
+        window.history.replaceState({}, '', cleanUrl.toString());
+    }
+})();
 </script>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>

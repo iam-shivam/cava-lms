@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sectionId = trim($_POST['section_id'] ?? '');
     $title = trim($_POST['video_title'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $order = intval($_POST['sort_order'] ?? 0);
 
     if (empty($sectionId) || empty($title)) {
         set_flash_message('danger', 'Please complete all required fields.');
@@ -162,10 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updates[] = "thumbnail = ?";
             $params[] = $newLessonThumbnail;
         }
-        if ($order !== intval($video['sort_order'])) {
-            $updates[] = "sort_order = ?";
-            $params[] = $order;
-        }
+
 
         if (!empty($updates)) {
             $params[] = $id;
