@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
     $time = $_POST['time'] ?? '';
     $price = floatval($_POST['price'] ?? 0.00);
     $status = $_POST['status'] ?? 'Active';
+    $joinUrl = trim($_POST['join_url'] ?? '');
     
     if (empty($title) || empty($date) || empty($time)) {
         set_flash_message('danger', 'Title, date, and time are required.');
@@ -67,12 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
 
     try {
         if ($action === 'add') {
-            $sql = "INSERT INTO webinars (id, title, thumbnail, description, date, time, price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO webinars (id, title, thumbnail, description, date, time, price, status, join_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([generate_uuid(), $title, $thumbnailName, $description, $date, $time, $price, $status]);
+            $stmt->execute([generate_uuid(), $title, $thumbnailName, $description, $date, $time, $price, $status, $joinUrl]);
             set_flash_message('success', 'Webinar created successfully!');
         } elseif ($action === 'edit' && !empty($id)) {
-            $oldWebinar = DB::fetch("SELECT title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+            $oldWebinar = DB::fetch("SELECT title, thumbnail, description, date, time, price, status, join_url FROM webinars WHERE id = ?", [$id]);
             
             $updates = [];
             $params = [];
@@ -83,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, ['add', 'edit']))
             if ($time !== $oldWebinar['time']) { $updates[] = "time = ?"; $params[] = $time; }
             if (floatval($price) !== floatval($oldWebinar['price'])) { $updates[] = "price = ?"; $params[] = $price; }
             if ($status !== $oldWebinar['status']) { $updates[] = "status = ?"; $params[] = $status; }
+            if ($joinUrl !== $oldWebinar['join_url']) { $updates[] = "join_url = ?"; $params[] = $joinUrl; }
             
             if ($thumbnailName) {
                 if ($oldWebinar['thumbnail'] && file_exists(BASE_PATH . '/uploads/' . $oldWebinar['thumbnail'])) {
@@ -125,12 +127,24 @@ if ($action === 'delete' && !empty($id)) {
     exit;
 }
 
-// Fetch Webinars
+// Pagination settings
+$perPage = isset($_GET['per_page']) ? intval($_GET['per_page']) : 10;
+if (!in_array($perPage, [10, 20, 50, 100])) $perPage = 10;
+$currentPage = isset($_GET['pg']) ? max(1, intval($_GET['pg'])) : 1;
+
+$totalRow = DB::fetch("SELECT COUNT(*) as total FROM webinars");
+$totalWebinars = intval($totalRow['total']);
+$totalPages = max(1, ceil($totalWebinars / $perPage));
+if ($currentPage > $totalPages) $currentPage = $totalPages;
+$offset = ($currentPage - 1) * $perPage;
+
+// Fetch Webinars with pagination
 $webinars = DB::fetchAll("
     SELECT w.*, 
            (SELECT COUNT(id) FROM webinar_registrations WHERE webinar_id = w.id) as registration_count 
     FROM webinars w 
     ORDER BY w.date ASC, w.time ASC
+    LIMIT $perPage OFFSET $offset
 ");
 
 $csrfToken = generate_csrf_token();
@@ -149,9 +163,9 @@ $csrfToken = generate_csrf_token();
             <table class="table table-hover align-middle">
                 <thead>
                     <tr>
+                        <th style="width: 50px;">#</th>
                         <th>Webinar Title</th>
                         <th>Date & Time</th>
-                        <th>Price</th>
                         <th>Registrations</th>
                         <th>Status</th>
                         <th>Export</th>
@@ -160,16 +174,16 @@ $csrfToken = generate_csrf_token();
                 </thead>
                 <tbody>
                     <?php if (empty($webinars)): ?>
-                        <tr><td colspan="6" class="text-center text-muted">No webinars created yet.</td></tr>
+                        <tr><td colspan="9" class="text-center text-muted">No webinars created yet.</td></tr>
                     <?php else: ?>
-                        <?php foreach ($webinars as $w): ?>
+                        <?php foreach ($webinars as $index => $w): ?>
                             <tr>
+                                <td class="text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                                 <td class="fw-semibold text-dark"><?php echo htmlspecialchars($w['title']); ?></td>
                                 <td>
                                     <span class="d-block"><i class="fa-regular fa-calendar me-1"></i><?php echo date('d M, Y', strtotime($w['date'])); ?></span>
                                     <span class="d-block text-muted fs-8"><i class="fa-regular fa-clock me-1"></i><?php echo date('h:i A', strtotime($w['time'])); ?></span>
                                 </td>
-                                <td class="fw-bold text-primary">₹<?php echo number_format($w['price'], 2); ?></td>
                                 <td><span class="badge bg-primary-light text-primary"><?php echo $w['registration_count']; ?> Registered</span></td>
                                 <td>
                                     <?php 
@@ -206,13 +220,61 @@ $csrfToken = generate_csrf_token();
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination Controls -->
+        <?php if ($totalWebinars > 0): ?>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-muted small">
+            Showing <?php echo $offset + 1; ?> to <?php echo min($offset + $perPage, $totalWebinars); ?> of <?php echo $totalWebinars; ?> entries
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <label class="text-muted small mb-0">Show</label>
+              <select class="form-select form-select-sm" style="width: auto;" onchange="window.location.href='webinars.php?per_page='+this.value+'&pg=1'">
+                <?php foreach ([10, 20, 50, 100] as $opt): ?>
+                  <option value="<?php echo $opt; ?>" <?php echo $perPage == $opt ? 'selected' : ''; ?>><?php echo $opt; ?></option>
+                <?php endforeach; ?>
+              </select>
+              <span class="text-muted small">entries</span>
+            </div>
+
+            <nav aria-label="Webinars pagination">
+              <ul class="pagination mb-0">
+                <li class="page-item <?php echo $currentPage <= 1 ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="webinars.php?pg=<?php echo $currentPage - 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Previous">&laquo;</a>
+                </li>
+                <?php
+                $startP = max(1, $currentPage - 2);
+                $endP = min($totalPages, $currentPage + 2);
+                if ($startP > 1): ?>
+                  <li class="page-item"><a class="page-link" href="webinars.php?pg=1&per_page=<?php echo $perPage; ?>">1</a></li>
+                  <?php if ($startP > 2): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+                <?php endif; ?>
+                <?php for ($p = $startP; $p <= $endP; $p++): ?>
+                  <li class="page-item <?php echo $p == $currentPage ? 'active' : ''; ?>">
+                    <a class="page-link" href="webinars.php?pg=<?php echo $p; ?>&per_page=<?php echo $perPage; ?>"><?php echo $p; ?></a>
+                  </li>
+                <?php endfor; ?>
+                <?php if ($endP < $totalPages): ?>
+                  <?php if ($endP < $totalPages - 1): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+                  <li class="page-item"><a class="page-link" href="webinars.php?pg=<?php echo $totalPages; ?>&per_page=<?php echo $perPage; ?>"><?php echo $totalPages; ?></a></li>
+                <?php endif; ?>
+                <li class="page-item <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="webinars.php?pg=<?php echo $currentPage + 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Next">&raquo;</a>
+                </li>
+              </ul>
+            </nav>
+
+          </div>
+        </div>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 
 <?php if (in_array($action, ['add', 'edit'])): 
     $editWebinar = null;
     if ($action === 'edit' && !empty($id)) {
-        $editWebinar = DB::fetch("SELECT id, title, thumbnail, description, date, time, price, status FROM webinars WHERE id = ?", [$id]);
+        $editWebinar = DB::fetch("SELECT id, title, thumbnail, description, date, time, price, status, join_url FROM webinars WHERE id = ?", [$id]);
     }
 ?>
     <div class="card shadow-sm border-0 rounded-4 bg-white p-4 p-md-5">
@@ -235,6 +297,11 @@ $csrfToken = generate_csrf_token();
                         <label for="description" class="form-label fw-semibold">Webinar Description</label>
                         <textarea class="form-control" id="description" name="description" rows="6" placeholder="Enter brief overview about what live webinar covers..." required><?php echo $editWebinar ? htmlspecialchars($editWebinar['description']) : ''; ?></textarea>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="join_url" class="form-label fw-semibold">Join Webinar URL (Optional)</label>
+                        <input type="url" class="form-control" id="join_url" name="join_url" value="<?php echo $editWebinar ? htmlspecialchars($editWebinar['join_url']) : ''; ?>" placeholder="https://zoom.us/j/...">
+                    </div>
                 </div>
                 
                 <div class="col-md-4">
@@ -251,10 +318,10 @@ $csrfToken = generate_csrf_token();
                                value="<?php echo $editWebinar ? $editWebinar['time'] : ''; ?>" required>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="mb-3 d-none">
                         <label for="price" class="form-label fw-semibold">Ticket Price (INR)</label>
                         <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" 
-                               value="<?php echo $editWebinar ? htmlspecialchars($editWebinar['price']) : '0.00'; ?>" required>
+                               value="<?php echo $editWebinar ? htmlspecialchars($editWebinar['price']) : '0.00'; ?>">
                     </div>
 
                     <div class="mb-3">

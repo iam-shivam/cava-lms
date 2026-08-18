@@ -22,7 +22,9 @@
                     <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
                         <li><a href="<?php echo SITE_URL; ?>/index.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Home</a></li>
                         <li><a href="<?php echo SITE_URL; ?>/courses.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Courses</a></li>
+                        <?php if (false): ?>
                         <li><a href="<?php echo SITE_URL; ?>/webinars.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Webinars</a></li>
+                        <?php endif; ?>
                         <li><a href="<?php echo SITE_URL; ?>/events.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Events</a></li>
                         <li><a href="<?php echo SITE_URL; ?>/support.php" class="lp-footer-link"><i class="fa-solid fa-chevron-right fs-8 me-2 opacity-50"></i>Support Center</a></li>
                     </ul>
@@ -49,14 +51,16 @@
                 <div class="col-md-7 text-center text-md-start mb-3 mb-md-0">
                     <p class="text-white-50 fs-7 mb-0">Copyright © 2026 All rights reserved by 
                         <strong class="text-white">CAVA LMS Portal</strong>.
+                        <span class="mx-1">|</span>
+                        <a href="<?php echo SITE_URL; ?>/privacy-policy.php" class="text-white-50 text-decoration-none" style="transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">Privacy Policy</a>
                     </p>
                 </div>
                 <div class="col-md-5 text-center text-md-end">
                     <div class="d-inline-flex gap-2">
-                        <a href="#" class="lp-footer-social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="lp-footer-social-btn" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="lp-footer-social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="lp-footer-social-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/careerabroadacademy" target="_blank" rel="noopener noreferrer" class="lp-footer-social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/visa_academy" target="_blank" rel="noopener noreferrer" class="lp-footer-social-btn"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 300 300" fill="currentColor" style="vertical-align: middle;"><path d="M178.57 127.15 290.27 0h-26.46l-96.97 110.38L89.34 0H0l117.13 166.93L0 300h26.46l102.4-116.59L209.66 300H299L178.57 127.15ZM140.55 170.08l-11.87-16.63L37.38 19.5h40.66l76.2 106.73 11.87 16.63 99.03 138.68h-40.66l-84.93-118.46Z"/></svg></a>
+                        <a href="https://www.linkedin.com/company/career-abroad-visa-academy/" target="_blank" rel="noopener noreferrer" class="lp-footer-social-btn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/careerabroadexpert/" target="_blank" rel="noopener noreferrer" class="lp-footer-social-btn"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>

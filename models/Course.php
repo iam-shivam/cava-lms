@@ -30,11 +30,11 @@ class Course {
     }
     
     public static function getSections($courseId) {
-        return DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, id ASC", [$courseId]);
+        return DB::fetchAll("SELECT * FROM course_sections WHERE course_id = ? ORDER BY sort_order ASC, created_at ASC", [$courseId]);
     }
     
     public static function getVideosBySection($sectionId) {
-        return DB::fetchAll("SELECT * FROM course_videos WHERE section_id = ? ORDER BY sort_order ASC, id ASC", [$sectionId]);
+        return DB::fetchAll("SELECT * FROM course_videos WHERE section_id = ? ORDER BY sort_order ASC, created_at ASC", [$sectionId]);
     }
     
     public static function getSyllabus($courseId) {

@@ -23,7 +23,7 @@ if ($timeframe === 'upcoming') {
     $params[] = date('Y-m-d');
 }
 
-$sql .= " ORDER BY created_at DESC";
+$sql .= " ORDER BY date ASC, created_at DESC";
 
 try {
     $eventsList = DB::fetchAll($sql, $params);
@@ -90,51 +90,89 @@ require_once __DIR__ . '/views/layout/header.php';
             </div>
 
             <!-- Events Grid -->
-            <div class="row g-4" id="events-grid">
+            <!-- Events Grouped List -->
+            <div id="events-list">
                 <?php if (empty($eventsList)): ?>
-                    <div class="col-12">
-                        <div class="lp-empty-state">
-                            <div class="lp-empty-icon">
-                                <i class="fa-regular fa-calendar-xmark"></i>
-                            </div>
-                            <h3 class="fw-bold text-dark mb-2">No Events Found</h3>
-                            <p class="text-muted mb-4" style="max-width: 440px; margin: 0 auto;">No campus events match your current filter parameters. Check back later for upcoming meetups.</p>
-                            <a href="events.php" class="lp-btn-pill-dark">
-                                Clear Filters <i class="fa-solid fa-rotate-left ms-1"></i>
-                            </a>
+                    <div class="lp-empty-state">
+                        <div class="lp-empty-icon">
+                            <i class="fa-regular fa-calendar-xmark"></i>
                         </div>
+                        <h3 class="fw-bold text-dark mb-2">No Events Found</h3>
+                        <p class="text-muted mb-4" style="max-width: 440px; margin: 0 auto;">No campus events match your current filter parameters. Check back later for upcoming meetups.</p>
+                        <a href="events.php" class="lp-btn-pill-dark">
+                            Clear Filters <i class="fa-solid fa-rotate-left ms-1"></i>
+                        </a>
                     </div>
-                <?php else: ?>
-                    <?php foreach ($eventsList as $ev): 
-                        $evDate = date('d M, Y', strtotime($ev['date']));
-                        $evImg = 'https://placehold.co/600x340/6f42c1/ffffff?text=Event';
-                        if ($ev['event_image'] && file_exists(BASE_PATH . '/uploads/' . $ev['event_image'])) {
-                            $evImg = SITE_URL . '/uploads/' . $ev['event_image'];
+                <?php else: 
+                    // Helper function to extract time or fallback to a default
+                    function getEventTime($desc) {
+                        if (preg_match('/(\d{1,2}:\d{2}\s*(?:AM|PM)\s*-\s*\d{1,2}:\d{2}\s*(?:AM|PM))/i', $desc, $matches)) {
+                            return $matches[1];
                         }
+                        if (preg_match('/(\d{1,2}\s*(?:AM|PM)\s*-\s*\d{1,2}\s*(?:AM|PM))/i', $desc, $matches)) {
+                            return $matches[1];
+                        }
+                        return '7:00 PM - 9:00 PM';
+                    }
+
+                    // Helper to get join URL from description or fallback
+                    function getJoinUrl($desc) {
+                        if (preg_match('/(https?:\/\/[^\s]+)/i', $desc, $matches)) {
+                            return $matches[1];
+                        }
+                        return '#';
+                    }
+
+                    // Group events by date
+                    $groupedEvents = [];
+                    foreach ($eventsList as $ev) {
+                        $dateKey = date('Y-m-d', strtotime($ev['date']));
+                        $groupedEvents[$dateKey][] = $ev;
+                    }
+                    ksort($groupedEvents);
+
+                    foreach ($groupedEvents as $dateStr => $eventsOfDay):
+                ?>
+                    <div class="date-separator py-2 px-3 mb-3 mt-4 rounded fw-bold text-muted" style="font-size: 0.95rem; letter-spacing: 0.5px; background-color: #f3f4f6;">
+                        <?php echo date('F d, Y', strtotime($dateStr)); ?>
+                    </div>
+
+                    <?php foreach ($eventsOfDay as $ev): 
+                        $timeStr = getEventTime($ev['description']);
+                        $isPast = strtotime($ev['date']) < strtotime(date('Y-m-d'));
+                        $joinUrl = !empty($ev['join_url']) ? $ev['join_url'] : '';
                     ?>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="custom-card border-0 shadow-sm bg-white rounded-4 overflow-hidden h-100 event-card">
-                                <div class="card-img-wrapper" style="height: 190px;">
-                                    <img src="<?php echo $evImg; ?>" alt="<?php echo htmlspecialchars($ev['title']); ?>" class="img-fluid w-100 h-100" style="object-fit: cover;" loading="lazy" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Event'">
-                                </div>
-                                <div class="p-4 d-flex flex-column h-100">
-                                    <div class="mb-3 d-flex align-items-center justify-content-between">
-                                        <span class="calendar-badge">
-                                            <i class="fa-regular fa-calendar-days me-1"></i> <?php echo $evDate; ?>
-                                        </span>
-                                        <?php if (strtotime($ev['date']) < strtotime(date('Y-m-d'))): ?>
-                                            <span class="badge bg-secondary-light text-secondary rounded-pill px-3 py-1 fw-semibold">Closed</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-success-light text-success rounded-pill px-3 py-1 fw-semibold">Upcoming</span>
+                        <div class="event-item-row d-flex flex-wrap align-items-center justify-content-between p-3 mb-3 bg-white border rounded shadow-sm">
+                            <!-- Time Column -->
+                            <div class="event-time-col col-md-3 d-flex align-items-center gap-2">
+                                <span class="fw-semibold text-dark"><?php echo $timeStr; ?></span>
+                                <i class="fa-regular fa-circle-question text-muted small" title="Event Time" style="cursor: pointer;"></i>
+                            </div>
+                            <!-- Title / Custom meeting Column -->
+                            <div class="event-details-col col-md-6 mt-2 mt-md-0">
+                                <h6 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($ev['title']); ?></h6>
+                                <span class="text-muted small"><?php echo htmlspecialchars(mb_strimwidth(strip_tags($ev['description']), 0, 100, '...')); ?></span>
+                            </div>
+                            <!-- Action Column -->
+                            <div class="event-action-col col-md-3 text-md-end mt-3 mt-md-0 d-flex align-items-center justify-content-end gap-2">
+                                <?php if (!empty($joinUrl)): ?>
+                                    <a href="<?php echo htmlspecialchars($joinUrl); ?>" target="_blank" class="btn btn-primary btn-sm px-4 rounded-pill fw-semibold <?php echo $isPast ? 'disabled btn-secondary' : ''; ?>" <?php echo $isPast ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>Join</a>
+                                <?php endif; ?>
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm border rounded-circle" type="button" data-bs-toggle="dropdown" style="width: 32px; height: 32px; padding: 0;">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                        <?php if (!empty($joinUrl)): ?>
+                                            <li><a class="dropdown-item py-2" href="#" onclick="event.preventDefault(); navigator.clipboard.writeText('<?php echo htmlspecialchars($joinUrl); ?>'); alert('Event link copied to clipboard!');"><i class="fa-solid fa-share-nodes me-2"></i>Copy Link</a></li>
                                         <?php endif; ?>
-                                    </div>
-                                    <h5 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($ev['title']); ?></h5>
-                                    <p class="text-muted fs-7 mb-0"><?php echo htmlspecialchars($ev['description']); ?></p>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
-                <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
             </div>
         </div>
     </section>

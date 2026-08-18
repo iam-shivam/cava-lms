@@ -170,13 +170,26 @@ if ($action === 'delete' && !empty($id)) {
   exit;
 }
 
-// Fetch Courses list
+// Pagination settings
+$perPage = isset($_GET['per_page']) ? intval($_GET['per_page']) : 10;
+if (!in_array($perPage, [10, 20, 50, 100])) $perPage = 10;
+$currentPage = isset($_GET['pg']) ? max(1, intval($_GET['pg'])) : 1;
+
+// Get total count for pagination
+$totalRow = DB::fetch("SELECT COUNT(*) as total FROM courses c JOIN categories cat ON c.category_id = cat.id");
+$totalCourses = intval($totalRow['total']);
+$totalPages = max(1, ceil($totalCourses / $perPage));
+if ($currentPage > $totalPages) $currentPage = $totalPages;
+$offset = ($currentPage - 1) * $perPage;
+
+// Fetch Courses list with pagination
 $courses = DB::fetchAll("
   SELECT c.*, cat.name as category_name,
       (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as video_count 
   FROM courses c 
   JOIN categories cat ON c.category_id = cat.id 
   ORDER BY c.created_at DESC
+  LIMIT $perPage OFFSET $offset
 ");
 
 $categories = DB::fetchAll("SELECT * FROM categories ORDER BY name ASC");
@@ -197,6 +210,7 @@ $csrfToken = generate_csrf_token();
       <table class="table table-hover align-middle">
         <thead>
           <tr>
+            <th class="text-center" style="width: 50px;">#</th>
             <th class="text-center" style="width: 80px;">Thumbnail</th>
             <th class="text-center">Course Title</th>
             <th class="text-center">Category</th>
@@ -208,9 +222,9 @@ $csrfToken = generate_csrf_token();
         </thead>
         <tbody>
           <?php if (empty($courses)): ?>
-            <tr><td colspan="7" class="text-center text-muted">No courses created yet.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted">No courses created yet.</td></tr>
           <?php else: ?>
-            <?php foreach ($courses as $c): 
+            <?php foreach ($courses as $index => $c): 
               $thumbnailUrl = 'https://placehold.co/80x50/6f42c1/ffffff?text=LMS';
               if ($c['thumbnail']) {
                 if (file_exists(BASE_PATH . '/uploads/' . $c['thumbnail'])) {
@@ -221,12 +235,12 @@ $csrfToken = generate_csrf_token();
               }
             ?>
               <tr>
+                <td class="text-center text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                 <td class="text-center">
                   <img src="<?php echo $thumbnailUrl; ?>" alt="thumbnail" class="img-fluid rounded-3 border" style="width: 70px; height: 45px; object-fit: cover;" onerror="this.src='https://placehold.co/80x50/6f42c1/ffffff?text=LMS'">
                 </td>
                 <td class="text-center">
                   <div class="fw-bold text-dark"><?php echo htmlspecialchars($c['title']); ?></div>
-                  <span class="text-muted fs-8">slug: <?php echo htmlspecialchars($c['slug']); ?></span>
                 </td>
                 <td class="text-center"><span class="badge bg-secondary"><?php echo htmlspecialchars($c['category_name']); ?></span></td>
                 <td class="text-center fw-bold text-primary">₹<?php echo number_format($c['price'], 2); ?></td>
@@ -255,6 +269,57 @@ $csrfToken = generate_csrf_token();
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination Controls -->
+    <?php if ($totalCourses > 0): ?>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="text-muted small">
+        Showing <?php echo $offset + 1; ?> to <?php echo min($offset + $perPage, $totalCourses); ?> of <?php echo $totalCourses; ?> entries
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Per-page selector -->
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted small mb-0">Show</label>
+          <select class="form-select form-select-sm" style="width: auto;" onchange="window.location.href='courses.php?per_page='+this.value+'&pg=1'">
+            <?php foreach ([10, 20, 50, 100] as $opt): ?>
+              <option value="<?php echo $opt; ?>" <?php echo $perPage == $opt ? 'selected' : ''; ?>><?php echo $opt; ?></option>
+            <?php endforeach; ?>
+          </select>
+          <span class="text-muted small">entries</span>
+        </div>
+
+        <!-- Page navigation -->
+        <nav aria-label="Courses pagination">
+          <ul class="pagination mb-0">
+            <li class="page-item <?php echo $currentPage <= 1 ? 'disabled' : ''; ?>">
+              <a class="page-link" href="courses.php?pg=<?php echo $currentPage - 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Previous">&laquo;</a>
+            </li>
+            <?php
+            // Show smart page range
+            $startP = max(1, $currentPage - 2);
+            $endP = min($totalPages, $currentPage + 2);
+            if ($startP > 1): ?>
+              <li class="page-item"><a class="page-link" href="courses.php?pg=1&per_page=<?php echo $perPage; ?>">1</a></li>
+              <?php if ($startP > 2): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+            <?php endif; ?>
+            <?php for ($p = $startP; $p <= $endP; $p++): ?>
+              <li class="page-item <?php echo $p == $currentPage ? 'active' : ''; ?>">
+                <a class="page-link" href="courses.php?pg=<?php echo $p; ?>&per_page=<?php echo $perPage; ?>"><?php echo $p; ?></a>
+              </li>
+            <?php endfor; ?>
+            <?php if ($endP < $totalPages): ?>
+              <?php if ($endP < $totalPages - 1): ?><li class="page-item disabled"><span class="page-link">&hellip;</span></li><?php endif; ?>
+              <li class="page-item"><a class="page-link" href="courses.php?pg=<?php echo $totalPages; ?>&per_page=<?php echo $perPage; ?>"><?php echo $totalPages; ?></a></li>
+            <?php endif; ?>
+            <li class="page-item <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?>">
+              <a class="page-link" href="courses.php?pg=<?php echo $currentPage + 1; ?>&per_page=<?php echo $perPage; ?>" aria-label="Next">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+
+      </div>
+    </div>
+    <?php endif; ?>
   </div>
 <?php endif; ?>
 
@@ -296,7 +361,7 @@ $csrfToken = generate_csrf_token();
               <?php foreach ($categories as $cat): ?>
                 <option value="<?php echo $cat['id']; ?>" 
                   <?php echo ($editCourse && $editCourse['category_id'] == $cat['id']) ? 'selected' : ''; ?>>
-                  <?php echo htmlspecialchars($cat['name']); ?> (<?php echo htmlspecialchars($cat['slug']); ?>)
+                  <?php echo htmlspecialchars($cat['name']); ?>
                 </option>
               <?php endforeach; ?>
             </select>

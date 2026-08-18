@@ -25,23 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $title = trim($_POST['section_title'] ?? '');
-    $order = intval($_POST['sort_order'] ?? 0);
     
     if (empty($title)) {
         set_flash_message('danger', 'Section title cannot be empty.');
         header("Location: section_edit.php?course_id=$courseId&id=$id");
         exit;
     } else {
-        $updates = [];
-        $params = [];
-        
-        if ($title !== $section['title']) { $updates[] = "title = ?"; $params[] = $title; }
-        if ($order !== intval($section['sort_order'])) { $updates[] = "sort_order = ?"; $params[] = $order; }
-        
-        if (!empty($updates)) {
-            $params[] = $id;
-            $stmt = DB::getConnection()->prepare("UPDATE course_sections SET " . implode(', ', $updates) . " WHERE id = ?");
-            if (!$stmt->execute($params)) {
+        if ($title !== $section['title']) {
+            $stmt = DB::getConnection()->prepare("UPDATE course_sections SET title = ? WHERE id = ?");
+            if (!$stmt->execute([$title, $id])) {
                 set_flash_message('danger', 'Failed to update section.');
                 header("Location: section_edit.php?course_id=$courseId&id=$id");
                 exit;
@@ -71,11 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label for="section_title" class="form-label fw-semibold">Section Title</label>
                     <input type="text" class="form-control" id="section_title" name="section_title" value="<?php echo htmlspecialchars($section['title']); ?>" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="sort_order" class="form-label fw-semibold">Sort Order</label>
-                    <input type="number" class="form-control" id="sort_order" name="sort_order" value="<?php echo htmlspecialchars($section['sort_order']); ?>">
                 </div>
                 
                 <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">Update Section</button>
