@@ -1,24 +1,24 @@
-/* CAVA LMS Core Stylesheet - Premium UI/UX inspired by Canada Government Theme */
+/* CAVA LMS Core Stylesheet - Premium UI/UX Black, White & Gray Theme */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --primary: #6f42c1;
-    --primary-hover: #592e9a;
-    --primary-light: #f3effc;
-    --dark: #1e1e24;
+    --primary: #111111;
+    --primary-hover: #000000;
+    --primary-light: #F5F5F5;
+    --dark: #111111;
     --light: #ffffff;
-    --bg-gray: #f8f9fa;
-    --border-color: #e2e8f0;
-    --text-main: #334155;
-    --text-muted: #64748b;
-    --accent: #ff7a59;
-    --accent-light: #fff0ec;
+    --bg-gray: #F8F8F8;
+    --border-color: #E5E5E5;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --accent: #111111;
+    --accent-light: #F5F5F5;
     --success: #10b981;
     --success-light: #ecfdf5;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
-    --shadow-md: 0 10px 15px -3px rgba(30, 58, 138, 0.05), 0 4px 6px -2px rgba(30, 58, 138, 0.02);
-    --shadow-lg: 0 20px 25px -5px rgba(30, 58, 138, 0.08), 0 10px 10px -5px rgba(30, 58, 138, 0.03);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -55,6 +55,12 @@ a:hover {
     color: var(--primary-hover);
 }
 
+/* Form Control Focus Styles */
+.form-control:focus, .form-select:focus {
+    border-color: #111111 !important;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08) !important;
+}
+
 /* Premium Buttons */
 .btn-primary {
     background-color: var(--primary);
@@ -62,8 +68,9 @@ a:hover {
     border-radius: 10px;
     padding: 10px 24px;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.2);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     transition: var(--transition);
+    color: #ffffff;
 }
 
 .btn-primary:hover,
@@ -71,8 +78,9 @@ a:hover {
 .btn-primary:active {
     background-color: var(--primary-hover) !important;
     border-color: var(--primary-hover) !important;
+    color: #ffffff !important;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .btn-outline-primary {
@@ -102,7 +110,7 @@ a:hover {
 .navbar-brand {
     font-weight: 800;
     font-size: 1.5rem;
-    color: var(--primary) !important;
+    color: var(--dark) !important;
     letter-spacing: -0.5px;
 }
 
@@ -122,7 +130,7 @@ a:hover {
 
 /* Hero Section */
 .hero-section {
-    background: radial-gradient(circle at 10% 20%, rgba(243, 239, 252, 1) 0%, rgba(255, 255, 255, 1) 90%);
+    background: radial-gradient(circle at 10% 20%, rgba(245, 245, 245, 1) 0%, rgba(255, 255, 255, 1) 90%);
     padding: 120px 0 80px 0;
     position: relative;
     overflow: hidden;
@@ -135,7 +143,7 @@ a:hover {
     right: -10%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(111, 66, 193, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
     z-index: 0;
 }
 
@@ -144,12 +152,12 @@ a:hover {
     line-height: 1.2;
     font-weight: 800;
     letter-spacing: -1.5px;
-    background: linear-gradient(135deg, var(--dark) 30%, var(--primary) 100%);
+    background: linear-gradient(135deg, #000000 30%, #444444 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-/* Card Styling - Inspired by TagMango */
+/* Card Styling */
 .custom-card {
     background: var(--light);
     border: 1px solid var(--border-color);
@@ -165,7 +173,7 @@ a:hover {
 .custom-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
-    border-color: rgba(111, 66, 193, 0.2);
+    border-color: #E5E5E5;
 }
 
 .card-img-wrapper {
@@ -250,14 +258,14 @@ a:hover {
 /* Locked / Unlocked States */
 .locked-banner {
     background-color: var(--accent-light);
-    color: var(--accent);
+    color: var(--text-main);
     border-radius: 12px;
     padding: 16px;
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 24px;
-    border: 1px dashed var(--accent);
+    border: 1px dashed #666666;
 }
 
 /* User Dashboard Portal */
@@ -269,13 +277,13 @@ a:hover {
 
 /* Welcome Banner */
 .dash-welcome-banner {
-    background: linear-gradient(135deg, #8b5cf6 0%, #6f42c1 55%, #592e9a 100%);
+    background: linear-gradient(135deg, #16181D 0%, #111111 55%, #000000 100%);
     border-radius: 20px;
     padding: 32px 36px;
     color: #fff;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 30px rgba(111, 66, 193, 0.28);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 .dash-welcome-banner::after {
     content: '';
@@ -347,12 +355,12 @@ a:hover {
     font-size: 1.3rem;
     flex-shrink: 0;
 }
-.dash-stat-icon.purple  { background: #ede9fe; color: #7c3aed; }
-.dash-stat-icon.blue    { background: #dbeafe; color: #2563eb; }
-.dash-stat-icon.amber   { background: #fef3c7; color: #d97706; }
-.dash-stat-icon.green   { background: #d1fae5; color: #059669; }
+.dash-stat-icon.purple  { background: #F5F5F5; color: #111111; }
+.dash-stat-icon.blue    { background: #E5E5E5; color: #222222; }
+.dash-stat-icon.amber   { background: #EEEEEE; color: #333333; }
+.dash-stat-icon.green   { background: #F8F8F8; color: #111111; }
 .dash-stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1; color: #111; }
-.dash-stat-label { font-size: 0.78rem; color: #6b7280; margin-top: 3px; }
+.dash-stat-label { font-size: 0.78rem; color: #666666; margin-top: 3px; }
 
 /* Sidebar */
 .dashboard-sidebar {
@@ -389,14 +397,14 @@ a:hover {
     flex-shrink: 0;
 }
 .dash-sidebar-name { font-weight: 600; font-size: 0.9rem; color: #111; line-height: 1.2; }
-.dash-sidebar-role { font-size: 0.72rem; color: #6b7280; }
+.dash-sidebar-role { font-size: 0.72rem; color: #666666; }
 
 .dashboard-menu-link {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 11px 14px;
-    color: #374151;
+    color: #333333;
     font-weight: 500;
     font-size: 0.9rem;
     border-radius: 10px;
@@ -412,8 +420,8 @@ a:hover {
 }
 .dashboard-menu-link .menu-badge {
     margin-left: auto;
-    background: #f3f4f6;
-    color: #6b7280;
+    background: #F5F5F5;
+    color: #666666;
     font-size: 0.7rem;
     font-weight: 600;
     border-radius: 20px;
@@ -421,14 +429,14 @@ a:hover {
     transition: var(--transition);
 }
 .dashboard-menu-link:hover {
-    background-color: #f5f3ff;
+    background-color: #F5F5F5;
     color: var(--primary);
 }
-.dashboard-menu-link:hover .menu-badge { background: #ede9fe; color: var(--primary); }
+.dashboard-menu-link:hover .menu-badge { background: #E5E5E5; color: var(--primary); }
 .dashboard-menu-link.active {
     background: var(--primary);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(108,59,252,0.3);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 .dashboard-menu-link.active .menu-badge { background: rgba(255,255,255,0.25); color: #fff; }
 .dash-section-label {
@@ -436,7 +444,7 @@ a:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #9ca3af;
+    color: #777777;
     padding: 10px 14px 4px;
 }
 
@@ -456,7 +464,7 @@ a:hover {
     align-items: center;
     gap: 16px;
     padding: 16px;
-    border: 1px solid #f3f4f6;
+    border: 1px solid #E5E5E5;
     border-radius: 14px;
     margin-bottom: 12px;
     transition: box-shadow 0.2s;
@@ -467,7 +475,7 @@ a:hover {
     border-radius: 10px;
     object-fit: cover;
     flex-shrink: 0;
-    background: #ede9fe;
+    background: #F5F5F5;
 }
 .dash-course-body { flex: 1; min-width: 0; }
 .dash-course-title { font-weight: 600; font-size: 0.92rem; color: #111; margin-bottom: 6px; }
@@ -528,10 +536,10 @@ a:hover {
     background-color: var(--primary) !important;
 }
 
-/* Admin Pagination - Purple Theme */
+/* Admin Pagination - Black/White Theme */
 .pagination .page-link {
     color: var(--primary);
-    border-color: #e2e8f0;
+    border-color: #E5E5E5;
     border-radius: 8px !important;
     margin: 0 3px;
     min-width: 38px;
@@ -548,12 +556,12 @@ a:hover {
     background-color: var(--primary);
     border-color: var(--primary);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 .pagination .page-item.disabled .page-link {
-    color: #c0c5ce;
-    background-color: #f8f9fa;
-    border-color: #e2e8f0;
+    color: #777777;
+    background-color: #F8F8F8;
+    border-color: #E5E5E5;
 }
 
 /* Video Learning Space (Play View) */

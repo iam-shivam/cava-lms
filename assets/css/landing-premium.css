@@ -1,23 +1,17 @@
 /* ==========================================================================
-   CAVA LMS - Premium Landing Page Redesign (World Academy Style)
-   Branding Aligned: Custom Midnight Purple Theme and Responsive Refinements
+   CAVA LMS - Premium Landing Page Redesign
+   Black, White & Gray Theme
    ========================================================================== */
 
 :root {
-    --wa-primary: #160730;
-    /* Midnight Deep Violet (Matching original branding) */
-    --wa-accent: #2e1065;
-    /* Darker violet accent */
-    --wa-highlight: #6f42c1;
-    /* Original website primary purple */
+    --wa-primary: #000000;
+    --wa-accent: #111111;
+    --wa-highlight: #111111;
     --wa-light: #ffffff;
-    --wa-dark: #0f172a;
-    /* Slate dark */
-    --wa-slate-500: #475569;
-    /* Slate text */
-    --wa-bg-light: #f8f6fc;
-    /* Soft purple-grey background tint */
-    --wa-border: #cbd5e1;
+    --wa-dark: #111111;
+    --wa-slate-500: #555555;
+    --wa-bg-light: #F8F8F8;
+    --wa-border: #E5E5E5;
 
     /* Hardware acceleration transition */
     --wa-transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
@@ -48,7 +42,7 @@
     line-height: 1.6;
 }
 
-/* Navbar overrides to stay consistent with original purple site header */
+/* Navbar overrides */
 .navbar {
     transition: background-color 0.3s ease, padding 0.3s ease !important;
 }
@@ -84,21 +78,21 @@
     object-fit: contain;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    border: 1.5px solid rgba(109, 40, 217, 0.18);
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     background: #ffffff;
 }
 
 .navbar-brand:hover .lp-nav-logo {
     transform: scale(1.06);
-    box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .lp-brand-text {
     font-weight: 800;
     font-size: 1.3rem;
     letter-spacing: -0.02em;
-    color: var(--wa-highlight, #581c87);
+    color: var(--wa-highlight, #111111);
 }
 
 .nav-link {
@@ -112,9 +106,9 @@
     color: var(--wa-highlight) !important;
 }
 
-/* Hero Section: Site Brand Purple with Grid Overlay */
+/* Hero Section: Black Background with Grid Overlay */
 .lp-hero-wa {
-    background-color: #160730;
+    background-color: #000000;
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
@@ -125,244 +119,172 @@
     color: #ffffff;
 }
 
-/* Two-line heading style matching the reference image */
+/* Two-line heading style */
 .lp-hero-wa-title {
     margin-bottom: 20px;
     line-height: 1.05;
+    color: #ffffff !important;
 }
 
-/* Line 1: "CAVA●Academy" - smaller eyebrow */
+/* Line 1: Eyebrow */
 .lp-hero-wa-title .hero-eyebrow {
     display: block;
     font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: -0.01em;
     margin-bottom: 6px;
-    background: linear-gradient(135deg, #c084fc 0%, #e879f9 100%);
+    color: #e5e5e5 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-/* Line 2: Main bold heading (larger, dominant) */
+/* Line 2: Main bold heading */
 .lp-hero-wa-title .hero-main-line {
     display: block;
     font-size: 4rem;
     font-weight: 800;
-    line-height: 1.05;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #ffffff 0%, #f472b6 45%, #c084fc 100%);
+    color: #ffffff !important;
+}
+
+.lp-hero-wa-title .hero-main-line span.accent-gradient {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ffffff 0%, #e5e5e5 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.lp-hero-wa-subtitle {
-    font-size: 1.18rem;
-    line-height: 1.65;
-    color: #f1f5f9 !important;
-    font-weight: 450;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    margin-bottom: 28px;
+.lp-hero-wa-desc {
+    font-size: 1.15rem;
+    color: #e2e8f0;
+    margin-bottom: 35px;
     max-width: 580px;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
-/* Pill Buttons matching Purple brand colors */
-.lp-btn-pill-white {
-    background: #ffffff;
-    color: var(--wa-highlight) !important;
-    border: 1px solid #ffffff;
-    border-radius: 100px;
-    padding: 10px 26px;
-    font-weight: 600;
-    font-size: 0.92rem;
-    transition: var(--wa-transition);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 44px;
-}
-
-.lp-btn-pill-white:hover {
-    transform: translateY(-2px);
-    background-color: var(--wa-bg-light);
-    border-color: var(--wa-bg-light);
-}
-
-/* Outline button for DARK hero backgrounds */
-.lp-btn-pill-outline {
-    background: transparent;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 100px;
-    padding: 10px 26px;
-    font-weight: 600;
-    font-size: 0.92rem;
-    transition: var(--wa-transition);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 44px;
-}
-
-.lp-btn-pill-outline:hover {
-    transform: translateY(-2px);
-    border-color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Outline button for LIGHT section backgrounds (e.g. courses, events) */
-.lp-btn-pill-dark {
-    background: transparent;
-    color: var(--wa-highlight) !important;
-    border: 2px solid var(--wa-highlight);
-    border-radius: 100px;
-    padding: 13px 32px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: var(--wa-transition);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none !important;
-}
-
-.lp-btn-pill-dark:hover {
-    transform: translateY(-2px);
-    background-color: var(--wa-highlight);
-    color: #ffffff !important;
-    box-shadow: 0 8px 20px rgba(111, 66, 193, 0.3);
-}
-
-/* Stats underlines style - positioned inside left text column */
+/* Hero Stats Counter Strip */
 .lp-hero-stats-row {
-    margin-top: 36px !important;
-    border-top: none !important;
-    padding-top: 0 !important;
+    margin-top: 45px;
+    padding-top: 35px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.lp-hero-stat-item {
-    text-align: left;
-}
-
-.lp-hero-stat-heading {
-    font-size: 0.98rem;
+.lp-hero-stat-number {
+    font-size: 2.25rem;
     font-weight: 800;
-    color: #ffffff !important;
-    margin-bottom: 6px;
-    border-bottom: 1.5px solid rgba(232, 121, 249, 0.45);
-    display: block;
-    padding-bottom: 4px;
-    width: 100%;
-    white-space: nowrap;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
 }
 
 .lp-hero-stat-desc {
-    font-size: 0.86rem;
-    color: #e2e8f0 !important;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-top: 4px;
     font-weight: 500;
-    line-height: 1.3;
 }
 
-/* Single Hero Image Banner Container */
-.lp-hero-single-img-wrapper {
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 80%);
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+.lp-hero-stat-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
 }
 
-.lp-hero-single-img-wrapper:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 28px 50px rgba(0, 0, 0, 0.45);
-    border-color: rgba(255, 255, 255, 0.25);
+.lp-hero-stat-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-.lp-hero-single-img {
-    width: 100%;
-    height: auto;
-    max-height: 420px;
-    object-fit: cover;
-    display: block;
-    border-radius: 22px;
-}
-
-/* Student capsule collage layout — matching reference exactly */
+/* Capsule Student Collage Layout */
 .student-collage-wrapper {
     position: relative;
-    height: 430px;
     width: 100%;
+    height: 480px;
 }
 
-.collage-capsule {
+.capsule-student-img {
     position: absolute;
     overflow: hidden;
-    background-color: #2a1060;
-    border: 2px solid rgba(255, 255, 255, 0.08);
-    will-change: transform;
-    transition: transform 0.3s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.collage-capsule img {
+.capsule-student-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.collage-capsule:hover {
-    transform: translateY(-5px) scale(1.02);
+.capsule-student-img:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    border-color: #ffffff;
 }
 
-/* Left tall capsule (woman smiling) */
+/* Left tall capsule */
 .capsule-1 {
-    width: 150px;
-    height: 280px;
-    border-radius: 75px;
-    top: 0;
+    width: 170px;
+    height: 330px;
+    border-radius: 85px;
+    top: 15px;
     left: 0;
 }
 
-/* Bottom circle under Left tall capsule */
+/* Top middle square circle */
+.capsule-2 {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    top: 0;
+    left: 185px;
+}
+
+/* Center middle tall capsule */
+.capsule-3 {
+    width: 145px;
+    height: 260px;
+    border-radius: 72px;
+    top: 145px;
+    left: 190px;
+}
+
+/* Bottom middle circle */
 .capsule-4 {
     width: 125px;
     height: 125px;
     border-radius: 50%;
-    top: 295px;
-    left: 12px;
+    top: 415px;
+    left: 190px;
 }
 
-/* Top-center circle (boy with backpack) */
-.capsule-2 {
-    width: 125px;
-    height: 125px;
-    border-radius: 50%;
-    top: 0;
-    left: 165px;
-}
-
-/* Center tall capsule (smiling teen boy) */
-.capsule-3 {
-    width: 145px;
-    height: 275px;
-    border-radius: 72px;
-    top: 138px;
-    left: 155px;
-}
-
-/* Right tall capsule (girl with books) */
+/* Right tall capsule */
 .capsule-5 {
     width: 150px;
     height: 320px;
     border-radius: 75px;
     top: 25px;
-    left: 315px;
+    left: 350px;
 }
 
-/* Why Choose Section (Screenshot 2 style) */
+/* Why Choose Section */
 .why-choose-section {
     padding: 100px 0;
     background-color: #ffffff;
@@ -373,27 +295,27 @@
     font-weight: 800;
     margin-bottom: 24px;
     letter-spacing: -0.02em;
-    color: #1e1b4b;
+    color: #111111;
 }
 
 .why-choose-title span.blue-highlight {
-    background: linear-gradient(135deg, #6f42c1 0%, #a855f7 100%);
+    background: linear-gradient(135deg, #111111 0%, #333333 100%);
     color: #ffffff;
     padding: 2px 14px;
     border-radius: 8px;
     display: inline-block;
-    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 .why-choose-subtitle {
     font-size: 1.15rem;
-    color: #334155 !important;
+    color: #555555 !important;
     font-weight: 500;
     max-width: 740px;
     margin: 0 auto 60px auto;
 }
 
-/* Numbered cards using premium purple borders */
+/* Numbered cards using premium neutral borders */
 .why-choose-card {
     background-color: var(--wa-bg-light);
     border-radius: 20px;
@@ -408,8 +330,8 @@
 
 .why-choose-card:hover {
     transform: translateY(-6px);
-    border-color: rgba(111, 66, 193, 0.25);
-    background-color: #f1ecf7;
+    border-color: rgba(0, 0, 0, 0.2);
+    background-color: #F5F5F5;
 }
 
 .why-choose-icon {
@@ -442,7 +364,7 @@
     right: 10px;
     font-size: 7rem;
     font-weight: 900;
-    color: rgba(111, 66, 193, 0.03);
+    color: rgba(0, 0, 0, 0.04);
     line-height: 1;
     pointer-events: none;
     user-select: none;
@@ -455,9 +377,9 @@
 
 .lp-section-badge {
     display: inline-block;
-    background: rgba(111, 66, 193, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     color: var(--wa-highlight);
-    border: 1px solid rgba(111, 66, 193, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     font-size: 0.75rem;
     font-weight: 700;
     padding: 4px 12px;
@@ -473,9 +395,7 @@
     color: var(--wa-dark);
 }
 
-/* ==========================================
-   COURSE CARD COMPONENT STYLES
-   ========================================== */
+/* Course Card Component */
 .lp-body-scope .custom-card {
     background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.8) !important;
@@ -490,11 +410,10 @@
 
 .lp-body-scope .custom-card:hover {
     transform: translateY(-5px) !important;
-    box-shadow: 0 10px 15px -3px rgba(111, 66, 193, 0.08) !important;
-    border-color: rgba(111, 66, 193, 0.3) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
+    border-color: rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Card Image Wrapper */
 .lp-body-scope .card-img-wrapper {
     position: relative;
     width: 100%;
@@ -515,12 +434,11 @@
     transform: scale(1.04);
 }
 
-/* Card Category Badge (overlaid on image) */
 .lp-body-scope .card-badge {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: rgba(111, 66, 193, 0.9);
+    background: rgba(17, 17, 17, 0.9);
     color: #ffffff;
     font-size: 0.7rem;
     font-weight: 700;
@@ -531,7 +449,6 @@
     backdrop-filter: blur(4px);
 }
 
-/* Lock/Unlock icon badge */
 .lp-body-scope .card-status-badge {
     position: absolute;
     top: 12px;
@@ -547,7 +464,6 @@
     backdrop-filter: blur(4px);
 }
 
-/* Card Content Body */
 .lp-body-scope .card-content {
     padding: 20px 20px 16px;
     display: flex;
@@ -555,7 +471,6 @@
     flex-grow: 1;
 }
 
-/* Card Title */
 .lp-body-scope .card-title {
     font-size: 1rem;
     font-weight: 700;
@@ -574,14 +489,12 @@
     color: var(--wa-highlight) !important;
 }
 
-/* Card Description */
 .lp-body-scope .card-text {
     font-size: 0.875rem;
     color: var(--wa-slate-500) !important;
     line-height: 1.55;
 }
 
-/* Card Price + CTA Row */
 .lp-body-scope .card-price-row {
     display: flex;
     align-items: center;
@@ -597,7 +510,6 @@
     color: var(--wa-highlight) !important;
 }
 
-/* Card grid row spacing */
 .lp-card-grid {
     margin-top: 40px;
 }
@@ -609,15 +521,15 @@
 
 .event-card:hover {
     transform: translateY(-5px) !important;
-    box-shadow: 0 10px 15px -3px rgba(111, 66, 193, 0.06) !important;
-    border-color: rgba(111, 66, 193, 0.2) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .calendar-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(111, 66, 193, 0.06);
+    background: rgba(0, 0, 0, 0.06);
     color: var(--wa-highlight);
     padding: 4px 10px;
     border-radius: 6px;
@@ -636,20 +548,20 @@
 }
 
 .lp-testimonial-card:hover {
-    border-color: rgba(111, 66, 193, 0.25);
+    border-color: rgba(0, 0, 0, 0.25);
     transform: translateY(-3px);
 }
 
 .quote-icon {
     font-size: 2rem;
-    color: rgba(111, 66, 193, 0.1);
+    color: rgba(0, 0, 0, 0.1);
     margin-bottom: 16px;
 }
 
 .lp-avatar-initials {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, var(--wa-highlight), var(--wa-accent));
+    background: linear-gradient(135deg, #111111, #333333);
     color: #ffffff;
 }
 
@@ -662,10 +574,9 @@
 
 .lp-form-control:focus {
     border-color: var(--wa-highlight) !important;
-    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Footer Section settings */
 footer {
     background-color: #0b0f19 !important;
 }
@@ -674,13 +585,9 @@ footer {
     background-color: var(--wa-highlight);
 }
 
-
-/* ==========================================
-   PRIMARY BUTTON (Solid Purple Fill)
-   Used for: Contact form submit, primary CTAs
-   ========================================== */
+/* Primary Button */
 .lp-btn-primary {
-    background: linear-gradient(135deg, var(--wa-highlight) 0%, var(--wa-accent) 100%);
+    background: linear-gradient(135deg, #111111 0%, #000000 100%);
     color: #ffffff !important;
     border: none;
     border-radius: 100px;
@@ -695,12 +602,12 @@ footer {
     justify-content: center;
     gap: 10px;
     text-decoration: none !important;
-    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 .lp-btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(111, 66, 193, 0.45);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
     color: #ffffff !important;
 }
 
@@ -708,21 +615,18 @@ footer {
     transform: translateY(0);
 }
 
-/* ==========================================
-   CONTACT SECTION - Brand Purple Styling
-   ========================================== */
+/* Contact Section */
 .lp-contact-section {
-    background: linear-gradient(135deg, #f3eeff 0%, #ede8ff 50%, #f8f6fc 100%);
+    background: linear-gradient(135deg, #F8F8F8 0%, #F5F5F5 50%, #EEEEEE 100%);
 }
 
 .lp-contact-container {
     background: #ffffff;
-    border: 1px solid rgba(111, 66, 193, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(111, 66, 193, 0.08);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
-/* Form labels */
 .lp-form-label {
     font-size: 0.875rem;
     font-weight: 600;
@@ -731,7 +635,6 @@ footer {
     display: block;
 }
 
-/* Form inputs */
 .lp-form-control {
     border: 1.5px solid rgba(203, 213, 225, 0.8) !important;
     border-radius: 10px !important;
@@ -744,20 +647,13 @@ footer {
 
 .lp-form-control:focus {
     border-color: var(--wa-highlight) !important;
-    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08) !important;
     background: #ffffff !important;
     outline: none !important;
 }
 
 .lp-form-control::placeholder {
-    color: #94a3b8 !important;
-}
-
-/* GSAP animations placeholders */
-.gsap-reveal {
-    opacity: 0;
-    transform: translateY(15px);
-    will-change: transform, opacity;
+    color: #777777 !important;
 }
 
 /* Accessibility */
@@ -788,7 +684,6 @@ textarea:focus-visible {
         height: 420px;
     }
 
-    /* Proportionally scaled for tablet */
     .capsule-1 {
         width: 145px;
         height: 280px;
@@ -843,7 +738,6 @@ textarea:focus-visible {
 
     .student-collage-wrapper {
         display: none !important;
-        /* Hide collage on mobile */
     }
 
     .lp-hero-stats-row {
@@ -866,11 +760,7 @@ textarea:focus-visible {
     }
 }
 
-/* ==========================================================================
-   SHARED PUBLIC PAGE COMPONENTS DESIGN SYSTEM
-   ========================================================================== */
-
-/* Inner Page Hero Header Banner (Consistent across catalog & detail pages) */
+/* Shared Public Page Components */
 .lp-page-hero {
     background-color: var(--wa-primary);
     background-image:
@@ -905,7 +795,7 @@ textarea:focus-visible {
     font-weight: 800;
     letter-spacing: -0.02em;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #ffffff 0%, #f472b6 50%, #c084fc 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -930,7 +820,7 @@ textarea:focus-visible {
 
 .lp-search-box:focus-within {
     border-color: var(--wa-highlight);
-    box-shadow: 0 4px 20px rgba(111, 66, 193, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 .lp-search-box .form-control {
@@ -962,7 +852,7 @@ textarea:focus-visible {
     background-color: var(--wa-highlight) !important;
     color: #ffffff !important;
     border-color: var(--wa-highlight) !important;
-    box-shadow: 0 4px 12px rgba(111, 66, 193, 0.25) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .lp-filter-link:not(.active) {
@@ -974,10 +864,10 @@ textarea:focus-visible {
 .lp-filter-link:not(.active):hover {
     background-color: var(--wa-bg-light) !important;
     color: var(--wa-highlight) !important;
-    border-color: rgba(111, 66, 193, 0.3) !important;
+    border-color: rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Accordion Custom Styling (Syllabus & FAQ) */
+/* Accordion Custom Styling */
 .lp-body-scope .accordion-item {
     border: 1px solid rgba(226, 232, 240, 0.9) !important;
     border-radius: 16px !important;
@@ -1004,7 +894,7 @@ textarea:focus-visible {
     box-shadow: none !important;
 }
 
-/* Auth Cards (Login, Register, OTP) */
+/* Auth Cards */
 .lp-auth-card {
     background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.9) !important;
@@ -1017,7 +907,7 @@ textarea:focus-visible {
 .lp-auth-icon {
     width: 64px;
     height: 64px;
-    background: rgba(111, 66, 193, 0.08);
+    background: rgba(0, 0, 0, 0.06);
     color: var(--wa-highlight);
     border-radius: 50%;
     display: flex;
@@ -1036,7 +926,7 @@ textarea:focus-visible {
 .lp-empty-icon {
     width: 80px;
     height: 80px;
-    background: rgba(111, 66, 193, 0.06);
+    background: rgba(0, 0, 0, 0.06);
     color: var(--wa-highlight);
     border-radius: 50%;
     display: inline-flex;
@@ -1046,9 +936,7 @@ textarea:focus-visible {
     margin-bottom: 20px;
 }
 
-/* ==========================================================================
-   PREMIUM FOOTER DESIGN SYSTEM (Matches Hero Theme & Palette)
-   ========================================================================== */
+/* Premium Footer Design System */
 .lp-footer {
     background-color: var(--wa-primary) !important;
     background-image:
@@ -1113,7 +1001,7 @@ textarea:focus-visible {
     border-color: var(--wa-highlight);
     transform: translateY(-3px);
     color: #ffffff !important;
-    box-shadow: 0 6px 16px rgba(111, 66, 193, 0.4);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 .lp-footer-divider {
@@ -1121,19 +1009,15 @@ textarea:focus-visible {
     margin: 32px 0 24px 0;
 }
 
-/* ==========================================================================
-   PAGE-SPECIFIC ANIMATION PERSONALITIES (2026 EDITION)
-   ========================================================================== */
-
-/* 1. COURSES CATALOG PAGE (Elastic 3D Tilt Grid & Price Sheen) */
+/* Page Specific Animation Personalities */
 .page-courses .custom-card {
     perspective: 1000px;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease !important;
 }
 .page-courses .custom-card:hover {
     transform: perspective(1000px) rotateY(4deg) rotateX(-2deg) translateY(-8px) scale(1.02) !important;
-    box-shadow: 0 18px 36px -6px rgba(111, 66, 193, 0.18) !important;
-    border-color: #6f42c1 !important;
+    box-shadow: 0 18px 36px -6px rgba(0, 0, 0, 0.14) !important;
+    border-color: #111111 !important;
 }
 .page-courses .card-price {
     position: relative;
@@ -1146,14 +1030,13 @@ textarea:focus-visible {
     transform: translateY(-2px) scale(1.04) !important;
 }
 
-/* 2. COURSE DETAIL PAGE (Floating Sidebar Levitation & Light Sweep) */
 @keyframes sidebarLevitate {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-7px); }
 }
 .page-course-detail .sticky-sidebar-card {
     animation: sidebarLevitate 6s ease-in-out infinite;
-    box-shadow: 0 20px 40px rgba(111, 66, 193, 0.12);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 @keyframes lightSweep {
     0% { left: -100%; }
@@ -1178,49 +1061,47 @@ textarea:focus-visible {
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-/* 3. WEBINARS & WEBINAR DETAIL PAGES (Live Radar Signal & Prism Glass) */
 @keyframes radarPulse {
-    0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-    70% { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 14px rgba(0, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
 }
 .live-radar-badge {
     animation: radarPulse 2s infinite;
     border-radius: 50%;
 }
 @keyframes borderGradientShift {
-    0% { border-color: #6f42c1; }
-    33% { border-color: #3b82f6; }
-    66% { border-color: #ec4899; }
-    100% { border-color: #6f42c1; }
+    0% { border-color: #111111; }
+    33% { border-color: #444444; }
+    66% { border-color: #777777; }
+    100% { border-color: #111111; }
 }
 .webinar-prism-card {
-    border: 2px solid #6f42c1;
+    border: 2px solid #111111;
     animation: borderGradientShift 5s ease infinite;
     backdrop-filter: blur(12px);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 .webinar-prism-card:hover {
     transform: translateY(-8px) scale(1.015);
-    box-shadow: 0 20px 40px rgba(111, 66, 193, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 .page-webinars .custom-card {
     transition: transform 0.4s ease, box-shadow 0.4s ease !important;
 }
 .page-webinars .custom-card:hover {
     transform: translateY(-8px) scale(1.02) !important;
-    box-shadow: 0 16px 32px rgba(111, 66, 193, 0.15) !important;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* 4. EVENTS CATALOG PAGE (Ticket Stamp & 3D Fold) */
 .page-events .event-card {
     transform-style: preserve-3d;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.4s ease !important;
 }
 .page-events .event-card:hover {
     transform: rotateX(6deg) translateY(-8px) !important;
-    box-shadow: 0 20px 35px -5px rgba(111, 66, 193, 0.18) !important;
-    border-color: rgba(111, 66, 193, 0.3) !important;
+    box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.14) !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
 }
 .page-events .calendar-badge {
     transition: transform 0.3s ease;
@@ -1229,30 +1110,27 @@ textarea:focus-visible {
     transform: scale(1.08);
 }
 
-/* 5. SUPPORT CENTER PAGE (Spring Category Cards) */
 .page-support .support-cat-card {
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease !important;
 }
 .page-support .support-cat-card:hover {
     transform: translateY(-8px) scale(1.03) !important;
-    border-color: #6f42c1 !important;
-    box-shadow: 0 16px 32px rgba(111, 66, 193, 0.14) !important;
+    border-color: #111111 !important;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12) !important;
 }
 .page-support .support-cat-card:hover i {
     transform: rotate(12deg) scale(1.25);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 6. AUTH PAGES - LOGIN & REGISTER (Elastic Auth Modal) */
 .page-auth .lp-auth-card {
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease !important;
 }
 .page-auth .lp-auth-card:hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 25px 60px rgba(111, 66, 193, 0.15) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* 7. DASHBOARD PAGE (Progress Shimmer & Metric Bounce) */
 .dashboard-progress-bar {
     transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -1261,13 +1139,10 @@ textarea:focus-visible {
 }
 .dashboard-stat-card:hover {
     transform: translateY(-6px) scale(1.02) !important;
-    box-shadow: 0 14px 28px rgba(111, 66, 193, 0.14) !important;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* ==========================================================================
-   ABOUT CAVA LMS & FLEXIBLE LEARNING & FOUNDER SPOTLIGHT SECTIONS
-   ========================================================================== */
-
+/* Flexible Learning & Founder Spotlight Sections */
 .lp-overview-section {
     padding: 85px 0 !important;
     position: relative !important;
@@ -1275,7 +1150,6 @@ textarea:focus-visible {
     overflow: visible !important;
 }
 
-/* Layered Image Container with Backdrop Card & Dot Matrix */
 .lp-about-img-box {
     position: relative !important;
     display: block !important;
@@ -1285,12 +1159,11 @@ textarea:focus-visible {
     z-index: 1 !important;
 }
 
-/* Offset Pastel Layer underneath */
 .lp-about-backdrop-card {
     position: absolute !important;
     width: 95% !important;
     height: 95% !important;
-    background: #ede9fe !important;
+    background: #F5F5F5 !important;
     border-radius: 28px !important;
     z-index: 0 !important;
     transition: transform 0.3s ease !important;
@@ -1310,7 +1183,6 @@ textarea:focus-visible {
     transform: translate(3px, 3px) !important;
 }
 
-/* Main Image Frame */
 .lp-about-img-frame {
     position: relative !important;
     border-radius: 22px !important;
@@ -1323,7 +1195,7 @@ textarea:focus-visible {
 
 .lp-about-img-frame:hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.16) !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
 }
 
 .lp-about-img-frame img {
@@ -1333,12 +1205,11 @@ textarea:focus-visible {
     display: block !important;
 }
 
-/* Dot Matrix Grid Decorations */
 .lp-img-decor-dots {
     position: absolute !important;
     width: 60px !important;
     height: 80px !important;
-    background-image: radial-gradient(#6366f1 1.5px, transparent 1.5px) !important;
+    background-image: radial-gradient(#222222 1.5px, transparent 1.5px) !important;
     background-size: 10px 10px !important;
     opacity: 0.65 !important;
     z-index: 0 !important;
@@ -1353,10 +1224,9 @@ textarea:focus-visible {
     right: -20px !important;
 }
 
-/* Typography Tokens */
 .lp-content-badge {
     display: inline-block !important;
-    color: #6366f1 !important;
+    color: #111111 !important;
     font-size: 0.82rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -1367,7 +1237,7 @@ textarea:focus-visible {
 .lp-content-title {
     font-size: 2.65rem !important;
     font-weight: 800 !important;
-    color: #0f172a !important;
+    color: #111111 !important;
     line-height: 1.18 !important;
     letter-spacing: -0.025em !important;
     margin-bottom: 16px !important;
@@ -1375,13 +1245,12 @@ textarea:focus-visible {
 
 .lp-content-desc {
     font-size: 0.95rem !important;
-    color: #475569 !important;
+    color: #555555 !important;
     line-height: 1.65 !important;
     margin-bottom: 24px !important;
     max-width: 490px !important;
 }
 
-/* Checklist with NO default discs and Solid Purple Circle with White Checkmark */
 .lp-content-checklist {
     list-style: none !important;
     list-style-type: none !important;
@@ -1398,7 +1267,7 @@ textarea:focus-visible {
     gap: 12px !important;
     font-size: 0.95rem !important;
     font-weight: 600 !important;
-    color: #1e293b !important;
+    color: #222222 !important;
     margin-bottom: 12px !important;
 }
 
@@ -1408,9 +1277,8 @@ textarea:focus-visible {
     content: "" !important;
 }
 
-/* Know More About Us CTA Button */
 .lp-btn-purple-pill {
-    background-color: #6366f1 !important;
+    background-color: #111111 !important;
     color: #ffffff !important;
     border-radius: 8px !important;
     padding: 12px 28px !important;
@@ -1420,19 +1288,18 @@ textarea:focus-visible {
     align-items: center !important;
     gap: 8px !important;
     text-decoration: none !important;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
     transition: all 0.25s ease !important;
     border: none !important;
 }
 
 .lp-btn-purple-pill:hover {
-    background-color: #4f46e5 !important;
+    background-color: #000000 !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
     color: #ffffff !important;
 }
 
-/* Flexible Learning 3 Feature Columns */
 .lp-feature-grid {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -1450,20 +1317,20 @@ textarea:focus-visible {
     width: 42px !important;
     height: 42px !important;
     border-radius: 12px !important;
-    background: #faf5ff !important;
-    border: 1.5px solid #d8b4fe !important;
+    background: #F5F5F5 !important;
+    border: 1.5px solid #E5E5E5 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #6366f1 !important;
+    color: #111111 !important;
     font-size: 1.15rem !important;
     margin-bottom: 10px !important;
     transition: all 0.25s ease !important;
 }
 
 .lp-feature-item:hover .lp-feature-icon-badge {
-    background: #6366f1 !important;
-    border-color: #6366f1 !important;
+    background: #111111 !important;
+    border-color: #111111 !important;
     color: #ffffff !important;
     transform: scale(1.06) !important;
 }
@@ -1471,21 +1338,18 @@ textarea:focus-visible {
 .lp-feature-title {
     font-size: 0.95rem !important;
     font-weight: 700 !important;
-    color: #0f172a !important;
+    color: #111111 !important;
     margin-bottom: 3px !important;
 }
 
 .lp-feature-desc {
     font-size: 0.82rem !important;
-    color: #64748b !important;
+    color: #666666 !important;
     line-height: 1.35 !important;
     margin: 0 !important;
 }
 
-/* ==========================================================================
-   IMMIGRATION OPPORTUNITIES SECTION (Australia & Canada)
-   ========================================================================== */
-
+/* Immigration Opportunities Section */
 .lp-immi-section {
     padding: 90px 0 !important;
     position: relative !important;
@@ -1505,7 +1369,7 @@ textarea:focus-visible {
     position: absolute !important;
     width: 95% !important;
     height: 95% !important;
-    background: #ede9fe !important;
+    background: #F5F5F5 !important;
     border-radius: 28px !important;
     right: -18px !important;
     bottom: -18px !important;
@@ -1529,7 +1393,7 @@ textarea:focus-visible {
 
 .lp-immi-img-frame:hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 18px 38px rgba(99, 102, 241, 0.16) !important;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.14) !important;
 }
 
 .lp-immi-img-frame img {
@@ -1539,7 +1403,6 @@ textarea:focus-visible {
     display: block !important;
 }
 
-/* Floating Overlay Pill Badge */
 .lp-immi-floating-badge {
     position: absolute !important;
     bottom: -22px !important;
@@ -1565,7 +1428,7 @@ textarea:focus-visible {
     width: 40px !important;
     height: 40px !important;
     border-radius: 50% !important;
-    background: #6366f1 !important;
+    background: #111111 !important;
     color: #ffffff !important;
     display: flex !important;
     align-items: center !important;
@@ -1577,7 +1440,7 @@ textarea:focus-visible {
 .lp-immi-floating-title {
     font-size: 0.88rem !important;
     font-weight: 700 !important;
-    color: #6366f1 !important;
+    color: #111111 !important;
     margin-bottom: 2px !important;
     line-height: 1.2 !important;
 }
@@ -1589,7 +1452,6 @@ textarea:focus-visible {
     line-height: 1.3 !important;
 }
 
-/* 2x3 Grid for 6 Immigration Features */
 .lp-immi-features-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -1607,9 +1469,9 @@ textarea:focus-visible {
     width: 44px !important;
     height: 44px !important;
     border-radius: 50% !important;
-    background: #f5f3ff !important;
-    border: 1px solid #ede9fe !important;
-    color: #6366f1 !important;
+    background: #F5F5F5 !important;
+    border: 1px solid #E5E5E5 !important;
+    color: #111111 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1619,11 +1481,11 @@ textarea:focus-visible {
 }
 
 .lp-immi-feature-item:hover .lp-immi-feature-icon {
-    background: #6366f1 !important;
-    border-color: #6366f1 !important;
+    background: #111111 !important;
+    border-color: #111111 !important;
     color: #ffffff !important;
     transform: scale(1.08) !important;
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
 .lp-immi-feature-content {
@@ -1633,14 +1495,14 @@ textarea:focus-visible {
 .lp-immi-feature-title {
     font-size: 0.95rem !important;
     font-weight: 700 !important;
-    color: #4338ca !important;
+    color: #111111 !important;
     margin-bottom: 3px !important;
     line-height: 1.3 !important;
 }
 
 .lp-immi-feature-desc {
     font-size: 0.82rem !important;
-    color: #64748b !important;
+    color: #666666 !important;
     line-height: 1.38 !important;
     margin: 0 !important;
 }
@@ -1664,7 +1526,7 @@ textarea:focus-visible {
     }
 }
 
-/* Founder Spotlight Section - Contained Card with Clean Page Background */
+/* Founder Spotlight Section */
 .lp-founder-section {
     padding: 75px 0 !important;
     background-color: #ffffff !important;
@@ -1673,11 +1535,11 @@ textarea:focus-visible {
 }
 
 .lp-founder-card-wrap {
-    background: linear-gradient(135deg, #1e0d38 0%, #100424 100%) !important;
-    border: 1px solid rgba(168, 85, 247, 0.25) !important;
+    background: linear-gradient(135deg, #16181D 0%, #111111 100%) !important;
+    border: 1px solid #333333 !important;
     border-radius: 28px !important;
     padding: 55px 50px !important;
-    box-shadow: 0 20px 50px rgba(17, 5, 36, 0.18) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2) !important;
     position: relative !important;
     overflow: hidden !important;
 }
@@ -1689,7 +1551,7 @@ textarea:focus-visible {
     right: -15% !important;
     width: 450px !important;
     height: 450px !important;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, transparent 70%) !important;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%) !important;
     pointer-events: none !important;
     z-index: 0 !important;
 }
@@ -1701,11 +1563,11 @@ textarea:focus-visible {
 
 .lp-founder-badge {
     display: inline-block !important;
-    background: rgba(168, 85, 247, 0.18) !important;
-    color: #e9d5ff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
     padding: 6px 16px !important;
     border-radius: 100px !important;
-    border: 1px solid rgba(192, 132, 252, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     font-size: 0.82rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -1723,7 +1585,7 @@ textarea:focus-visible {
 }
 
 .lp-founder-title .gold-accent {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+    background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     font-weight: 800 !important;
@@ -1759,7 +1621,7 @@ textarea:focus-visible {
 }
 
 .lp-founder-point-item i {
-    color: #fbbf24 !important;
+    color: #ffffff !important;
     font-size: 1.15rem !important;
     margin-top: 3px !important;
     flex-shrink: 0 !important;
@@ -1777,7 +1639,7 @@ textarea:focus-visible {
     margin: 0 auto 20px auto !important;
     border-radius: 50% !important;
     padding: 6px !important;
-    background: linear-gradient(135deg, #a855f7 0%, #fbbf24 100%) !important;
+    background: linear-gradient(135deg, #444444 0%, #ffffff 100%) !important;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -1786,7 +1648,7 @@ textarea:focus-visible {
     height: 100% !important;
     border-radius: 50% !important;
     object-fit: cover !important;
-    background-color: #1e1035 !important;
+    background-color: #111111 !important;
     display: block !important;
 }
 
@@ -1799,17 +1661,16 @@ textarea:focus-visible {
 
 .lp-founder-role {
     font-size: 0.92rem !important;
-    color: #c084fc !important;
+    color: #CCCCCC !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.06em !important;
     margin: 0 !important;
 }
 
-/* White Pill Button for Founder Section */
 .lp-btn-pill-white {
     background: #ffffff !important;
-    color: #1e0d38 !important;
+    color: #111111 !important;
     border-radius: 100px !important;
     padding: 13px 32px !important;
     font-weight: 700 !important;
@@ -1818,16 +1679,16 @@ textarea:focus-visible {
     align-items: center !important;
     gap: 8px !important;
     text-decoration: none !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
     transition: all 0.25s ease !important;
     border: none !important;
 }
 
 .lp-btn-pill-white:hover {
-    background: #f8fafc !important;
-    color: #4f46e5 !important;
+    background: #F8F8F8 !important;
+    color: #000000 !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3) !important;
 }
 
 @media (max-width: 991.98px) {
@@ -1841,7 +1702,6 @@ textarea:focus-visible {
     }
 }
 
-/* Responsive Overrides */
 @media (max-width: 991.98px) {
     .lp-content-title, .lp-founder-title {
         font-size: 2.2rem;
