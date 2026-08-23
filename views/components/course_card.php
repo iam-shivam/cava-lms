@@ -12,9 +12,17 @@ if (!empty($course['thumbnail'])) {
     }
 }
 
-// Check if image exists, otherwise write placeholder placeholder later or use custom inline svg
+$delayClass = '';
+if (isset($cardIndex)) {
+    $delayMod = $cardIndex % 3;
+    if ($delayMod === 1) {
+        $delayClass = ' lms-delay-1';
+    } elseif ($delayMod === 2) {
+        $delayClass = ' lms-delay-2';
+    }
+}
 ?>
-<div class="col-md-6 col-lg-4 mb-4">
+<div class="col-md-6 col-lg-4 mb-4 lms-reveal-card<?php echo $delayClass; ?>">
     <div class="custom-card">
         <div class="card-img-wrapper">
             <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" loading="lazy" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
@@ -38,6 +46,18 @@ if (!empty($course['thumbnail'])) {
             <p class="card-text text-muted mb-4 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3rem;">
                 <?php echo htmlspecialchars(strip_tags($course['description'] ?? '')); ?>
             </p>
+            
+            <?php 
+            $lessonsCount = Course::countLessons($course['id']);
+            $hasDuration = isset($course['course_duration']) && intval($course['course_duration']) > 0;
+            ?>
+            <div class="card-meta">
+                <span><i class="fa-regular fa-file-video"></i> <?php echo $lessonsCount; ?> Lessons</span>
+                <?php if ($hasDuration): ?>
+                    <span><i class="fa-regular fa-clock"></i> <?php echo intval($course['course_duration']); ?> Hours</span>
+                <?php endif; ?>
+                <span><i class="fa-solid fa-infinity"></i> Lifetime Access</span>
+            </div>
             
             <div class="card-price-row">
                 <div>

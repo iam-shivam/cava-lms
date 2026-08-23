@@ -122,17 +122,25 @@ require_once __DIR__ . '/views/layout/header.php';
     <div class="container">
         
         <div class="row mb-4 align-items-center">
-            <div class="col">
-                <a href="dashboard.php" class="text-decoration-none text-muted mb-2 d-inline-block">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
-                </a>
-                <h2 class="fw-bold m-0"><?php echo htmlspecialchars($course['title']); ?></h2>
+            <div class="col d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <a href="dashboard.php" class="text-decoration-none text-muted mb-2 d-inline-block">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                    <h2 class="fw-bold m-0"><?php echo htmlspecialchars($course['title']); ?></h2>
+                </div>
+                <div>
+                    <button type="button" id="lms-sidebar-toggle" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm" aria-controls="coursePlayerSidebar" aria-expanded="true" aria-label="Toggle course navigation">
+                        <i class="fa-solid fa-bars-staggered me-1" id="sidebar-toggle-icon"></i>
+                        <span id="sidebar-toggle-text" class="d-none d-sm-inline">Hide Syllabus</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" id="coursePlayerRow">
             <!-- Left Side: Player -->
-            <div class="col-lg-8 mb-4">
+            <div class="col-lg-8 mb-4 course-player-main" id="coursePlayerMain">
                 <div class="video-player-container mb-3 border border-dark rounded-4" style="position: relative; overflow: hidden; background: #000;">
                     <?php 
                     $requiresOtp = true; // All videos require OTP
@@ -298,7 +306,7 @@ require_once __DIR__ . '/views/layout/header.php';
             </div>
 
             <!-- Right Side: Syllabus navigation -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 syllabus-col" id="coursePlayerSidebar">
                 <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="fs-7 fw-bold text-dark">Your Progress</span>

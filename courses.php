@@ -67,7 +67,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </ol>
             </nav>
             <h1 class="lp-page-hero-title">Browse Courses</h1>
-            <p class="lp-page-hero-subtitle">High-quality video modules designed by industry experts with lifetime access and locked-syllabus progression.</p>
+            <p class="lp-page-hero-subtitle">Explore expert-led learning programs designed to help you build your skills and achieve your career goals.</p>
         </div>
     </section>
 
@@ -157,9 +157,12 @@ require_once __DIR__ . '/views/layout/header.php';
                         </div>
                     </div>
                 <?php else: ?>
-                    <?php foreach ($coursesList as $course): 
+                    <?php 
+                    $cardIndex = 0;
+                    foreach ($coursesList as $course): 
                         $isEnrolled = Course::isUserEnrolled($userId, $course['id']);
                         require __DIR__ . '/views/components/course_card.php';
+                        $cardIndex++;
                     endforeach; ?>
                 <?php endif; ?>
             </div>

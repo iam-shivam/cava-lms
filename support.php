@@ -13,7 +13,7 @@ $pageDescription = 'Have questions about immigration, courses, or your account? 
 require_once __DIR__ . '/views/layout/header.php'; 
 ?>
 
-<div class="lp-body-scope">
+<div class="lp-body-scope page-support">
     <!-- Page Hero Banner -->
     <section class="lp-page-hero">
         <div class="container">
@@ -23,8 +23,8 @@ require_once __DIR__ . '/views/layout/header.php';
                     <li class="breadcrumb-item active" aria-current="page">Support</li>
                 </ol>
             </nav>
-            <h1 class="lp-page-hero-title">Support Center</h1>
-            <p class="lp-page-hero-subtitle">Have visa, profile draw, or course syllabus doubts? Submit a query below and track your support tickets in real-time.</p>
+            <h1 class="lp-page-hero-title">How Can We Help?</h1>
+            <p class="lp-page-hero-subtitle">Get help with courses, account access, learning, or other CAVA LMS questions.</p>
         </div>
     </section>
 
@@ -66,7 +66,7 @@ require_once __DIR__ . '/views/layout/header.php';
 
             <div class="row g-4">
                 <!-- Left Column: Submit Query Form -->
-                <div class="col-lg-6">
+                <div class="col-lg-6 lms-reveal lms-reveal-left">
                     <div class="custom-card border-0 shadow-sm p-4 p-md-5 bg-white rounded-4">
                         <div class="d-flex align-items-center gap-3 mb-4">
                             <div class="lp-avatar-initials rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5" style="width: 48px; height: 48px; flex-shrink: 0;">
@@ -109,7 +109,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
 
                 <!-- Right Column: Support Tickets / Query History (Logged-In User) -->
-                <div class="col-lg-6">
+                <div class="col-lg-6 lms-reveal lms-reveal-right lms-delay-1">
                     <?php if (!$userId): ?>
                         <div class="custom-card border-0 shadow-sm p-5 bg-white rounded-4 text-center h-100 d-flex flex-column justify-content-center align-items-center">
                             <div class="lp-empty-icon mb-3">
@@ -138,7 +138,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             <?php else: ?>
                                 <div class="overflow-auto pe-1" style="max-height: 480px;">
                                     <?php foreach ($myQueries as $q): ?>
-                                        <div class="border rounded-4 p-3 mb-3 bg-light">
+                                        <div class="border rounded-4 p-3 mb-3 support-ticket-card">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted fs-8"><i class="fa-regular fa-clock me-1"></i><?php echo date('d M, Y', strtotime($q['created_at'])); ?></span>
                                                 <span class="badge <?php echo $q['status'] === 'Resolved' ? 'bg-success' : 'bg-warning text-dark'; ?> rounded-pill px-3 py-1">

@@ -20,6 +20,239 @@
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ==========================================================================
+       SHARED PREMIUM UI DESIGN SYSTEM TOKENS
+       ========================================================================== */
+    --lms-black: #0f172a;
+    --lms-white: #ffffff;
+    --lms-gray-50: #f8fafc;
+    --lms-gray-100: #f1f5f9;
+    --lms-gray-200: #e2e8f0;
+    --lms-gray-500: #64748b;
+    --lms-gray-700: #334155;
+    --lms-purple: #6366f1;
+    --lms-purple-dark: #4f46e5;
+
+    --lms-space-xs: 0.5rem;   /* 8px */
+    --lms-space-sm: 0.75rem;  /* 12px */
+    --lms-space-md: 1rem;     /* 16px */
+    --lms-space-lg: 1.5rem;    /* 24px */
+    --lms-space-xl: 2rem;     /* 32px */
+
+    --lms-radius-sm: 8px;
+    --lms-radius-md: 12px;
+    --lms-radius-lg: 18px;
+
+    --lms-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
+    --lms-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.015);
+    --lms-shadow-lg: 0 16px 32px rgba(15, 23, 42, 0.08);
+
+    --lms-transition-fast: all 0.15s ease;
+    --lms-transition-normal: all 0.25s ease;
+    --lms-transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   REUSABLE UI COMPONENTS
+   ========================================================================== */
+
+/* Buttons */
+.lms-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 22px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 100px;
+    transition: var(--lms-transition-normal);
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
+}
+
+.lms-btn:focus-visible {
+    outline: 2px solid var(--lms-purple);
+    outline-offset: 2px;
+}
+
+.lms-btn-primary {
+    background-color: var(--lms-purple) !important;
+    color: var(--lms-white) !important;
+}
+
+.lms-btn-primary:hover {
+    background-color: var(--lms-purple-dark) !important;
+    transform: translateY(-1px) !important;
+}
+
+.lms-btn-secondary {
+    background-color: var(--lms-gray-100) !important;
+    color: var(--lms-gray-700) !important;
+    border-color: var(--lms-gray-200) !important;
+}
+
+.lms-btn-secondary:hover {
+    background-color: var(--lms-gray-200) !important;
+    transform: translateY(-1px) !important;
+}
+
+.lms-btn-outline {
+    background-color: transparent !important;
+    border-color: var(--lms-purple) !important;
+    color: var(--lms-purple) !important;
+}
+
+.lms-btn-outline:hover {
+    background-color: var(--lms-purple) !important;
+    color: var(--lms-white) !important;
+    transform: translateY(-1px) !important;
+}
+
+.lms-btn-danger {
+    background-color: #ef4444 !important;
+    color: var(--lms-white) !important;
+}
+
+.lms-btn-danger:hover {
+    background-color: #dc2626 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Cards */
+.lms-card {
+    background: var(--lms-white) !important;
+    border: 1px solid var(--lms-gray-200) !important;
+    border-radius: var(--lms-radius-lg) !important;
+    padding: var(--lms-space-lg) !important;
+    box-shadow: var(--lms-shadow-md) !important;
+    transition: var(--lms-transition-smooth) !important;
+}
+
+.lms-card-hover:hover,
+.lms-card-hover:focus-within {
+    transform: translateY(-4px) scale(1.01) !important;
+    box-shadow: var(--lms-shadow-lg) !important;
+}
+
+/* Badges */
+.lms-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 6px 14px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border-radius: 100px !important;
+}
+
+.lms-badge-primary {
+    background-color: rgba(99, 102, 241, 0.1) !important;
+    color: var(--lms-purple) !important;
+}
+
+.lms-badge-success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+}
+
+.lms-badge-warning {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+}
+
+.lms-badge-danger {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #ef4444 !important;
+}
+
+/* Form Controls */
+.lms-input,
+.lms-select,
+.lms-textarea {
+    display: block !important;
+    width: 100% !important;
+    padding: 12px 18px !important;
+    font-size: 0.90rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: var(--lms-black) !important;
+    background-color: var(--lms-white) !important;
+    border: 1px solid var(--lms-gray-200) !important;
+    border-radius: var(--lms-radius-md) !important;
+    transition: var(--lms-transition-normal) !important;
+}
+
+.lms-input:focus,
+.lms-select:focus,
+.lms-textarea:focus {
+    border-color: var(--lms-purple) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+    outline: none !important;
+}
+
+.lms-input::placeholder,
+.lms-textarea::placeholder {
+    color: var(--lms-gray-500) !important;
+}
+
+/* Page Elements */
+.lms-page-header {
+    margin-bottom: var(--lms-space-xl) !important;
+}
+
+.lms-breadcrumb {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    padding: 0 !important;
+    margin-bottom: var(--lms-space-sm) !important;
+    list-style: none !important;
+}
+
+.lms-breadcrumb-item a {
+    color: var(--lms-gray-500) !important;
+    font-weight: 500 !important;
+    transition: var(--lms-transition-fast) !important;
+}
+
+.lms-breadcrumb-item a:hover {
+    color: var(--lms-black) !important;
+}
+
+.lms-breadcrumb-item.active {
+    color: var(--lms-black) !important;
+    font-weight: 600 !important;
+}
+
+.lms-section {
+    padding: var(--lms-space-xl) 0 !important;
+}
+
+.lms-section-title {
+    font-size: 2.25rem !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--lms-black) !important;
+    margin-bottom: var(--lms-space-md) !important;
+}
+
+/* Premium Page-Entry Transition */
+@keyframes lmsPageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lms-page-entry {
+    animation: lmsPageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 body {
@@ -164,15 +397,16 @@ a:hover {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: var(--shadow-md);
-    transition: var(--transition);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.custom-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
+.custom-card:hover,
+.custom-card:focus-within {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     border-color: #E5E5E5;
 }
 
@@ -186,10 +420,11 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transition);
+    transition: transform 0.4s ease;
 }
 
-.custom-card:hover .card-img-wrapper img {
+.custom-card:hover .card-img-wrapper img,
+.custom-card:focus-within .card-img-wrapper img {
     transform: scale(1.05);
 }
 
@@ -652,4 +887,212 @@ select.form-select.rounded-pill,
 select.form-select-sm.rounded-pill {
     padding-right: 40px !important;
     background-position: right 16px center !important;
+}
+
+/* ==========================================================================
+   CAVA LMS - UI Enhancements (Sidebar Toggle, Progress Animation & Accessibility)
+   ========================================================================== */
+
+/* 1. Course Player Sidebar Toggle Transitions */
+#coursePlayerRow {
+    transition: flex 0.35s ease-in-out;
+}
+
+.course-player-main,
+.syllabus-col {
+    transition: flex-basis 0.35s ease-in-out, max-width 0.35s ease-in-out, width 0.35s ease-in-out, opacity 0.25s ease-in-out;
+}
+
+#coursePlayerSidebar {
+    transform-origin: right center;
+    transition: opacity 0.3s ease-in-out, flex-basis 0.35s ease-in-out, max-width 0.35s ease-in-out, width 0.35s ease-in-out, transform 0.35s ease-in-out;
+}
+
+#coursePlayerRow.sidebar-collapsed #coursePlayerMain {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+#coursePlayerRow.sidebar-collapsed #coursePlayerSidebar {
+    flex: 0 0 0% !important;
+    max-width: 0% !important;
+    width: 0% !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    transform: scaleX(0) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 991.98px) {
+    #coursePlayerSidebar {
+        transition: max-height 0.35s ease-in-out, opacity 0.25s ease-in-out;
+        max-height: 3000px;
+    }
+    #coursePlayerRow.sidebar-collapsed #coursePlayerSidebar {
+        max-height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        transform: none !important;
+    }
+}
+
+/* 2. Progress Bar Smooth Animation & Shimmer */
+.progress-bar {
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.progress-bar-striped {
+    background-size: 1rem 1rem;
+    animation: cava-progress-stripes 1s linear infinite;
+}
+
+@keyframes cava-progress-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
+}
+
+/* 3. Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    #coursePlayerRow,
+    .syllabus-col,
+    .course-player-main,
+    #coursePlayerSidebar,
+    .custom-card,
+    .card-img-wrapper img,
+    .progress-bar,
+    .progress-bar-striped {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* ==========================================================================
+   CAVA LMS - Premium Home Page Scroll & Image Reveal Transitions
+   ========================================================================== */
+
+.lms-reveal {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lms-reveal-left {
+    transform: translateX(-50px) scale(0.97);
+}
+
+.lms-reveal-right {
+    transform: translateX(50px) scale(0.97);
+}
+
+.lms-reveal-up {
+    transform: translateY(25px);
+}
+
+.lms-reveal-hero-img {
+    opacity: 0;
+    will-change: transform, opacity;
+    transform: translateY(15px) scale(0.96);
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Delay Stagger Helpers */
+.lms-delay-1 { transition-delay: 0.12s; }
+.lms-delay-2 { transition-delay: 0.20s; }
+.lms-delay-3 { transition-delay: 0.30s; }
+
+/* Triggered State */
+.lms-reveal.is-visible,
+.lms-reveal-hero-img.is-visible,
+.lms-reveal-card.is-visible {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) scale(1) !important;
+}
+
+/* Course Card Scroll Reveal */
+.lms-reveal-card {
+    opacity: 0;
+    will-change: transform, opacity;
+    transform: translateY(25px) scale(0.98);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Image Wrapper Hover Interaction */
+.lms-img-hover {
+    overflow: hidden !important;
+    border-radius: inherit;
+}
+
+.lms-img-hover img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease !important;
+    will-change: transform;
+}
+
+.lms-img-hover:hover img {
+    transform: scale(1.025) !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Mobile Responsiveness Safeguard (<768px) */
+@media (max-width: 768px) {
+    .lms-reveal-left,
+    .lms-reveal-right {
+        transform: translateY(25px) scale(0.98);
+    }
+    .lms-reveal-card {
+        transform: translateY(20px) scale(0.99);
+    }
+}
+
+/* Reduced Motion Accessibility for Home Page Reveals and Components */
+@media (prefers-reduced-motion: reduce) {
+    .lms-reveal,
+    .lms-reveal-left,
+    .lms-reveal-right,
+    .lms-reveal-up,
+    .lms-reveal-hero-img,
+    .lms-reveal-card,
+    .lms-page-entry,
+    .lms-card,
+    .lms-card-hover,
+    .lms-btn,
+    .lms-btn-primary,
+    .lms-btn-secondary,
+    .lms-btn-outline,
+    .lms-btn-danger {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
+    }
+    .lms-img-hover:hover img {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Global Card Metadata style fallback */
+.card-meta {
+    font-size: 0.78rem;
+    color: #888888;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.card-meta span i {
+    font-size: 0.75rem;
 }

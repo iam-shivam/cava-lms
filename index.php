@@ -51,14 +51,14 @@ require_once __DIR__ . '/views/layout/header.php';
         <div class="container position-relative" style="z-index: 1;">
             <div class="row align-items-center g-4 g-lg-5 py-2">
                 <div class="col-lg-6 pe-lg-4 text-center text-lg-start">
-                    <h1 class="lp-hero-wa-title">
+                    <h1 class="lp-hero-wa-title lms-reveal lms-reveal-up">
                         <span class="hero-eyebrow"><?php echo htmlspecialchars($heroEyebrow); ?></span>
                         <span class="hero-main-line"><?php echo htmlspecialchars($heroTitle); ?></span>
                     </h1>
-                    <p class="lp-hero-wa-subtitle"><?php echo htmlspecialchars($heroSubtitle); ?></p>
+                    <p class="lp-hero-wa-subtitle lms-reveal lms-reveal-up lms-delay-1"><?php echo htmlspecialchars($heroSubtitle); ?></p>
 
                     <div
-                        class="lp-hero-cta-group d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3">
+                        class="lp-hero-cta-group d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 lms-reveal lms-reveal-up lms-delay-2">
                         <a href="#featured-courses" class="lp-btn-pill-white">
                             <i class="fa-solid fa-book-open me-1"></i> Explore Courses <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
@@ -70,7 +70,7 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
 
                     <!-- Wix Studio Style Statistics Row inside left column -->
-                    <div class="lp-hero-stats-row row g-3 mt-4">
+                    <div class="lp-hero-stats-row row g-3 mt-4 lms-reveal lms-reveal-up lms-delay-3">
                         <div class="col-4">
                             <div class="lp-hero-stat-item">
                                 <div class="lp-hero-stat-heading"><?php echo htmlspecialchars($heroStat1Title); ?></div>
@@ -94,7 +94,7 @@ require_once __DIR__ . '/views/layout/header.php';
 
                 <!-- Single Hero Banner Image representation with gap -->
                 <div class="col-lg-6 ps-lg-4 mt-4 mt-lg-0">
-                    <div class="lp-hero-single-img-wrapper">
+                    <div class="lp-hero-single-img-wrapper lms-reveal-hero-img lms-img-hover lms-delay-1">
                         <img src="<?php echo $heroImg1; ?>" alt="Hero Banner" class="lp-hero-single-img" loading="eager">
                     </div>
                 </div>
@@ -104,7 +104,7 @@ require_once __DIR__ . '/views/layout/header.php';
 
     <!-- Why Choose World Academy Section (Screenshot 2 style) -->
     <section class="why-choose-section border-bottom" id="why-choose">
-        <div class="container text-center">
+        <div class="container text-center lms-reveal lms-reveal-up">
             <h2 class="why-choose-title">Why Choose <span class="blue-highlight">CAVA Academy</span>?</h2>
             <p class="why-choose-subtitle">Our programs are designed to inspire, challenge, and elevate ambitious
                 students through world-class instruction and real-world experience.</p>
@@ -112,7 +112,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <div class="row g-4 mt-2 text-start">
                 <!-- Card 01 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="why-choose-card">
+                    <div class="why-choose-card lms-reveal lms-reveal-up">
                         <div class="why-choose-icon">
                             <i class="fa-solid fa-chalkboard-user"></i>
                         </div>
@@ -123,7 +123,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
                 <!-- Card 02 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="why-choose-card">
+                    <div class="why-choose-card lms-reveal lms-reveal-up lms-delay-1">
                         <div class="why-choose-icon">
                             <i class="fa-solid fa-globe"></i>
                         </div>
@@ -135,7 +135,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
                 <!-- Card 03 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="why-choose-card">
+                    <div class="why-choose-card lms-reveal lms-reveal-up lms-delay-2">
                         <div class="why-choose-icon">
                             <i class="fa-solid fa-briefcase"></i>
                         </div>
@@ -147,7 +147,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
                 <!-- Card 04 -->
                 <div class="col-md-6 col-lg-3">
-                    <div class="why-choose-card">
+                    <div class="why-choose-card lms-reveal lms-reveal-up lms-delay-3">
                         <div class="why-choose-icon">
                             <i class="fa-solid fa-certificate"></i>
                         </div>
@@ -168,11 +168,11 @@ require_once __DIR__ . '/views/layout/header.php';
         <div class="container">
             <div class="row align-items-center g-5">
                 <!-- Left Column: Layered Image with offset backdrop & dot grid -->
-                <div class="col-lg-6 text-center text-lg-start">
+                <div class="col-lg-6 text-center text-lg-start lms-reveal lms-reveal-left">
                     <div class="lp-about-img-box">
                         <div class="lp-img-decor-dots lp-decor-dots-tl"></div>
                         <div class="lp-about-backdrop-card lp-backdrop-offset-br"></div>
-                        <div class="lp-about-img-frame">
+                        <div class="lp-about-img-frame lms-img-hover">
                             <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80" 
                                  alt="Student Learning at CAVA LMS" 
                                  loading="lazy" 
@@ -182,7 +182,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
 
                 <!-- Right Column: Content -->
-                <div class="col-lg-6">
+                <div class="col-lg-6 lms-reveal lms-reveal-right lms-delay-1">
                     <span class="lp-content-badge">ABOUT CAVA LMS</span>
                     <h2 class="lp-content-title">Learn. Grow. Succeed.</h2>
                     <p class="lp-content-desc">
@@ -241,7 +241,7 @@ require_once __DIR__ . '/views/layout/header.php';
         <div class="container">
             <div class="row align-items-center g-5">
                 <!-- Left Column: Content -->
-                <div class="col-lg-6 order-2 order-lg-1">
+                <div class="col-lg-6 order-2 order-lg-1 lms-reveal lms-reveal-left">
                     <span class="lp-content-badge">FLEXIBLE LEARNING</span>
                     <h2 class="lp-content-title">Learn From Anywhere,<br>Anytime</h2>
                     <p class="lp-content-desc">
@@ -279,11 +279,11 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
 
                 <!-- Right Column: Layered Image with offset backdrop & dot grid -->
-                <div class="col-lg-6 order-1 order-lg-2 text-center text-lg-end">
+                <div class="col-lg-6 order-1 order-lg-2 text-center text-lg-end lms-reveal lms-reveal-right lms-delay-1">
                     <div class="lp-about-img-box">
                         <div class="lp-img-decor-dots lp-decor-dots-mr"></div>
                         <div class="lp-about-backdrop-card lp-backdrop-offset-bl"></div>
-                        <div class="lp-about-img-frame">
+                        <div class="lp-about-img-frame lms-img-hover">
                             <img src="https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=1000&q=80" 
                                  alt="Flexible Online Education" 
                                  loading="lazy" 
@@ -302,11 +302,11 @@ require_once __DIR__ . '/views/layout/header.php';
         <div class="container">
             <div class="row align-items-center g-5">
                 <!-- Left Column: Visual with Floating Badge, Dot Matrix & Backdrop -->
-                <div class="col-lg-5 text-center text-lg-start">
+                <div class="col-lg-5 text-center text-lg-start lms-reveal lms-reveal-left">
                     <div class="lp-immi-visual-box">
                         <div class="lp-img-decor-dots lp-decor-dots-tl"></div>
                         <div class="lp-immi-backdrop-card"></div>
-                        <div class="lp-immi-img-frame">
+                        <div class="lp-immi-img-frame lms-img-hover">
                             <img src="assets/images/immigration_opportunities.png" 
                                  alt="Australia and Canada Immigration Opportunities" 
                                  loading="lazy" 
@@ -329,7 +329,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
 
                 <!-- Right Column: Content & 2x3 Feature Grid -->
-                <div class="col-lg-7">
+                <div class="col-lg-7 lms-reveal lms-reveal-right lms-delay-1">
                     <span class="lp-content-badge">IMMIGRATION OPPORTUNITIES</span>
                     <h2 class="lp-content-title">Australia & Canada</h2>
                     <p class="lp-content-desc">
@@ -438,7 +438,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <div class="lp-founder-card-wrap">
                 <div class="row align-items-center g-5">
                     <!-- Left: Details -->
-                    <div class="col-lg-7">
+                    <div class="col-lg-7 lms-reveal lms-reveal-left">
                         <span class="lp-founder-badge">FOUNDER & CHIEF MENTOR</span>
                         <h2 class="lp-founder-title">Why Learn From <span class="gold-accent">Amarnath</span>?</h2>
                         <p class="lp-founder-quote">"Experience Cannot Be Googled."</p>
@@ -470,9 +470,9 @@ require_once __DIR__ . '/views/layout/header.php';
                     </div>
 
                     <!-- Right: Founder Portrait -->
-                    <div class="col-lg-5">
+                    <div class="col-lg-5 lms-reveal lms-reveal-right lms-delay-1">
                         <div class="lp-founder-img-box">
-                            <div class="lp-founder-avatar-frame">
+                            <div class="lp-founder-avatar-frame lms-img-hover">
                                 <img src="assets/images/amarnath.png" alt="Amarnath - Founder & Chief Mentor" loading="lazy" onerror="this.src='https://placehold.co/400x400/230d4a/ffffff?text=Amarnath'">
                             </div>
                             <h4 class="lp-founder-name">Amarnath Singh</h4>
@@ -487,22 +487,25 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- Featured Courses Section (Directly following Why Choose) -->
     <section class="lp-section-padding" id="featured-courses">
         <div class="container">
-            <div class="lp-section-title-wrap text-center gsap-reveal">
+            <div class="lp-section-title-wrap text-center gsap-reveal lms-reveal lms-reveal-up">
                 <span class="lp-section-badge">Self-Paced Courses</span>
                 <h2 class="lp-section-title">Featured Study Programs</h2>
                 <p class="lp-section-subtitle">High-quality video modules with lifetime access and locked-syllabus
                     structures.</p>
             </div>
 
-            <div class="row lp-card-grid gsap-reveal">
+            <div class="row lp-card-grid gsap-reveal lms-reveal lms-reveal-up lms-delay-1">
                 <?php if (empty($featuredCourses)): ?>
                     <div class="col text-center py-5">
                         <p class="text-muted fs-5">No featured courses available at the moment.</p>
                     </div>
                 <?php else: ?>
-                    <?php foreach ($featuredCourses as $course):
+                    <?php 
+                    $cardIndex = 0;
+                    foreach ($featuredCourses as $course):
                         $isEnrolled = Course::isUserEnrolled($userId, $course['id']);
                         require __DIR__ . '/views/components/course_card.php';
+                        $cardIndex++;
                     endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -555,14 +558,14 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- Upcoming Events Section -->
     <section class="lp-section-padding" id="upcoming-events">
         <div class="container">
-            <div class="lp-section-title-wrap text-center gsap-reveal">
+            <div class="lp-section-title-wrap text-center gsap-reveal lms-reveal lms-reveal-up">
                 <span class="lp-section-badge">Campus Events</span>
                 <h2 class="lp-section-title">Upcoming Events & Fairs</h2>
                 <p class="lp-section-subtitle">Stay up to date with visa fairs, university meetups, and mock evaluation
                     sessions.</p>
             </div>
 
-            <div class="row justify-content-center gsap-reveal">
+            <div class="row justify-content-center gsap-reveal lms-reveal lms-reveal-up lms-delay-1">
                 <?php if (empty($upcomingEvents)): ?>
                     <div class="col text-center py-5">
                         <p class="text-muted fs-5">No upcoming events listed at the moment.</p>
@@ -615,14 +618,14 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- Testimonials Section -->
     <section class="lp-section-padding bg-light border-top border-bottom" id="testimonials">
         <div class="container">
-            <div class="lp-section-title-wrap text-center gsap-reveal">
+            <div class="lp-section-title-wrap text-center gsap-reveal lms-reveal lms-reveal-up">
                 <span class="lp-section-badge">Student Reviews</span>
                 <h2 class="lp-section-title">Success Stories</h2>
                 <p class="lp-section-subtitle">Hear from our students who successfully migrated and upgraded their
                     careers.</p>
             </div>
 
-            <div class="row g-4 gsap-reveal">
+            <div class="row g-4 gsap-reveal lms-reveal lms-reveal-up lms-delay-1">
                 <div class="col-md-4">
                     <div class="lp-testimonial-card">
                         <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
@@ -675,7 +678,7 @@ require_once __DIR__ . '/views/layout/header.php';
     <section class="lp-section-padding lp-contact-section" id="contact-section">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-8 gsap-reveal">
+                <div class="col-md-10 col-lg-8 gsap-reveal lms-reveal lms-reveal-up">
                     <div class="lp-contact-container p-4 p-md-5">
                         <div class="text-center mb-5">
                             <span class="lp-section-badge">Support Desk</span>

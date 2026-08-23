@@ -276,7 +276,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                         <span class="fs-8 fw-bold text-primary"><?php echo $courseProgressPercent; ?>%</span>
                                     </div>
                                     <div class="progress" style="height:5px; border-radius:3px;">
-                                        <div class="progress-bar bg-success" style="width:<?php echo $courseProgressPercent; ?>%;"></div>
+                                        <div class="progress-bar bg-success" role="progressbar" style="width:<?php echo $courseProgressPercent; ?>%;" aria-valuenow="<?php echo $courseProgressPercent; ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                     <?php if ($effectiveStatus === 'Pending'): ?>
                                         <small class="text-warning fw-semibold d-block mt-1"><i class="fa-solid fa-triangle-exclamation me-1"></i>Partially Paid — <a href="course.php?slug=<?php echo $course['slug']; ?>">Pay Balance</a></small>

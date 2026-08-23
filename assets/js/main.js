@@ -380,4 +380,117 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 10);
         });
     });
+
+    // 9. CAVA LMS UI Enhancements (Sidebar Toggle & Animated Progress Bars)
+    initLmsUIEnhancements();
 });
+
+// Sidebar Toggle Helper
+function initCoursePlayerSidebar() {
+    var toggleBtn = document.getElementById('lms-sidebar-toggle');
+    var playerRow = document.getElementById('coursePlayerRow');
+    var playerSidebar = document.getElementById('coursePlayerSidebar');
+    if (!toggleBtn || !playerRow) return;
+
+    var storageKey = 'cava_lms_sidebar_collapsed';
+
+    function updateToggleUI(isCollapsed) {
+        toggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+        var iconEl = toggleBtn.querySelector('#sidebar-toggle-icon') || toggleBtn.querySelector('i');
+        var textEl = toggleBtn.querySelector('#sidebar-toggle-text') || toggleBtn.querySelector('span');
+
+        if (isCollapsed) {
+            if (iconEl) iconEl.className = 'fa-solid fa-list-ul me-1';
+            if (textEl) textEl.textContent = 'Show Syllabus';
+            toggleBtn.setAttribute('title', 'Show Syllabus Navigation');
+        } else {
+            if (iconEl) iconEl.className = 'fa-solid fa-bars-staggered me-1';
+            if (textEl) textEl.textContent = 'Hide Syllabus';
+            toggleBtn.setAttribute('title', 'Hide Syllabus Navigation');
+        }
+    }
+
+    var isCollapsed = false;
+    try {
+        isCollapsed = localStorage.getItem(storageKey) === 'true';
+    } catch (e) {
+        isCollapsed = false;
+    }
+
+    if (isCollapsed) {
+        playerRow.classList.add('sidebar-collapsed');
+        updateToggleUI(true);
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        var currentlyCollapsed = playerRow.classList.toggle('sidebar-collapsed');
+        updateToggleUI(currentlyCollapsed);
+
+        try {
+            localStorage.setItem(storageKey, String(currentlyCollapsed));
+        } catch (e) {
+            // Fail silently if localStorage is restricted
+        }
+    });
+}
+
+// Animated Progress Bar Helper
+function initProgressAnimations() {
+    var progressBars = document.querySelectorAll('.progress-bar');
+    if (!progressBars.length) return;
+
+    progressBars.forEach(function(bar) {
+        var targetWidth = bar.style.width;
+        if (!targetWidth && bar.hasAttribute('aria-valuenow')) {
+            var val = parseFloat(bar.getAttribute('aria-valuenow'));
+            if (!isNaN(val)) {
+                targetWidth = Math.min(100, Math.max(0, val)) + '%';
+            }
+        }
+
+        if (!targetWidth) return;
+
+        bar.style.width = '0%';
+
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                bar.style.width = targetWidth;
+            });
+        });
+    });
+}
+
+function initHomePageRevealAnimations() {
+    var revealElements = document.querySelectorAll('.lms-reveal, .lms-reveal-hero-img, .lms-reveal-card');
+    if (!revealElements.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+        revealElements.forEach(function(el) {
+            el.classList.add('is-visible');
+        });
+        return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+            } else {
+                entry.target.classList.remove('is-visible');
+            }
+        });
+    }, {
+        threshold: 0.15
+    });
+
+    revealElements.forEach(function(element) {
+        observer.observe(element);
+    });
+}
+
+function initLmsUIEnhancements() {
+    initCoursePlayerSidebar();
+    initProgressAnimations();
+    initHomePageRevealAnimations();
+}
+

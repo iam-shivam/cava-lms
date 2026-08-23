@@ -402,16 +402,17 @@
     border-radius: 16px !important;
     overflow: hidden !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03) !important;
-    transition: var(--wa-transition) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.lp-body-scope .custom-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
-    border-color: rgba(0, 0, 0, 0.3) !important;
+.lp-body-scope .custom-card:hover,
+.lp-body-scope .custom-card:focus-within {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .lp-body-scope .card-img-wrapper {
@@ -430,8 +431,9 @@
     transition: transform 0.4s ease;
 }
 
-.lp-body-scope .custom-card:hover .card-img-wrapper img {
-    transform: scale(1.04);
+.lp-body-scope .custom-card:hover .card-img-wrapper img,
+.lp-body-scope .custom-card:focus-within .card-img-wrapper img {
+    transform: scale(1.05) !important;
 }
 
 .lp-body-scope .card-badge {
@@ -1730,5 +1732,468 @@ textarea:focus-visible {
     .lp-feature-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+    }
+}
+
+/* ==========================================================================
+   CAVA LMS - Premium Editorial Layout Overrides (Courses, Events & Support)
+   ========================================================================== */
+
+/* Editorial Hero for Courses, Events, and Support pages */
+.page-courses .lp-page-hero,
+.page-events .lp-page-hero,
+.page-support .lp-page-hero {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111111 !important;
+    padding: 70px 0 35px 0 !important;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.page-courses .lp-page-hero .breadcrumb,
+.page-events .lp-page-hero .breadcrumb,
+.page-support .lp-page-hero .breadcrumb {
+    margin-bottom: 16px !important;
+}
+
+.page-courses .lp-page-hero .breadcrumb-item a,
+.page-events .lp-page-hero .breadcrumb-item a,
+.page-support .lp-page-hero .breadcrumb-item a {
+    color: #666666 !important;
+    font-weight: 500 !important;
+    transition: color 0.2s ease !important;
+}
+
+.page-courses .lp-page-hero .breadcrumb-item a:hover,
+.page-events .lp-page-hero .breadcrumb-item a:hover,
+.page-support .lp-page-hero .breadcrumb-item a:hover {
+    color: #111111 !important;
+}
+
+.page-courses .lp-page-hero .breadcrumb-item.active,
+.page-events .lp-page-hero .breadcrumb-item.active,
+.page-support .lp-page-hero .breadcrumb-item.active {
+    color: #111111 !important;
+    font-weight: 600 !important;
+}
+
+.page-courses .lp-page-hero .breadcrumb-item + .breadcrumb-item::before,
+.page-events .lp-page-hero .breadcrumb-item + .breadcrumb-item::before,
+.page-support .lp-page-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: #cccccc !important;
+}
+
+.page-courses .lp-page-hero-title,
+.page-events .lp-page-hero-title,
+.page-support .lp-page-hero-title {
+    font-size: 3.25rem !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.03em !important;
+    color: #111111 !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    margin-bottom: 12px !important;
+}
+
+.page-courses .lp-page-hero-subtitle,
+.page-events .lp-page-hero-subtitle,
+.page-support .lp-page-hero-subtitle {
+    font-size: 1.15rem !important;
+    color: #555555 !important;
+    max-width: 720px !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+}
+
+/* Editorial Filter Link Overrides */
+.page-courses .lp-filter-link,
+.page-events .lp-filter-link {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    padding: 8px 20px !important;
+    border-radius: 100px !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease !important;
+    box-shadow: none !important;
+}
+
+.page-courses .lp-filter-link:hover,
+.page-events .lp-filter-link:hover {
+    border-color: #0f172a !important;
+    color: #0f172a !important;
+    transform: translateY(-2px) !important;
+}
+
+.page-courses .lp-filter-link.active,
+.page-events .lp-filter-link.active {
+    background-color: #0f172a !important;
+    border-color: #0f172a !important;
+    color: #ffffff !important;
+}
+
+/* Search Box Overrides */
+.page-courses .lp-search-box,
+.page-events .lp-search-box {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 100px !important;
+    padding: 8px 20px !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease !important;
+}
+
+.page-courses .lp-search-box:focus-within,
+.page-events .lp-search-box:focus-within {
+    border-color: #0f172a !important;
+}
+
+.page-courses .lp-search-box input,
+.page-events .lp-search-box input {
+    color: #0f172a !important;
+    font-size: 0.88rem !important;
+}
+
+.page-courses .lp-search-box .input-group-text,
+.page-events .lp-search-box .input-group-text {
+    color: #64748b !important;
+}
+
+/* Sort Select Overrides */
+.page-courses select.form-select,
+.page-events select.form-select {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 100px !important;
+    padding: 8px 28px 8px 16px !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    background-color: #ffffff !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    transition: border-color 0.25s ease, color 0.25s ease !important;
+}
+
+.page-courses select.form-select:hover,
+.page-courses select.form-select:focus,
+.page-events select.form-select:hover,
+.page-events select.form-select:focus {
+    border-color: #0f172a !important;
+    color: #0f172a !important;
+}
+
+/* Premium Card & Grid styling for courses and events catalog */
+.page-courses .custom-card,
+.page-events .custom-card {
+    perspective: none !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.015) !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+}
+
+.page-courses .custom-card:hover,
+.page-courses .custom-card:focus-within,
+.page-events .custom-card:hover,
+.page-events .custom-card:focus-within {
+    transform: translateY(-6px) scale(1.015) !important;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08) !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Card Image Wrapper Aspect Ratio Override */
+.page-courses .card-img-wrapper,
+.page-events .card-img-wrapper {
+    aspect-ratio: 16 / 10 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    border-radius: 18px 18px 0 0 !important;
+    position: relative !important;
+}
+
+.page-courses .card-img-wrapper img,
+.page-events .card-img-wrapper img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.page-courses .custom-card:hover .card-img-wrapper img,
+.page-courses .custom-card:focus-within .card-img-wrapper img,
+.page-events .custom-card:hover .card-img-wrapper img,
+.page-events .custom-card:focus-within .card-img-wrapper img {
+    transform: scale(1.04) !important;
+}
+
+/* Subtle Card Badges Over Image */
+.page-courses .card-badge,
+.page-events .card-badge {
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(4px) !important;
+    color: #ffffff !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 5px 12px !important;
+    border-radius: 100px !important;
+    top: 14px !important;
+    left: 14px !important;
+}
+
+/* Subtle circular lock badge over image */
+.page-courses .card-status-badge,
+.page-events .card-status-badge {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(4px) !important;
+    border-radius: 50% !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    z-index: 5 !important;
+}
+
+.page-courses .card-status-badge i,
+.page-events .card-status-badge i {
+    font-size: 0.8rem !important;
+}
+
+/* Card Content Area styling */
+.page-courses .card-content,
+.page-events .card-content {
+    padding: 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+}
+
+.page-courses .card-title,
+.page-events .card-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    line-height: 1.45 !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.page-courses .card-title a,
+.page-events .card-title a {
+    color: #0f172a !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+.page-courses .card-title a:hover,
+.page-events .card-title a:hover {
+    color: #6366f1 !important;
+}
+
+.page-courses .card-text,
+.page-events .card-text {
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    color: #475569 !important;
+    margin-bottom: 20px !important;
+}
+
+/* Metadata row formatting */
+.card-meta {
+    font-size: 0.78rem !important;
+    color: #64748b !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+}
+
+.card-meta span {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.card-meta span i {
+    font-size: 0.75rem !important;
+}
+
+/* Card Price & Button row */
+.page-courses .card-price-row,
+.page-events .card-price-row {
+    margin-top: auto !important;
+    padding-top: 18px !important;
+    border-top: 1px solid #f1f5f9 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.page-courses .card-price,
+.page-events .card-price {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+}
+
+/* Button overrides for card button */
+.page-courses .card-price-row .btn,
+.page-events .card-price-row .btn {
+    padding: 8px 18px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 100px !important;
+    transition: all 0.2s ease !important;
+}
+
+.page-courses .card-price-row .btn-primary,
+.page-events .card-price-row .btn-primary {
+    background-color: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: #ffffff !important;
+}
+
+.page-courses .card-price-row .btn-primary:hover,
+.page-events .card-price-row .btn-primary:hover {
+    background-color: #4f46e5 !important;
+    border-color: #4f46e5 !important;
+    transform: translateY(-1px) !important;
+}
+
+.page-courses .card-price-row .btn-outline-primary,
+.page-events .card-price-row .btn-outline-primary {
+    border-color: #6366f1 !important;
+    color: #6366f1 !important;
+    background: transparent !important;
+}
+
+.page-courses .card-price-row .btn-outline-primary:hover,
+.page-events .card-price-row .btn-outline-primary:hover {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Layout Padding & Whitespace improvements */
+.page-courses .py-5,
+.page-events .py-5,
+.page-support .py-5 {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+}
+
+.page-courses #courses-grid,
+.page-events #events-grid {
+    margin-top: 30px !important;
+}
+
+/* Editorial Form Overrides for Support page */
+.page-support .custom-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.015) !important;
+}
+
+.page-support .lp-form-control {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    font-size: 0.9rem !important;
+    padding: 12px 18px !important;
+    color: #0f172a !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.page-support .lp-form-control:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12) !important;
+    background: #ffffff !important;
+}
+
+.page-support .lp-form-label {
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+    color: #334155 !important;
+    margin-bottom: 8px !important;
+}
+
+.page-support .lp-avatar-initials {
+    background: rgba(99, 102, 241, 0.08) !important;
+    color: #6366f1 !important;
+}
+
+.page-support .lp-btn-primary {
+    background: #6366f1 !important;
+    border: none !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.page-support .lp-btn-primary:hover {
+    background: #4f46e5 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Support Tickets / History Cards override */
+.page-support .support-ticket-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.01) !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.page-support .support-ticket-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 4px !important;
+    height: 100% !important;
+    background: #6366f1 !important;
+}
+
+.page-support .support-ticket-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Responsive adjustments for headings */
+@media (max-width: 991.98px) {
+    .page-courses .lp-page-hero-title,
+    .page-events .lp-page-hero-title,
+    .page-support .lp-page-hero-title {
+        font-size: 2.75rem !important;
+    }
+}
+@media (max-width: 767.98px) {
+    .page-courses .lp-page-hero-title,
+    .page-events .lp-page-hero-title,
+    .page-support .lp-page-hero-title {
+        font-size: 2.25rem !important;
+    }
+    .page-courses .lp-page-hero,
+    .page-events .lp-page-hero,
+    .page-support .lp-page-hero {
+        padding: 50px 0 25px 0 !important;
+    }
+    .page-courses .py-5,
+    .page-events .py-5,
+    .page-support .py-5 {
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
     }
 }
