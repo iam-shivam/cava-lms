@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] === 'update_profile') {
         $fullName = trim($_POST['full_name'] ?? '');
-        $mobile   = trim($_POST['mobile_number'] ?? '');
+        $mobile = trim($_POST['mobile_number'] ?? '');
 
         if (empty($fullName) || empty($mobile)) {
             set_flash_message('danger', 'All profile fields are required.');
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // Handle avatar upload (on same form submission)
         if (!empty($_FILES['profile_picture']['name'])) {
-            $file    = $_FILES['profile_picture'];
+            $file = $_FILES['profile_picture'];
             $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxSize = 2 * 1024 * 1024; // 2 MB
 
@@ -61,16 +61,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } elseif ($file['size'] > $maxSize) {
                 set_flash_message('danger', 'Profile picture must be under 2 MB.');
             } else {
-                $ext      = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $filename = 'avatar_' . substr($userId, 0, 8) . '_' . time() . '.' . $ext;
-                $destDir  = BASE_PATH . '/uploads/avatars/';
-                if (!is_dir($destDir)) mkdir($destDir, 0775, true);
+                $destDir = BASE_PATH . '/uploads/avatars/';
+                if (!is_dir($destDir))
+                    mkdir($destDir, 0775, true);
 
                 if (move_uploaded_file($file['tmp_name'], $destDir . $filename)) {
                     // Delete old avatar if it exists
                     if (!empty($user['profile_picture'])) {
                         $oldFile = $destDir . $user['profile_picture'];
-                        if (file_exists($oldFile)) @unlink($oldFile);
+                        if (file_exists($oldFile))
+                            @unlink($oldFile);
                     }
                     User::updateAvatar($userId, $filename);
                     $_SESSION['user_avatar'] = $filename;
@@ -87,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch user data
-$purchasedCourses    = Course::getEnrolledCourses($userId);
-$registeredWebinars  = Webinar::getRegisteredWebinars($userId);
-$myQueries           = Query::getByUser($userId);
-$myPayments          = Payment::getPaymentsByUser($userId);
+$purchasedCourses = Course::getEnrolledCourses($userId);
+$registeredWebinars = Webinar::getRegisteredWebinars($userId);
+$myQueries = Query::getByUser($userId);
+$myPayments = Payment::getPaymentsByUser($userId);
 
 // Summary counts for stat cards
 $totalPaid = array_sum(array_column(
@@ -100,7 +102,7 @@ $totalPaid = array_sum(array_column(
 
 // User initials helper
 $nameParts = explode(' ', trim($user['full_name']));
-$initials  = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
+$initials = strtoupper(substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''));
 
 // Avatar URL helper
 $avatarUrl = '';
@@ -131,7 +133,8 @@ require_once __DIR__ . '/views/layout/header.php';
                     <p>Track your enrolled courses, webinars, and support queries from here.</p>
                 </div>
                 <div class="ms-auto d-none d-md-block">
-                    <span class="badge px-3 py-2 rounded-pill fw-semibold" style="background:rgba(255,255,255,0.2); color:#fff; font-size:0.8rem;">
+                    <span class="badge px-3 py-2 rounded-pill fw-semibold"
+                        style="background:rgba(255,255,255,0.2); color:#fff; font-size:0.8rem;">
                         <i class="fa-solid fa-circle-check me-1 text-success"></i> Account Active
                     </span>
                 </div>
@@ -150,15 +153,15 @@ require_once __DIR__ . '/views/layout/header.php';
                 </div>
             </div>
             <?php if (false): ?>
-            <div class="col">
-                <div class="dash-stat-card animate-fade-in-up">
-                    <div class="dash-stat-icon blue"><i class="fa-solid fa-video"></i></div>
-                    <div>
-                        <div class="dash-stat-value"><?php echo count($registeredWebinars); ?></div>
-                        <div class="dash-stat-label">Webinars</div>
+                <div class="col">
+                    <div class="dash-stat-card animate-fade-in-up">
+                        <div class="dash-stat-icon blue"><i class="fa-solid fa-video"></i></div>
+                        <div>
+                            <div class="dash-stat-value"><?php echo count($registeredWebinars); ?></div>
+                            <div class="dash-stat-label">Webinars</div>
+                        </div>
                     </div>
                 </div>
-            </div>
             <?php endif; ?>
             <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
@@ -171,7 +174,8 @@ require_once __DIR__ . '/views/layout/header.php';
             </div>
             <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
-                    <div class="dash-stat-icon text-info bg-info bg-opacity-10"><i class="fa-solid fa-credit-card"></i></div>
+                    <div class="dash-stat-icon text-info bg-info bg-opacity-10"><i class="fa-solid fa-credit-card"></i>
+                    </div>
                     <div>
                         <div class="dash-stat-value"><?php echo count($myPayments); ?></div>
                         <div class="dash-stat-label">Total Orders</div>
@@ -201,29 +205,35 @@ require_once __DIR__ . '/views/layout/header.php';
                             <div class="dash-sidebar-avatar-initials"><?php echo $initials; ?></div>
                         <?php endif; ?>
                         <div class="overflow-hidden">
-                            <div class="dash-sidebar-name text-truncate"><?php echo htmlspecialchars($user['full_name']); ?></div>
+                            <div class="dash-sidebar-name text-truncate">
+                                <?php echo htmlspecialchars($user['full_name']); ?></div>
                             <div class="dash-sidebar-role">Student</div>
                         </div>
                     </div>
 
                     <div class="dash-section-label">Workspace</div>
-                    <a href="dashboard.php?tab=courses" class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
+                    <a href="dashboard.php?tab=courses"
+                        class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-book-open"></i> My Courses
                     </a>
                     <?php if (false): ?>
-                    <a href="dashboard.php?tab=webinars" class="dashboard-menu-link <?php echo $tab === 'webinars' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-video"></i> My Webinars
-                    </a>
+                        <a href="dashboard.php?tab=webinars"
+                            class="dashboard-menu-link <?php echo $tab === 'webinars' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-video"></i> My Webinars
+                        </a>
                     <?php endif; ?>
-                    <a href="dashboard.php?tab=queries" class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
+                    <a href="dashboard.php?tab=queries"
+                        class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-circle-question"></i> Query History
                     </a>
-                    <a href="dashboard.php?tab=payments" class="dashboard-menu-link <?php echo $tab === 'payments' ? 'active' : ''; ?>">
+                    <a href="dashboard.php?tab=payments"
+                        class="dashboard-menu-link <?php echo $tab === 'payments' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-credit-card"></i> Order History
                     </a>
 
                     <div class="dash-section-label">Account</div>
-                    <a href="dashboard.php?tab=profile" class="dashboard-menu-link <?php echo $tab === 'profile' ? 'active' : ''; ?>">
+                    <a href="dashboard.php?tab=profile"
+                        class="dashboard-menu-link <?php echo $tab === 'profile' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-id-card"></i> My Profile
                     </a>
                     <!-- Sign Out removed from sidebar — use the top-right navbar dropdown instead -->
@@ -237,9 +247,11 @@ require_once __DIR__ . '/views/layout/header.php';
                 <?php if ($tab === 'courses'): ?>
                     <div class="dash-content-card">
                         <div class="d-flex align-items-center mb-4">
-                            <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-graduation-cap text-primary me-2"></i>My Enrolled Courses</h4>
+                            <h4 class="fw-bold text-dark mb-0"><i
+                                    class="fa-solid fa-graduation-cap text-primary me-2"></i>My Enrolled Courses</h4>
                             <?php if (!empty($purchasedCourses)): ?>
-                                <a href="courses.php" class="btn btn-outline-primary btn-sm rounded-pill ms-auto px-3">Browse More</a>
+                                <a href="courses.php" class="btn btn-outline-primary btn-sm rounded-pill ms-auto px-3">Browse
+                                    More</a>
                             <?php endif; ?>
                         </div>
 
@@ -249,10 +261,10 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-muted mb-3">You haven't enrolled in any courses yet.</p>
                                 <a href="courses.php" class="btn btn-primary rounded-pill px-4">Browse Courses</a>
                             </div>
-                        <?php else: 
+                        <?php else:
                             $progressRows = DB::fetchAll("SELECT course_id, COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND status = 'completed' GROUP BY course_id", [$userId]);
                             $userCourseProgress = array_column($progressRows, 'count', 'course_id');
-                        ?>
+                            ?>
                             <?php foreach ($purchasedCourses as $course):
                                 $thumbnailUrl = 'https://placehold.co/160x120/6f42c1/ffffff?text=Course';
                                 if ($course['thumbnail']) {
@@ -261,45 +273,57 @@ require_once __DIR__ . '/views/layout/header.php';
                                         : SITE_URL . '/assets/images/' . $course['thumbnail'];
                                 }
 
-                                $isExpired      = $course['expiry_date'] && strtotime($course['expiry_date']) < time();
+                                $isExpired = $course['expiry_date'] && strtotime($course['expiry_date']) < time();
                                 $effectiveStatus = $course['enrollment_status'] ?? 'Active';
-                                if ($isExpired) $effectiveStatus = 'Expired';
+                                if ($isExpired)
+                                    $effectiveStatus = 'Expired';
 
-                                $courseVideosCount    = intval($course['lessons_count'] ?? 0);
+                                $courseVideosCount = intval($course['lessons_count'] ?? 0);
                                 $courseCompletedCount = intval($userCourseProgress[$course['id']] ?? 0);
                                 $courseProgressPercent = ($courseVideosCount > 0) ? min(100, round(($courseCompletedCount / $courseVideosCount) * 100)) : 0;
-                            ?>
-                            <div class="dash-course-row">
-                                <img src="<?php echo $thumbnailUrl; ?>" alt="thumbnail" class="dash-course-thumb"
-                                     onerror="this.src='https://placehold.co/160x120/6f42c1/ffffff?text=Course'">
-                                <div class="dash-course-body">
-                                    <div class="dash-course-title"><?php echo htmlspecialchars($course['title']); ?></div>
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="fs-8 text-muted">Progress</span>
-                                        <span class="fs-8 fw-bold text-primary"><?php echo $courseProgressPercent; ?>%</span>
+                                ?>
+                                <div class="dash-course-row">
+                                    <img src="<?php echo $thumbnailUrl; ?>" alt="thumbnail" class="dash-course-thumb"
+                                        onerror="this.src='https://placehold.co/160x120/6f42c1/ffffff?text=Course'">
+                                    <div class="dash-course-body">
+                                        <div class="dash-course-title"><?php echo htmlspecialchars($course['title']); ?></div>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="fs-8 text-muted">Progress</span>
+                                            <span class="fs-8 fw-bold text-primary"><?php echo $courseProgressPercent; ?>%</span>
+                                        </div>
+                                        <div class="progress" style="height:5px; border-radius:3px;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width:<?php echo $courseProgressPercent; ?>%;"
+                                                aria-valuenow="<?php echo $courseProgressPercent; ?>" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                        <?php if ($effectiveStatus === 'Pending'): ?>
+                                            <small class="text-warning fw-semibold d-block mt-1"><i
+                                                    class="fa-solid fa-triangle-exclamation me-1"></i>Partially Paid — <a
+                                                    href="course.php?slug=<?php echo $course['slug']; ?>">Pay Balance</a></small>
+                                        <?php elseif ($effectiveStatus === 'Expired'): ?>
+                                            <small class="text-danger fw-semibold d-block mt-1"><i
+                                                    class="fa-solid fa-lock me-1"></i>Access Expired — <a
+                                                    href="course.php?slug=<?php echo $course['slug']; ?>">Renew</a></small>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="progress" style="height:5px; border-radius:3px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width:<?php echo $courseProgressPercent; ?>%;" aria-valuenow="<?php echo $courseProgressPercent; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="flex-shrink-0">
+                                        <?php if ($effectiveStatus === 'Expired'): ?>
+                                            <button class="btn btn-secondary btn-sm rounded-pill px-3" disabled><i
+                                                    class="fa-solid fa-lock me-1"></i>Locked</button>
+                                        <?php elseif ($effectiveStatus === 'Pending'): ?>
+                                            <a href="course.php?slug=<?php echo $course['slug']; ?>"
+                                                class="btn btn-warning btn-sm rounded-pill px-3"><i
+                                                    class="fa-solid fa-lock me-1"></i>Pay Balance</a>
+                                        <?php else: ?>
+                                            <a href="course_play.php?slug=<?php echo $course['slug']; ?>"
+                                                class="btn btn-primary btn-sm rounded-pill px-3">
+                                                <i class="fa-solid fa-circle-play me-1"></i>
+                                                <?php echo $courseProgressPercent > 0 ? 'Continue' : 'Start'; ?>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
-                                    <?php if ($effectiveStatus === 'Pending'): ?>
-                                        <small class="text-warning fw-semibold d-block mt-1"><i class="fa-solid fa-triangle-exclamation me-1"></i>Partially Paid — <a href="course.php?slug=<?php echo $course['slug']; ?>">Pay Balance</a></small>
-                                    <?php elseif ($effectiveStatus === 'Expired'): ?>
-                                        <small class="text-danger fw-semibold d-block mt-1"><i class="fa-solid fa-lock me-1"></i>Access Expired — <a href="course.php?slug=<?php echo $course['slug']; ?>">Renew</a></small>
-                                    <?php endif; ?>
                                 </div>
-                                <div class="flex-shrink-0">
-                                    <?php if ($effectiveStatus === 'Expired'): ?>
-                                        <button class="btn btn-secondary btn-sm rounded-pill px-3" disabled><i class="fa-solid fa-lock me-1"></i>Locked</button>
-                                    <?php elseif ($effectiveStatus === 'Pending'): ?>
-                                        <a href="course.php?slug=<?php echo $course['slug']; ?>" class="btn btn-warning btn-sm rounded-pill px-3"><i class="fa-solid fa-lock me-1"></i>Pay Balance</a>
-                                    <?php else: ?>
-                                        <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-primary btn-sm rounded-pill px-3">
-                                            <i class="fa-solid fa-circle-play me-1"></i>
-                                            <?php echo $courseProgressPercent > 0 ? 'Continue' : 'Start'; ?>
-                                        </a>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
@@ -309,9 +333,11 @@ require_once __DIR__ . '/views/layout/header.php';
                 <?php if ($tab === 'webinars'): ?>
                     <div class="dash-content-card">
                         <div class="d-flex align-items-center mb-4">
-                            <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-video text-primary me-2"></i>My Registered Webinars</h4>
+                            <h4 class="fw-bold text-dark mb-0"><i class="fa-solid fa-video text-primary me-2"></i>My
+                                Registered Webinars</h4>
                             <?php if (!empty($registeredWebinars)): ?>
-                                <a href="webinars.php" class="btn btn-outline-primary btn-sm rounded-pill ms-auto px-3">Browse More</a>
+                                <a href="webinars.php" class="btn btn-outline-primary btn-sm rounded-pill ms-auto px-3">Browse
+                                    More</a>
                             <?php endif; ?>
                         </div>
 
@@ -327,31 +353,39 @@ require_once __DIR__ . '/views/layout/header.php';
                                     $webDate = date('d M, Y', strtotime($webinar['date']));
                                     $webTime = date('h:i A', strtotime($webinar['time']));
                                     $isPastWebinar = strtotime($webinar['date'] . ' ' . $webinar['time']) < time();
-                                ?>
-                                <div class="col-md-6">
-                                    <div class="border rounded-3 p-3 h-100 d-flex flex-column" style="border-color:#f3f4f6!important;">
-                                        <?php if ($isPastWebinar): ?>
-                                            <span class="badge bg-secondary-light text-secondary rounded-pill px-3 py-1 fw-semibold align-self-start mb-2">
-                                                <i class="fa-solid fa-video-slash me-1"></i> Closed
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="badge bg-success-light text-success rounded-pill px-3 py-1 fw-semibold align-self-start mb-2">
-                                                <i class="fa-solid fa-circle-check me-1"></i> Registered
-                                            </span>
-                                        <?php endif; ?>
-                                        <h6 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($webinar['title']); ?></h6>
-                                        <p class="text-muted small mb-0 flex-grow-1"><?php echo htmlspecialchars(mb_strimwidth($webinar['description'], 0, 100, '...')); ?></p>
-                                        <div class="mt-3 pt-2 border-top d-flex justify-content-between text-muted small">
-                                            <span><i class="fa-regular fa-calendar me-1"></i><?php echo $webDate; ?></span>
-                                            <span><i class="fa-regular fa-clock me-1"></i><?php echo $webTime; ?></span>
-                                        </div>
-                                        <?php if (!$isPastWebinar && !empty($webinar['join_url'])): ?>
-                                            <div class="mt-3">
-                                                <a href="<?php echo htmlspecialchars($webinar['join_url']); ?>" target="_blank" class="btn btn-success btn-sm rounded-pill w-100 fw-semibold"><i class="fa-solid fa-video me-1"></i>Join Webinar</a>
+                                    ?>
+                                    <div class="col-md-6">
+                                        <div class="border rounded-3 p-3 h-100 d-flex flex-column"
+                                            style="border-color:#f3f4f6!important;">
+                                            <?php if ($isPastWebinar): ?>
+                                                <span
+                                                    class="badge bg-secondary-light text-secondary rounded-pill px-3 py-1 fw-semibold align-self-start mb-2">
+                                                    <i class="fa-solid fa-video-slash me-1"></i> Closed
+                                                </span>
+                                            <?php else: ?>
+                                                <span
+                                                    class="badge bg-success-light text-success rounded-pill px-3 py-1 fw-semibold align-self-start mb-2">
+                                                    <i class="fa-solid fa-circle-check me-1"></i> Registered
+                                                </span>
+                                            <?php endif; ?>
+                                            <h6 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($webinar['title']); ?>
+                                            </h6>
+                                            <p class="text-muted small mb-0 flex-grow-1">
+                                                <?php echo htmlspecialchars(mb_strimwidth($webinar['description'], 0, 100, '...')); ?>
+                                            </p>
+                                            <div class="mt-3 pt-2 border-top d-flex justify-content-between text-muted small">
+                                                <span><i class="fa-regular fa-calendar me-1"></i><?php echo $webDate; ?></span>
+                                                <span><i class="fa-regular fa-clock me-1"></i><?php echo $webTime; ?></span>
                                             </div>
-                                        <?php endif; ?>
+                                            <?php if (!$isPastWebinar && !empty($webinar['join_url'])): ?>
+                                                <div class="mt-3">
+                                                    <a href="<?php echo htmlspecialchars($webinar['join_url']); ?>" target="_blank"
+                                                        class="btn btn-success btn-sm rounded-pill w-100 fw-semibold"><i
+                                                            class="fa-solid fa-video me-1"></i>Join Webinar</a>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
@@ -361,7 +395,8 @@ require_once __DIR__ . '/views/layout/header.php';
                 <!-- 3. Query History -->
                 <?php if ($tab === 'queries'): ?>
                     <div class="dash-content-card">
-                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-circle-question text-primary me-2"></i>My Query History</h4>
+                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-circle-question text-primary me-2"></i>My
+                            Query History</h4>
 
                         <?php if (empty($myQueries)): ?>
                             <div class="text-center py-5">
@@ -373,29 +408,98 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
+                                            <th>Ticket ID</th>
                                             <th>Query Message</th>
                                             <th>Date</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($myQueries as $query): ?>
-                                        <tr>
-                                            <td style="max-width:400px; white-space:normal; word-wrap:break-word;">
-                                                <div class="fw-medium text-dark"><?php echo htmlspecialchars($query['query_message']); ?></div>
-                                                <?php if ($query['resolved_at']): ?>
-                                                    <small class="text-success d-block mt-1">Resolved: <?php echo date('d M, Y', strtotime($query['resolved_at'])); ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?php echo date('d M, Y', strtotime($query['created_at'])); ?></td>
-                                            <td>
-                                                <?php if ($query['status'] === 'Resolved'): ?>
-                                                    <span class="badge bg-success rounded-pill"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-warning text-dark rounded-pill"><i class="fa-regular fa-clock me-1"></i>Pending</span>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
+                                        <?php foreach ($myQueries as $qIdx => $query): ?>
+                                            <tr>
+                                                <td>
+                                                     <span
+                                                         class="badge bg-dark rounded-pill px-2 py-1 fw-bold text-white"
+                                                         style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                         <i
+                                                             class="fa-solid fa-ticket me-1"></i><?php echo htmlspecialchars($query['ticket_number'] ?? '------'); ?>
+                                                     </span>
+                                                </td>
+                                                <td style="max-width:320px;">
+                                                    <div class="fw-medium text-dark"
+                                                        style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.85rem;">
+                                                        <?php echo htmlspecialchars($query['query_message']); ?></div>
+                                                    <?php if (strlen($query['query_message']) > 80): ?>
+                                                        <button type="button"
+                                                            class="btn btn-view-more mt-1"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#userQueryModal<?php echo $query['id']; ?>">
+                                                            View More &raquo;
+                                                        </button>
+                                                    <?php endif; ?>
+                                                    <?php if ($query['resolved_at']): ?>
+                                                        <small class="text-success d-block mt-1" style="font-size:0.75rem;"><i
+                                                                class="fa-solid fa-check-double me-1"></i>Resolved:
+                                                            <?php echo date('d M, Y', strtotime($query['resolved_at'])); ?></small>
+                                                    <?php endif; ?>
+
+                                                    <!-- User Modal for Full Query Message -->
+                                                    <div class="modal fade" id="userQueryModal<?php echo $query['id']; ?>"
+                                                        tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content rounded-4 border-0 shadow">
+                                                                <div class="modal-header border-bottom-0 pb-0">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="badge bg-dark rounded-pill px-2 py-1 fw-bold text-white" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                                                                            <i class="fa-solid fa-ticket me-1"></i>Ticket #<?php echo htmlspecialchars($query['ticket_number'] ?? '------'); ?>
+                                                                        </span>
+                                                                        <span
+                                                                            class="badge <?php echo $query['status'] === 'Resolved' ? 'bg-success' : 'bg-warning text-dark'; ?> rounded-pill">
+                                                                            <?php echo $query['status']; ?>
+                                                                        </span>
+                                                                    </div>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body text-start pt-3">
+                                                                    <h6 class="fw-bold mb-2">Query Details</h6>
+                                                                    <div class="p-3 bg-light rounded-3 border text-dark fs-7"
+                                                                        style="line-height: 1.6; white-space: pre-wrap;">
+                                                                        <?php echo trim(htmlspecialchars($query['query_message'])); ?>
+                                                                    </div>
+                                                                    <div class="mt-2 text-muted text-end"
+                                                                        style="font-size:0.75rem;">
+                                                                        <i class="fa-regular fa-clock me-1"></i>Submitted on
+                                                                        <?php echo date('d M, Y \a\t h:i A', strtotime($query['created_at'])); ?>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer border-top-0 pt-0">
+                                                                    <button type="button"
+                                                                        class="btn btn-secondary rounded-pill px-4"
+                                                                        data-bs-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-muted small">
+                                                    <?php echo date('d M, Y', strtotime($query['created_at'])); ?></td>
+                                                <td>
+                                                    <?php if ($query['status'] === 'Resolved'): ?>
+                                                        <span
+                                                            class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold"
+                                                            style="background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">
+                                                            <i class="fa-solid fa-circle-check me-1"></i>Resolved
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span
+                                                            class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-semibold"
+                                                            style="background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
+                                                            <i class="fa-regular fa-clock me-1"></i>Pending
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -407,7 +511,8 @@ require_once __DIR__ . '/views/layout/header.php';
                 <!-- 4. Order History -->
                 <?php if ($tab === 'payments'): ?>
                     <div class="dash-content-card">
-                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-credit-card text-primary me-2"></i>Order & Transaction Logs</h4>
+                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-credit-card text-primary me-2"></i>Order &
+                            Transaction Logs</h4>
 
                         <?php if (empty($myPayments)): ?>
                             <div class="text-center py-5">
@@ -429,22 +534,28 @@ require_once __DIR__ . '/views/layout/header.php';
                                     </thead>
                                     <tbody>
                                         <?php foreach ($myPayments as $payment): ?>
-                                        <tr>
-                                            <td class="fw-semibold text-dark"><?php echo htmlspecialchars($payment['item_title'] ?? 'Purchase'); ?></td>
-                                            <td><span class="badge bg-secondary rounded-pill"><?php echo ucfirst($payment['item_type']); ?></span></td>
-                                            <td>
-                                                <span class="badge <?php echo (isset($payment['payment_type']) && $payment['payment_type'] === 'Full') ? 'bg-success' : 'bg-info text-dark'; ?> rounded-pill">
-                                                    <?php echo $payment['payment_type'] ?? 'Full'; ?>
-                                                </span>
-                                            </td>
-                                            <td class="fw-bold text-primary">₹<?php echo number_format($payment['amount'], 2); ?></td>
-                                            <td>
-                                                <span class="badge <?php echo $payment['status'] === 'Success' ? 'bg-success' : ($payment['status'] === 'Pending' ? 'bg-warning text-dark' : 'bg-danger'); ?> rounded-pill">
-                                                    <?php echo $payment['status']; ?>
-                                                </span>
-                                            </td>
-                                            <td><?php echo date('d M, Y', strtotime($payment['created_at'])); ?></td>
-                                        </tr>
+                                            <tr>
+                                                <td class="fw-semibold text-dark">
+                                                    <?php echo htmlspecialchars($payment['item_title'] ?? 'Purchase'); ?></td>
+                                                <td><span
+                                                        class="badge bg-secondary rounded-pill"><?php echo ucfirst($payment['item_type']); ?></span>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        class="badge <?php echo (isset($payment['payment_type']) && $payment['payment_type'] === 'Full') ? 'bg-success' : 'bg-info text-dark'; ?> rounded-pill">
+                                                        <?php echo $payment['payment_type'] ?? 'Full'; ?>
+                                                    </span>
+                                                </td>
+                                                <td class="fw-bold text-primary">
+                                                    ₹<?php echo number_format($payment['amount'], 2); ?></td>
+                                                <td>
+                                                    <span
+                                                        class="badge <?php echo $payment['status'] === 'Success' ? 'bg-success' : ($payment['status'] === 'Pending' ? 'bg-warning text-dark' : 'bg-danger'); ?> rounded-pill">
+                                                        <?php echo $payment['status']; ?>
+                                                    </span>
+                                                </td>
+                                                <td><?php echo date('d M, Y', strtotime($payment['created_at'])); ?></td>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
@@ -456,7 +567,8 @@ require_once __DIR__ . '/views/layout/header.php';
                 <!-- 5. Profile Settings -->
                 <?php if ($tab === 'profile'): ?>
                     <div class="dash-content-card">
-                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-user-gear text-primary me-2"></i>My Profile Settings</h4>
+                        <h4 class="fw-bold text-dark mb-4"><i class="fa-solid fa-user-gear text-primary me-2"></i>My Profile
+                            Settings</h4>
 
                         <form action="dashboard.php" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
@@ -466,34 +578,39 @@ require_once __DIR__ . '/views/layout/header.php';
                             <div class="text-center mb-4">
                                 <div class="avatar-upload-area">
                                     <?php if ($avatarUrl): ?>
-                                        <img src="<?php echo htmlspecialchars($avatarUrl); ?>" alt="Profile Picture" id="avatar-preview">
+                                        <img src="<?php echo htmlspecialchars($avatarUrl); ?>" alt="Profile Picture"
+                                            id="avatar-preview">
                                     <?php else: ?>
-                                        <div class="avatar-big-initials" id="avatar-initials-preview"><?php echo $initials; ?></div>
+                                        <div class="avatar-big-initials" id="avatar-initials-preview"><?php echo $initials; ?>
+                                        </div>
                                     <?php endif; ?>
                                     <label for="profile_picture" class="avatar-upload-btn" title="Change photo">
                                         <i class="fa-solid fa-camera"></i>
                                     </label>
-                                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="d-none" onchange="previewAvatar(this)">
+                                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
+                                        class="d-none" onchange="previewAvatar(this)">
                                 </div>
-                                <small class="text-muted d-block">Click the camera icon to change your photo (max 2 MB)</small>
+                                <small class="text-muted d-block">Click the camera icon to change your photo (max 2
+                                    MB)</small>
                             </div>
 
                             <div class="row justify-content-center">
                                 <div class="col-md-8">
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Email Address</label>
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
+                                        <input type="text" class="form-control"
+                                            value="<?php echo htmlspecialchars($user['email']); ?>" disabled>
                                         <small class="text-muted">Registered email cannot be modified.</small>
                                     </div>
                                     <div class="mb-3">
                                         <label for="full_name" class="form-label fw-semibold">Full Name</label>
                                         <input type="text" class="form-control" id="full_name" name="full_name"
-                                               value="<?php echo htmlspecialchars($user['full_name']); ?>" required>
+                                            value="<?php echo htmlspecialchars($user['full_name']); ?>" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="mobile_number" class="form-label fw-semibold">Mobile Number</label>
                                         <input type="tel" class="form-control" id="mobile_number" name="mobile_number"
-                                               value="<?php echo htmlspecialchars($user['mobile_number']); ?>" required>
+                                            value="<?php echo htmlspecialchars($user['mobile_number']); ?>" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 mt-2">
                                         <i class="fa-solid fa-floppy-disk me-2"></i>Save Profile
@@ -510,24 +627,24 @@ require_once __DIR__ . '/views/layout/header.php';
 </div><!-- /dashboard-wrapper -->
 
 <script>
-function previewAvatar(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var preview = document.getElementById('avatar-preview');
-            var initials = document.getElementById('avatar-initials-preview');
-            if (!preview) {
-                // Create an img element and replace initials div
-                preview = document.createElement('img');
-                preview.id = 'avatar-preview';
-                preview.alt = 'Profile Picture';
-                if (initials) initials.replaceWith(preview);
-            }
-            preview.src = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var preview = document.getElementById('avatar-preview');
+                var initials = document.getElementById('avatar-initials-preview');
+                if (!preview) {
+                    // Create an img element and replace initials div
+                    preview = document.createElement('img');
+                    preview.id = 'avatar-preview';
+                    preview.alt = 'Profile Picture';
+                    if (initials) initials.replaceWith(preview);
+                }
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-}
 </script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

@@ -77,5 +77,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
     <!-- Premium Interactive Page Animations Script -->
     <script src="<?php echo SITE_URL; ?>/assets/js/landing-premium.js" defer></script>
+
+    <?php if (isset($_SESSION['pending_webhook_payload']) && defined('GOOGLE_SHEETS_WEBHOOK') && GOOGLE_SHEETS_WEBHOOK): ?>
+    <script>
+        (function() {
+            const url = <?php echo json_encode(GOOGLE_SHEETS_WEBHOOK); ?>;
+            const payload = <?php echo $_SESSION['pending_webhook_payload']; ?>;
+            if (url && url.indexOf('YOUR_SCRIPT_ID') === -1) {
+                // Send the webhook payload to Google Sheets in the background
+                fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors', // Avoid pre-flight CORS blocks for Apps Script redirects
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.warn('Google Sheets Webhook failed:', err));
+            }
+        })();
+    </script>
+    <?php 
+    unset($_SESSION['pending_webhook_payload']);
+    endif; 
+    ?>
 </body>
 </html>

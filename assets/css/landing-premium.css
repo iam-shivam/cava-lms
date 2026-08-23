@@ -2647,6 +2647,7 @@ textarea:focus-visible {
    11. FINAL CTA SECTION
    ========================================================================== */
 .lp-final-cta-section {
+    display: none;
     padding: 100px 0;
     background: #0b0f19;
     background-image:
@@ -2684,7 +2685,7 @@ textarea:focus-visible {
     font-size: 3.25rem;
     font-weight: 850;
     letter-spacing: -0.03em;
-    color: #ffffff;
+    color: #ffffff !important;
     line-height: 1.15;
     margin-bottom: 20px;
 }

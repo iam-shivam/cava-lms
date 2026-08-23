@@ -10,7 +10,7 @@
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold" id="globalConfirmModalLabel"><i class="fa-solid fa-circle-question text-warning me-2"></i>Confirmation Required</h5>
             </div>
-            <div class="modal-body fs-5 text-dark" id="globalConfirmMessage">
+            <div class="modal-body fs-6 text-dark" id="globalConfirmMessage">
                 Are you sure you want to proceed?
             </div>
             <div class="modal-footer border-0 pt-0">

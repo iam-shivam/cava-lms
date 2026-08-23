@@ -790,7 +790,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             <p class="text-muted">Submit your question below, and our support team will respond shortly. You can also visit our <a href="support.php" class="text-decoration-underline text-dark fw-semibold">Support Center</a>.</p>
                         </div>
 
-                        <form action="submit_query.php" method="POST">
+                        <form action="submit_query.php" method="POST" id="queryFormHome" onsubmit="return validateWordLimit('queryFormHome')">
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <div class="form-group text-start">
@@ -837,7 +837,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 </div>
 
                                 <div class="col-12 mt-4">
-                                    <button type="submit" class="lp-btn-primary w-100 py-3" style="border-radius: 100px;">
+                                    <button type="submit" id="querySubmitBtnHome" class="lp-btn-primary w-100 py-3" style="border-radius: 100px;">
                                         Submit Query Request <i class="fa-solid fa-paper-plane ms-2"></i>
                                     </button>
                                 </div>
@@ -891,7 +891,35 @@ function updateWordCount(textarea) {
     }
 
     display.textContent = words + ' / 100 words';
-    display.style.color = '#198754';
+    display.style.color = words >= 100 ? '#dc3545' : '#198754';
+
+    // Disable submit button when at word limit
+    var submitBtn = document.getElementById('querySubmitBtnHome');
+    if (submitBtn) {
+        if (words >= 100) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
+    }
+}
+
+// Form-level validation before submit
+function validateWordLimit(formId) {
+    var form = document.getElementById(formId);
+    var textarea = form.querySelector('textarea[name="query_message"]');
+    var text = textarea.value.trim();
+    var words = text === '' ? 0 : text.split(/\s+/).length;
+    if (words > 100) {
+        alert('Your query message must not exceed 100 words. Currently: ' + words + ' words.');
+        textarea.focus();
+        return false;
+    }
+    return true;
 }
 
 // Init Bootstrap tooltips

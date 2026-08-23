@@ -1,6 +1,8 @@
 <?php
 // Enable Output Buffering
-ob_start();
+if (!ob_start("ob_gzhandler")) {
+    ob_start();
+}
 
 // CAVA LMS Configuration File
 
@@ -122,7 +124,7 @@ function display_flash_message() {
                 break;
         }
         // Toast container (if not already present, we add a wrapper)
-        echo '<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        echo '<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
                 <div id="flashToast" class="toast align-items-center text-bg-' . htmlspecialchars($flash['type']) . ' border-0" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="d-flex">
                         <div class="toast-body">
@@ -269,4 +271,32 @@ if (!function_exists('get_setting')) {
         return $settings[$key] ?? $default;
     }
 }
+// Global cached settings helper
+if (!function_exists('get_all_settings')) {
+    function get_all_settings() {
+        static $settingsCache = null;
+        if ($settingsCache === null) {
+            $settingsCache = [];
+            try {
+                if (class_exists('DB')) {
+                    $rows = DB::fetchAll("SELECT setting_key, setting_value FROM settings");
+                    foreach ($rows as $r) {
+                        $settingsCache[$r['setting_key']] = $r['setting_value'];
+                    }
+                }
+            } catch (Exception $e) {
+                $settingsCache = [];
+            }
+        }
+        return $settingsCache;
+    }
+}
+
+if (!function_exists('get_setting')) {
+    function get_setting($key, $default = '') {
+        $all = get_all_settings();
+        return $all[$key] ?? $default;
+    }
+}
+
 ?>
