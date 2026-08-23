@@ -23,9 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    // Word count validation (max 100 words)
+    $wordCount = str_word_count($message);
+    if ($wordCount > 100) {
+        set_flash_message('danger', 'Your query message must not exceed 100 words. Currently: ' . $wordCount . ' words.');
+        header("Location: support.php");
+        exit;
+    }
+    
     try {
-        $saved = Query::create($userId, $name, $email, $mobile, $message);
-        if ($saved) {
+        $ticketNumber = Query::create($userId, $name, $email, $mobile, $message);
+        if ($ticketNumber) {
             // Also push to Google Sheets (fails silently if not configured)
             if (defined('GOOGLE_SHEETS_WEBHOOK') && GOOGLE_SHEETS_WEBHOOK && strpos(GOOGLE_SHEETS_WEBHOOK, 'YOUR_SCRIPT_ID') === false) {
                 $payload = json_encode([
@@ -45,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 curl_exec($ch);
                 curl_close($ch);
             }
-            set_flash_message('success', 'Your query has been submitted successfully! We will get back to you soon.');
+            set_flash_message('success', 'Your query has been submitted successfully! Your ticket number is: ' . $ticketNumber . '. We will get back to you soon.');
         } else {
             set_flash_message('danger', 'Failed to submit your query. Please try again.');
         }
