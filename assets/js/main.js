@@ -488,9 +488,49 @@ function initHomePageRevealAnimations() {
     });
 }
 
+function initStorytellingController() {
+    var storytellingSection = document.querySelector('.lp-storytelling-section');
+    if (!storytellingSection) return;
+
+    var stages = storytellingSection.querySelectorAll('.story-stage');
+    if (!stages.length) return;
+
+    // Check reduced motion
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+        stages.forEach(function(s) { s.classList.add('is-active'); });
+        return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+        stages.forEach(function(s) { s.classList.add('is-active'); });
+        return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-active');
+            } else {
+                entry.target.classList.remove('is-active');
+            }
+        });
+    }, {
+        rootMargin: '-10% 0px -10% 0px',
+        threshold: 0.2
+    });
+
+    stages.forEach(function(stage) {
+        observer.observe(stage);
+    });
+}
+
+
 function initLmsUIEnhancements() {
     initCoursePlayerSidebar();
     initProgressAnimations();
     initHomePageRevealAnimations();
+    initStorytellingController();
 }
+
 

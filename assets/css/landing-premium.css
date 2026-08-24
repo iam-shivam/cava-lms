@@ -2197,3 +2197,482 @@ textarea:focus-visible {
         padding-bottom: 3.5rem !important;
     }
 }
+
+/* ==========================================================================
+   CAVA LMS - Homepage Premium Long-Form Storytelling & Journey System
+   ========================================================================== */
+
+/* Hero Secondary Pill Button */
+.lp-btn-pill-outline {
+    background: transparent !important;
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 100px !important;
+    padding: 13px 28px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    transition: all 0.25s ease !important;
+}
+
+.lp-btn-pill-outline:hover {
+    border-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+}
+
+.lp-btn-pill-dark {
+    background: #111111 !important;
+    color: #ffffff !important;
+    border-radius: 100px !important;
+    padding: 13px 32px !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.25s ease !important;
+    border: none !important;
+}
+
+.lp-btn-pill-dark:hover {
+    background: #000000 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Single Hero Image Frame */
+.lp-hero-single-img-wrapper {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #111111;
+}
+
+.lp-hero-single-img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Hero Stats Row */
+.lp-hero-stat-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.lp-hero-stat-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.lp-hero-stat-heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.lp-hero-stat-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.3;
+}
+
+/* ==========================================================================
+   03. EDITORIAL ALTERNATING STORYTELLING SECTION
+   ========================================================================== */
+.lp-storytelling-section {
+    padding: 105px 0 90px 0;
+    background-color: #fbfbfe;
+    background-image: radial-gradient(rgba(111, 66, 193, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    position: relative;
+}
+
+.storytelling-intro {
+    max-width: 760px;
+    margin: 0 auto 65px auto;
+}
+
+.story-stage {
+    padding: 55px 0;
+    position: relative;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-stage:not(:last-child) {
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.story-stage-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.story-stage-num {
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #6f42c1;
+    background: rgba(111, 66, 193, 0.08);
+    border: 1.5px solid rgba(111, 66, 193, 0.25);
+    padding: 4px 14px;
+    border-radius: 100px;
+    transition: all 0.35s ease;
+}
+
+.story-stage.is-active .story-stage-num {
+    background: #6f42c1;
+    color: #ffffff;
+    border-color: #6f42c1;
+    box-shadow: 0 4px 14px rgba(111, 66, 193, 0.3);
+}
+
+.story-stage-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.story-title {
+    font-size: 2.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+    transition: color 0.3s ease;
+}
+
+.story-stage.is-active .story-title {
+    color: #000000;
+}
+
+.story-desc {
+    font-size: 1.02rem;
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    max-width: 530px;
+}
+
+.story-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 0;
+    list-style: none;
+    padding: 0;
+}
+
+.story-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 100px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s ease;
+}
+
+.story-chip i {
+    color: #6f42c1;
+    font-size: 0.85rem;
+}
+
+.story-stage.is-active .story-chip {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.story-img-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #0f172a;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.story-img-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 55px rgba(15, 23, 42, 0.13);
+}
+
+.story-img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+    transform: scale(0.94);
+    opacity: 0.85;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.story-stage.is-active .story-img {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.story-img-tag {
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.story-img-tag i {
+    color: #a855f7;
+}
+
+@media (max-width: 991.98px) {
+    .story-stage {
+        padding: 40px 0;
+    }
+    .story-title {
+        font-size: 1.85rem;
+    }
+    .story-img {
+        height: 270px;
+        transform: scale(1) !important;
+        opacity: 1 !important;
+    }
+    .story-img-card {
+        margin-top: 22px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .story-title {
+        font-size: 1.55rem;
+    }
+    .story-desc {
+        font-size: 0.95rem;
+    }
+    .story-img {
+        height: 220px;
+    }
+    .story-stage-meta {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .story-stage,
+    .story-img,
+    .story-img-card {
+        transform: none !important;
+        opacity: 1 !important;
+        transition: none !important;
+    }
+}
+
+/* ==========================================================================
+   05. LEARNING JOURNEY SECTION
+   ========================================================================== */
+.lp-journey-section {
+    padding: 100px 0;
+    background-color: #ffffff;
+    position: relative;
+}
+
+.journey-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+    position: relative;
+}
+
+.journey-step-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 28px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.journey-step-card:hover {
+    transform: translateY(-6px);
+    background: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+}
+
+.journey-step-number-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.journey-step-num {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #0f172a;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.journey-step-card:hover .journey-step-num {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+.journey-step-icon {
+    font-size: 1.25rem;
+    color: #64748b;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.journey-step-card:hover .journey-step-icon {
+    color: #0f172a;
+    transform: scale(1.15);
+}
+
+.journey-step-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.journey-step-desc {
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    .journey-steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+@media (max-width: 575.98px) {
+    .journey-steps-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   06. CAREER OPPORTUNITIES ALTERNATING BLOCKS
+   ========================================================================== */
+.lp-career-alternating-block {
+    padding: 40px 0;
+}
+
+/* ==========================================================================
+   11. FINAL CTA SECTION
+   ========================================================================== */
+.lp-final-cta-section {
+    padding: 100px 0;
+    background: #0b0f19;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    position: relative;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+.lp-final-cta-box {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.lp-final-cta-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.lp-final-cta-title {
+    font-size: 3.25rem;
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.lp-final-cta-desc {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 36px auto;
+    line-height: 1.6;
+}
+
+@media (max-width: 767.98px) {
+    .lp-final-cta-title {
+        font-size: 2.2rem;
+    }
+    .lp-final-cta-section {
+        padding: 70px 0;
+    }
+}
