@@ -722,8 +722,15 @@ require_once __DIR__ . '/views/layout/header.php';
                                         <label for="query_message" class="lp-form-label">Your Support Query
                                             Message</label>
                                         <textarea class="form-control lp-form-control" id="query_message"
-                                            name="query_message" rows="4" placeholder="Describe your doubt here..."
-                                            required></textarea>
+                                            name="query_message" rows="4" placeholder="Describe your doubt here in detail..."
+                                            required oninput="updateWordCount(this)" style="resize: none; height: 120px;"></textarea>
+                                        <div class="d-flex justify-content-end align-items-center mt-1 gap-2">
+                                            <span id="word-limit-error" class="text-danger small fw-semibold" style="display:none; margin-right:auto;">
+                                                <i class="fa-solid fa-triangle-exclamation me-1"></i>Word limit reached!
+                                            </span>
+                                            <small id="word-count-display" class="fw-semibold text-muted">0 / 100 words</small>
+                                            <i class="fa-solid fa-circle-info text-muted" style="cursor:help;" data-bs-toggle="tooltip" data-bs-placement="top" title="Maximum 100 words allowed."></i>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -741,5 +748,34 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
     </section>
 </div>
+
+<script>
+function updateWordCount(textarea) {
+    var text = textarea.value.trim();
+    var wordsArr = text === '' ? [] : text.split(/\s+/);
+    var words = wordsArr.length;
+    var display = document.getElementById('word-count-display');
+    var errorDiv = document.getElementById('word-limit-error');
+
+    // Hard-cap at 100 words: truncate extra words
+    if (words > 100) {
+        textarea.value = wordsArr.slice(0, 100).join(' ');
+        words = 100;
+        errorDiv.style.display = 'inline';
+        textarea.style.borderColor = '#dc3545';
+    } else {
+        errorDiv.style.display = 'none';
+        textarea.style.borderColor = '';
+    }
+
+    display.textContent = words + ' / 100 words';
+    display.style.color = '#198754';
+}
+// Init Bootstrap tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipEls.forEach(function(el) { new bootstrap.Tooltip(el); });
+});
+</script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

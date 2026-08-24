@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `webinar_registrations` (
 
 CREATE TABLE IF NOT EXISTS `queries` (
   `id` CHAR(36) PRIMARY KEY,
+  `ticket_number` VARCHAR(6) NOT NULL UNIQUE,
   `user_id` CHAR(36) DEFAULT NULL,
   `name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
