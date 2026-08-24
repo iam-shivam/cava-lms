@@ -2,13 +2,15 @@
 // Course Model
 
 class Course {
-    
+    private static $lessonsCountCache = [];
+    private static $enrolledCourseIdsMap = [];
+
     public static function getAll() {
-        return DB::fetchAll("SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published' ORDER BY c.id DESC");
+        return DB::fetchAll("SELECT c.*, cat.name as category_name, (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published' ORDER BY c.id DESC");
     }
     
     public static function getFeatured($limit = 3, $excludeUserId = null) {
-        $sql = "SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published'";
+        $sql = "SELECT c.*, cat.name as category_name, (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.status = 'Published'";
         $params = [];
         if ($excludeUserId) {
             $sql .= " AND c.id NOT IN (SELECT course_id FROM enrollments WHERE user_id = ?)";
@@ -22,11 +24,11 @@ class Course {
     }
     
     public static function getBySlug($slug) {
-        return DB::fetch("SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.slug = ? AND c.status = 'Published'", [$slug]);
+        return DB::fetch("SELECT c.*, cat.name as category_name, (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.slug = ? AND c.status = 'Published'", [$slug]);
     }
     
     public static function getById($id) {
-        return DB::fetch("SELECT c.*, cat.name as category_name FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.id = ?", [$id]);
+        return DB::fetch("SELECT c.*, cat.name as category_name, (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count FROM courses c JOIN categories cat ON c.category_id = cat.id WHERE c.id = ?", [$id]);
     }
     
     public static function getSections($courseId) {
@@ -51,19 +53,28 @@ class Course {
     }
     
     public static function countLessons($courseId) {
+        if (isset(self::$lessonsCountCache[$courseId])) {
+            return self::$lessonsCountCache[$courseId];
+        }
         $row = DB::fetch("SELECT COUNT(id) as total FROM course_videos WHERE course_id = ?", [$courseId]);
-        return $row ? $row['total'] : 0;
+        $count = $row ? (int)$row['total'] : 0;
+        self::$lessonsCountCache[$courseId] = $count;
+        return $count;
     }
     
     public static function isUserEnrolled($userId, $courseId) {
         if (!$userId) return false;
-        $row = DB::fetch("SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? AND status = 'Active' AND (expiry_date IS NULL OR expiry_date >= NOW())", [$userId, $courseId]);
-        return !empty($row);
+        if (!isset(self::$enrolledCourseIdsMap[$userId])) {
+            $rows = DB::fetchAll("SELECT course_id FROM enrollments WHERE user_id = ? AND status = 'Active' AND (expiry_date IS NULL OR expiry_date >= NOW())", [$userId]);
+            self::$enrolledCourseIdsMap[$userId] = array_column($rows, 'course_id');
+        }
+        return in_array($courseId, self::$enrolledCourseIdsMap[$userId]);
     }
     
     public static function getEnrolledCourses($userId) {
         return DB::fetchAll("
-            SELECT c.*, e.enrolled_at, e.status as enrollment_status, e.expiry_date
+            SELECT c.*, e.enrolled_at, e.status as enrollment_status, e.expiry_date,
+                   (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count
             FROM enrollments e 
             JOIN courses c ON e.course_id = c.id 
             WHERE e.user_id = ?
@@ -75,3 +86,4 @@ class Course {
         return DB::fetchAll("SELECT * FROM categories ORDER BY name ASC");
     }
 }
+

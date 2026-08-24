@@ -9,9 +9,13 @@ require_once __DIR__ . '/models/Event.php';
 // Fetch dynamic settings
 $settings = [];
 try {
-    $rows = DB::fetchAll("SELECT * FROM settings");
-    foreach ($rows as $row) {
-        $settings[$row['setting_key']] = $row['setting_value'];
+    if (function_exists('get_all_settings')) {
+        $settings = get_all_settings();
+    } else {
+        $rows = DB::fetchAll("SELECT * FROM settings");
+        foreach ($rows as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+        }
     }
 } catch (Exception $e) {
     // Fail silently

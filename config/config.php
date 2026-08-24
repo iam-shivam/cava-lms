@@ -241,4 +241,32 @@ if (!function_exists('generate_uuid')) {
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }
+
+// Helper: Get all settings
+if (!function_exists('get_all_settings')) {
+    function get_all_settings() {
+        static $cachedSettings = null;
+        if ($cachedSettings !== null) {
+            return $cachedSettings;
+        }
+        $cachedSettings = [];
+        try {
+            $rows = DB::fetchAll("SELECT setting_key, setting_value FROM settings");
+            foreach ($rows as $row) {
+                $cachedSettings[$row['setting_key']] = $row['setting_value'];
+            }
+        } catch (Exception $e) {
+            // Fail silently
+        }
+        return $cachedSettings;
+    }
+}
+
+// Helper: Get single setting with fallback
+if (!function_exists('get_setting')) {
+    function get_setting($key, $default = '') {
+        $settings = get_all_settings();
+        return $settings[$key] ?? $default;
+    }
+}
 ?>

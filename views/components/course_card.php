@@ -48,7 +48,7 @@ if (isset($cardIndex)) {
             </p>
             
             <?php 
-            $lessonsCount = Course::countLessons($course['id']);
+            $lessonsCount = isset($course['lessons_count']) ? intval($course['lessons_count']) : Course::countLessons($course['id']);
             $hasDuration = isset($course['course_duration']) && intval($course['course_duration']) > 0;
             ?>
             <div class="card-meta">

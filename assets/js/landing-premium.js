@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.requestAnimationFrame(checkScroll);
                 ticking = true;
             }
-        });
+        }, { passive: true });
         checkScroll();
     };
     initNavbarScroll();

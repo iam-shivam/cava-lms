@@ -249,7 +249,10 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-muted mb-3">You haven't enrolled in any courses yet.</p>
                                 <a href="courses.php" class="btn btn-primary rounded-pill px-4">Browse Courses</a>
                             </div>
-                        <?php else: ?>
+                        <?php else: 
+                            $progressRows = DB::fetchAll("SELECT course_id, COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND status = 'completed' GROUP BY course_id", [$userId]);
+                            $userCourseProgress = array_column($progressRows, 'count', 'course_id');
+                        ?>
                             <?php foreach ($purchasedCourses as $course):
                                 $thumbnailUrl = 'https://placehold.co/160x120/6f42c1/ffffff?text=Course';
                                 if ($course['thumbnail']) {
@@ -262,8 +265,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                 $effectiveStatus = $course['enrollment_status'] ?? 'Active';
                                 if ($isExpired) $effectiveStatus = 'Expired';
 
-                                $courseVideosCount    = intval(DB::fetch("SELECT COUNT(id) as count FROM course_videos WHERE course_id = ?", [$course['id']])['count']);
-                                $courseCompletedCount = intval(DB::fetch("SELECT COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND course_id = ? AND status = 'completed'", [$userId, $course['id']])['count']);
+                                $courseVideosCount    = intval($course['lessons_count'] ?? 0);
+                                $courseCompletedCount = intval($userCourseProgress[$course['id']] ?? 0);
                                 $courseProgressPercent = ($courseVideosCount > 0) ? min(100, round(($courseCompletedCount / $courseVideosCount) * 100)) : 0;
                             ?>
                             <div class="dash-course-row">
@@ -370,70 +373,26 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Ticket #</th>
                                             <th>Query Message</th>
                                             <th>Date</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($myQueries as $qIdx => $query): ?>
+                                        <?php foreach ($myQueries as $query): ?>
                                         <tr>
-                                            <td>
-                                                <span class="badge bg-purple-subtle text-purple border border-purple-subtle rounded-2 px-2 py-1 fw-bold font-monospace" style="font-size: 0.78rem; background-color: #f3e8ff; color: #6d28d9; border: 1px solid #ddd6fe;">
-                                                    <i class="fa-solid fa-ticket me-1 opacity-75"></i><?php echo htmlspecialchars($query['ticket_number'] ?? '------'); ?>
-                                                </span>
-                                            </td>
-                                            <td style="max-width:320px;">
-                                                <div class="fw-medium text-dark" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.85rem;"><?php echo htmlspecialchars($query['query_message']); ?></div>
-                                                <?php if (strlen($query['query_message']) > 80): ?>
-                                                    <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold text-purple mt-1" data-bs-toggle="modal" data-bs-target="#userQueryModal<?php echo $query['id']; ?>" style="color: #6d28d9; font-size: 0.78rem;">
-                                                        View More &raquo;
-                                                    </button>
-                                                <?php endif; ?>
+                                            <td style="max-width:400px; white-space:normal; word-wrap:break-word;">
+                                                <div class="fw-medium text-dark"><?php echo htmlspecialchars($query['query_message']); ?></div>
                                                 <?php if ($query['resolved_at']): ?>
-                                                    <small class="text-success d-block mt-1" style="font-size:0.75rem;"><i class="fa-solid fa-check-double me-1"></i>Resolved: <?php echo date('d M, Y', strtotime($query['resolved_at'])); ?></small>
+                                                    <small class="text-success d-block mt-1">Resolved: <?php echo date('d M, Y', strtotime($query['resolved_at'])); ?></small>
                                                 <?php endif; ?>
-
-                                                <!-- User Modal for Full Query Message -->
-                                                <div class="modal fade" id="userQueryModal<?php echo $query['id']; ?>" tabindex="-1" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content rounded-4 border-0 shadow">
-                                                            <div class="modal-header border-bottom-0 pb-0">
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <span class="badge rounded-2 px-2 py-1 font-monospace" style="background-color: #f3e8ff; color: #6d28d9; border: 1px solid #ddd6fe;">
-                                                                        Ticket #<?php echo htmlspecialchars($query['ticket_number'] ?? '------'); ?>
-                                                                    </span>
-                                                                    <span class="badge <?php echo $query['status'] === 'Resolved' ? 'bg-success' : 'bg-warning text-dark'; ?> rounded-pill">
-                                                                        <?php echo $query['status']; ?>
-                                                                    </span>
-                                                                </div>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body text-start pt-3">
-                                                                <h6 class="fw-bold mb-2">Query Details</h6>
-                                                                <div class="p-3 bg-light rounded-3 border text-dark fs-7" style="line-height: 1.6; white-space: pre-wrap;"><?php echo trim(htmlspecialchars($query['query_message'])); ?></div>
-                                                                <div class="mt-2 text-muted text-end" style="font-size:0.75rem;">
-                                                                    <i class="fa-regular fa-clock me-1"></i>Submitted on <?php echo date('d M, Y \a\t h:i A', strtotime($query['created_at'])); ?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer border-top-0 pt-0">
-                                                                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </td>
-                                            <td class="text-muted small"><?php echo date('d M, Y', strtotime($query['created_at'])); ?></td>
+                                            <td><?php echo date('d M, Y', strtotime($query['created_at'])); ?></td>
                                             <td>
                                                 <?php if ($query['status'] === 'Resolved'): ?>
-                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold" style="background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">
-                                                        <i class="fa-solid fa-circle-check me-1"></i>Resolved
-                                                    </span>
+                                                    <span class="badge bg-success rounded-pill"><i class="fa-solid fa-circle-check me-1"></i>Resolved</span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-semibold" style="background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
-                                                        <i class="fa-regular fa-clock me-1"></i>Pending
-                                                    </span>
+                                                    <span class="badge bg-warning text-dark rounded-pill"><i class="fa-regular fa-clock me-1"></i>Pending</span>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

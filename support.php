@@ -98,14 +98,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             
                             <div class="mb-4">
                                 <label for="query_message" class="lp-form-label">Query Message Details</label>
-                                <textarea class="form-control lp-form-control" id="query_message" name="query_message" rows="4" placeholder="State your PR eligibility, CRS scores, or purchase queries in detail..." required oninput="updateWordCount(this)" style="resize: none; height: 120px;"></textarea>
-                                <div class="d-flex justify-content-end align-items-center mt-1 gap-2">
-                                    <span id="word-limit-error" class="text-danger small fw-semibold" style="display:none; margin-right:auto;">
-                                        <i class="fa-solid fa-triangle-exclamation me-1"></i>Word limit reached!
-                                    </span>
-                                    <small id="word-count-display" class="fw-semibold text-muted">0 / 100 words</small>
-                                    <i class="fa-solid fa-circle-info text-muted" style="cursor:help;" data-bs-toggle="tooltip" data-bs-placement="top" title="Maximum 100 words allowed."></i>
-                                </div>
+                                <textarea class="form-control lp-form-control" id="query_message" name="query_message" rows="4" placeholder="State your PR eligibility, CRS scores, or purchase queries..." required></textarea>
                             </div>
                             
                             <button type="submit" class="lp-btn-primary w-100 py-3" style="border-radius: 100px;">
@@ -147,12 +140,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                     <?php foreach ($myQueries as $q): ?>
                                         <div class="border rounded-4 p-3 mb-3 support-ticket-card">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <span class="badge bg-dark rounded-pill px-2 py-1 fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">
-                                                        <i class="fa-solid fa-ticket me-1"></i><?php echo htmlspecialchars($q['ticket_number'] ?? '------'); ?>
-                                                    </span>
-                                                    <span class="text-muted fs-8"><i class="fa-regular fa-clock me-1"></i><?php echo date('d M, Y', strtotime($q['created_at'])); ?></span>
-                                                </div>
+                                                <span class="text-muted fs-8"><i class="fa-regular fa-clock me-1"></i><?php echo date('d M, Y', strtotime($q['created_at'])); ?></span>
                                                 <span class="badge <?php echo $q['status'] === 'Resolved' ? 'bg-success' : 'bg-warning text-dark'; ?> rounded-pill px-3 py-1">
                                                     <?php echo $q['status']; ?>
                                                 </span>
@@ -176,33 +164,5 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
     </section>
 </div>
-
-<script>
-function updateWordCount(textarea) {
-    var text = textarea.value.trim();
-    var wordsArr = text === '' ? [] : text.split(/\s+/);
-    var words = wordsArr.length;
-    var display = document.getElementById('word-count-display');
-    var errorDiv = document.getElementById('word-limit-error');
-
-    // Hard-cap at 100 words: truncate extra words
-    if (words > 100) {
-        textarea.value = wordsArr.slice(0, 100).join(' ');
-        words = 100;
-        errorDiv.style.display = 'inline';
-        textarea.style.borderColor = '#dc3545';
-    } else {
-        errorDiv.style.display = 'none';
-        textarea.style.borderColor = '';
-    }
-
-    display.textContent = words + ' / 100 words';
-}
-// Init Bootstrap tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    var tooltipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipEls.forEach(function(el) { new bootstrap.Tooltip(el); });
-});
-</script>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>
