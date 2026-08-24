@@ -6,16 +6,8 @@ require_once __DIR__ . '/models/Course.php';
 require_once __DIR__ . '/models/Webinar.php';
 require_once __DIR__ . '/models/Event.php';
 
-// Fetch settings
-$settings = [];
-try {
-    $rows = DB::fetchAll("SELECT * FROM settings");
-    foreach ($rows as $row) {
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
-} catch (Exception $e) {
-    // Fail silently
-}
+// Fetch settings using cached helper
+$settings = get_all_settings();
 
 $heroEyebrow  = $settings['hero_eyebrow'] ?? 'Cava Career Abroad Visa Academy';
 $heroTitle    = $settings['hero_title'] ?? 'Upgrade Your Skills with CAVA LMS';
@@ -32,7 +24,7 @@ $heroStat3Desc  = $settings['hero_stat_3_desc'] ?? 'Micro-group classes';
 // Dynamic Hero Banner Single Image
 $heroImg1 = (!empty($settings['hero_img_1']) && file_exists(BASE_PATH . '/uploads/' . $settings['hero_img_1']))
     ? SITE_URL . '/uploads/' . $settings['hero_img_1']
-    : 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000&h=600';
+    : SITE_URL . '/assets/images/study_abroad.jpeg';
 
 // Fetch dynamic data
 $userId = $_SESSION['user_id'] ?? null;
@@ -237,25 +229,25 @@ require_once __DIR__ . '/views/layout/header.php';
     <!-- =========================================================================
          SECTION: FLEXIBLE LEARNING (Learn From Anywhere, Anytime)
          ========================================================================= -->
-    <section class="lp-overview-section" id="flexible-learning">
+    <section class="lp-overview-section" id="about-us">
         <div class="container">
             <div class="row align-items-center g-5">
                 <!-- Left Column: Content -->
                 <div class="col-lg-6 order-2 order-lg-1 lms-reveal lms-reveal-left">
                     <span class="lp-content-badge">FLEXIBLE LEARNING</span>
-                    <h2 class="lp-content-title">Learn From Anywhere,<br>Anytime</h2>
+                    <h2 class="lp-content-title">Study Anywhere, Anytime</h2>
                     <p class="lp-content-desc">
-                        Access our courses, webinars, and events on any device, anytime you want. Flexible learning that fits your schedule and lifestyle.
+                        Access high-quality course material on your schedule. Whether you're upgrading your skills or starting a new career path, CAVA LMS provides the tools and guidance you need.
                     </p>
 
                     <div class="lp-feature-grid">
                         <!-- Mini Feature 1 -->
                         <div class="lp-feature-item">
                             <div class="lp-feature-icon-badge">
-                                <i class="fa-regular fa-clock"></i>
+                                <i class="fa-solid fa-laptop-code"></i>
                             </div>
-                            <h5 class="lp-feature-title">Anytime Access</h5>
-                            <p class="lp-feature-desc">Learn at your own pace</p>
+                            <h5 class="lp-feature-title">Self-Paced</h5>
+                            <p class="lp-feature-desc">Learn at your own speed with unlimited video access</p>
                         </div>
 
                         <!-- Mini Feature 2 -->
@@ -263,8 +255,8 @@ require_once __DIR__ . '/views/layout/header.php';
                             <div class="lp-feature-icon-badge">
                                 <i class="fa-solid fa-headset"></i>
                             </div>
-                            <h5 class="lp-feature-title">Expert Support</h5>
-                            <p class="lp-feature-desc">Get guidance whenever you need</p>
+                            <h5 class="lp-feature-title">Direct Support</h5>
+                            <p class="lp-feature-desc">Get your questions answered by expert mentors</p>
                         </div>
 
                         <!-- Mini Feature 3 -->
@@ -284,10 +276,10 @@ require_once __DIR__ . '/views/layout/header.php';
                         <div class="lp-img-decor-dots lp-decor-dots-mr"></div>
                         <div class="lp-about-backdrop-card lp-backdrop-offset-bl"></div>
                         <div class="lp-about-img-frame lms-img-hover">
-                            <img src="https://images.unsplash.com/photo-1588702547919-26089e690ecc?auto=format&fit=crop&w=1000&q=80" 
+                            <img src="assets/images/work_abroad.jpeg" 
                                  alt="Flexible Online Education" 
                                  loading="lazy" 
-                                 onerror="this.src='assets/images/work_abroad.jpeg'">
+                                 onerror="this.src='assets/images/visa_consultancy.jpeg'">
                         </div>
                     </div>
                 </div>

@@ -249,7 +249,10 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-muted mb-3">You haven't enrolled in any courses yet.</p>
                                 <a href="courses.php" class="btn btn-primary rounded-pill px-4">Browse Courses</a>
                             </div>
-                        <?php else: ?>
+                        <?php else: 
+                            $progressRows = DB::fetchAll("SELECT course_id, COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND status = 'completed' GROUP BY course_id", [$userId]);
+                            $userCourseProgress = array_column($progressRows, 'count', 'course_id');
+                        ?>
                             <?php foreach ($purchasedCourses as $course):
                                 $thumbnailUrl = 'https://placehold.co/160x120/6f42c1/ffffff?text=Course';
                                 if ($course['thumbnail']) {
@@ -262,8 +265,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                 $effectiveStatus = $course['enrollment_status'] ?? 'Active';
                                 if ($isExpired) $effectiveStatus = 'Expired';
 
-                                $courseVideosCount    = intval(DB::fetch("SELECT COUNT(id) as count FROM course_videos WHERE course_id = ?", [$course['id']])['count']);
-                                $courseCompletedCount = intval(DB::fetch("SELECT COUNT(id) as count FROM user_video_progress WHERE user_id = ? AND course_id = ? AND status = 'completed'", [$userId, $course['id']])['count']);
+                                $courseVideosCount    = intval($course['lessons_count'] ?? 0);
+                                $courseCompletedCount = intval($userCourseProgress[$course['id']] ?? 0);
                                 $courseProgressPercent = ($courseVideosCount > 0) ? min(100, round(($courseCompletedCount / $courseVideosCount) * 100)) : 0;
                             ?>
                             <div class="dash-course-row">

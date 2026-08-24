@@ -4,16 +4,8 @@ require_once dirname(dirname(__DIR__)) . '/config/config.php';
 require_once dirname(dirname(__DIR__)) . '/config/db.php';
 
 // Fetch dynamic settings from database if possible
-$siteTitle = 'CAVA LMS Portal';
+$siteTitle = get_setting('site_title', 'CAVA LMS Portal');
 $siteDescription = 'CAVA LMS Portal – Learn immigration, career, and skills courses online at your own pace. Expert-led video courses, live webinars, and more.';
-try {
-    $titleSetting = DB::fetch("SELECT setting_value FROM settings WHERE setting_key = 'site_title'");
-    if ($titleSetting) {
-        $siteTitle = $titleSetting['setting_value'];
-    }
-} catch (Exception $e) {
-    // Fail silently if DB not seeded yet
-}
 
 // Per-page SEO — pages can set $pageTitle, $pageDescription, $pageImage before including this header
 $metaTitle       = isset($pageTitle)       ? htmlspecialchars($pageTitle) . ' | ' . htmlspecialchars($siteTitle) : htmlspecialchars($siteTitle);
@@ -31,6 +23,16 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $metaTitle; ?></title>
+
+    <!-- Resource Preconnect Hints for Maximum Loading Performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="<?php echo $metaDescription; ?>">
@@ -113,8 +115,8 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
                                 $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $_SESSION['user_avatar'];
                             }
                         }
-                        if (!$navAvatarUrl) {
-                            // Try fetching from DB if session doesn't have it yet
+                        if (!$navAvatarUrl && empty($_SESSION['user_avatar_checked'])) {
+                            // Fetch from DB once per session
                             try {
                                 $navUser = DB::fetch("SELECT profile_picture FROM users WHERE id = ?", [$_SESSION['user_id']]);
                                 if ($navUser && !empty($navUser['profile_picture'])) {
@@ -124,6 +126,7 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
                                         $_SESSION['user_avatar'] = $navUser['profile_picture'];
                                     }
                                 }
+                                $_SESSION['user_avatar_checked'] = true;
                             } catch (Exception $e) {}
                         }
                         $navNameParts = explode(' ', trim($userName));

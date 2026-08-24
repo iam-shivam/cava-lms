@@ -15,7 +15,7 @@ $sort = trim($_GET['sort'] ?? 'latest');
 $userId = $_SESSION['user_id'] ?? null;
 
 // Base query
-$sql = "SELECT c.*, cat.name as category_name 
+$sql = "SELECT c.*, cat.name as category_name, (SELECT COUNT(id) FROM course_videos WHERE course_id = c.id) as lessons_count 
         FROM courses c 
         JOIN categories cat ON c.category_id = cat.id 
         WHERE c.status = 'Published'";
