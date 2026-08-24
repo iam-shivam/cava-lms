@@ -15,6 +15,16 @@
 
     /* Hardware acceleration transition */
     --wa-transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+
+    /* Nav Design Tokens */
+    --cava-purple: #6f42c1;
+    --cava-purple-light: rgba(111, 66, 193, 0.08);
+    --cava-nav-height: 68px;
+    --cava-nav-bg: #ffffff;
+    --cava-nav-border: rgba(0, 0, 0, 0.08);
+    --cava-nav-shadow-scroll: 0 4px 24px rgba(0, 0, 0, 0.07);
+    --cava-nav-transition: background 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    --cava-link-transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1), transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Scoped Landing Page Body Styling */
@@ -2709,4 +2719,772 @@ textarea:focus-visible {
     -webkit-backface-visibility: hidden;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+}
+
+/* ==========================================================================
+   CAVA LMS — Premium 3-Zone Navigation Header
+   Design: White bg, black text, CAVA purple accent, editorial typography.
+   ========================================================================== */
+
+/* ── Header Shell ─────────────────────────────────────────────────────────── */
+.cava-nav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1080;
+    height: var(--cava-nav-height);
+    background: var(--cava-nav-bg);
+    border-bottom: 1px solid var(--cava-nav-border);
+    transition: var(--cava-nav-transition);
+    will-change: box-shadow, background;
+}
+
+.cava-nav-header.is-scrolled {
+    box-shadow: var(--cava-nav-shadow-scroll);
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom-color: transparent;
+}
+
+/* Push page body content below fixed header */
+body {
+    padding-top: var(--cava-nav-height);
+}
+
+/* ── Inner 3-Zone Grid ────────────────────────────────────────────────────── */
+.cava-nav-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 28px;
+    gap: 16px;
+}
+
+/* ── Zone 1: Logo ─────────────────────────────────────────────────────────── */
+.cava-nav-logo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: opacity 220ms ease, transform 220ms ease;
+    flex-shrink: 0;
+}
+
+.cava-nav-logo-link:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+}
+
+.cava-nav-logo-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+}
+
+.cava-nav-brand {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.4px;
+    white-space: nowrap;
+}
+
+/* ── Zone 2: Center Nav ───────────────────────────────────────────────────── */
+.cava-nav-center {
+    grid-column: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.cava-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cava-nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.935rem;
+    font-weight: 500;
+    color: #334155;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms ease;
+    white-space: nowrap;
+}
+
+/* Underline indicator */
+.cava-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--cava-purple);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: width 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cava-nav-link:hover {
+    color: var(--cava-purple);
+    background: var(--cava-purple-light);
+}
+
+.cava-nav-link:hover::after {
+    width: calc(100% - 28px);
+}
+
+.cava-nav-link--active {
+    color: var(--cava-purple) !important;
+    font-weight: 600;
+}
+
+.cava-nav-link--active::after {
+    width: calc(100% - 28px);
+}
+
+/* Focus visible styles for accessibility */
+.cava-nav-link:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ── Zone 3: Right CTA ────────────────────────────────────────────────────── */
+.cava-nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Login Button */
+.cava-nav-login-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 22px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1.5px solid rgba(0, 0, 0, 0.16);
+    border-radius: 10px;
+    text-decoration: none;
+    letter-spacing: -0.1px;
+    transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease;
+    white-space: nowrap;
+}
+
+.cava-nav-login-btn:hover {
+    background: #f8fafc;
+    border-color: var(--cava-purple);
+    color: var(--cava-purple);
+    box-shadow: 0 2px 10px rgba(111, 66, 193, 0.14);
+}
+
+.cava-nav-login-btn:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 3px;
+    border-radius: 10px;
+}
+
+/* ── User Dropdown Button ─────────────────────────────────────────────────── */
+.cava-user-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px 7px 9px;
+    background: #f8fafc;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #0f172a;
+    transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    white-space: nowrap;
+}
+
+.cava-user-btn:hover {
+    background: #f1f5f9;
+    border-color: var(--cava-purple);
+    box-shadow: 0 2px 10px rgba(111, 66, 193, 0.12);
+}
+
+.cava-user-btn:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 3px;
+}
+
+.cava-user-avatar-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid rgba(111, 66, 193, 0.2);
+}
+
+.cava-user-avatar-initials {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--cava-purple);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cava-user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cava-user-chevron {
+    font-size: 0.65rem;
+    color: #64748b;
+    transition: transform 220ms ease;
+}
+
+.cava-user-dropdown .dropdown-toggle::after {
+    display: none; /* hide BS arrow, we have our own */
+}
+
+.show .cava-user-chevron {
+    transform: rotate(180deg);
+}
+
+/* ── User Dropdown Menu ───────────────────────────────────────────────────── */
+.cava-user-dropdown-menu {
+    min-width: 210px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    margin-top: 8px !important;
+    overflow: hidden;
+}
+
+.cava-dropdown-header {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px 12px 12px;
+}
+
+.cava-dropdown-username {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.cava-dropdown-role {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+.cava-dropdown-divider {
+    margin: 4px 0;
+    border-color: rgba(0, 0, 0, 0.07);
+}
+
+.cava-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.cava-dropdown-item i {
+    width: 16px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: color 180ms ease;
+}
+
+.cava-dropdown-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.cava-dropdown-item:hover i {
+    color: var(--cava-purple);
+}
+
+.cava-dropdown-item--danger {
+    color: #ef4444;
+}
+
+.cava-dropdown-item--danger i {
+    color: #ef4444;
+}
+
+.cava-dropdown-item--danger:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.cava-dropdown-item--danger:hover i {
+    color: #dc2626;
+}
+
+.cava-dropdown-item:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 1px;
+    border-radius: 9px;
+}
+
+/* ── Hamburger Button (Mobile) ────────────────────────────────────────────── */
+.cava-nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1.5px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+    transition: background 200ms ease, border-color 200ms ease;
+    flex-shrink: 0;
+}
+
+.cava-nav-hamburger:hover {
+    background: #f8fafc;
+    border-color: var(--cava-purple);
+}
+
+.cava-nav-hamburger:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 3px;
+}
+
+.cava-hamburger-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #0f172a;
+    border-radius: 2px;
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease, width 250ms ease;
+    transform-origin: center;
+}
+
+/* Hamburger → X transform */
+.cava-nav-hamburger[aria-expanded="true"] .cava-hamburger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.cava-nav-hamburger[aria-expanded="true"] .cava-hamburger-bar:nth-child(2) {
+    opacity: 0;
+    width: 0;
+}
+
+.cava-nav-hamburger[aria-expanded="true"] .cava-hamburger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Mobile Overlay ───────────────────────────────────────────────────────── */
+.cava-mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 300ms ease;
+}
+
+.cava-mobile-overlay.is-visible {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Mobile Drawer ────────────────────────────────────────────────────────── */
+.cava-mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1095;
+    width: 300px;
+    max-width: 88vw;
+    background: #ffffff;
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12);
+    transform: translateX(100%);
+    transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.cava-mobile-drawer:not([hidden]) {
+    display: block;
+}
+
+.cava-mobile-drawer.is-open {
+    transform: translateX(0);
+}
+
+.cava-mobile-drawer-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 0;
+}
+
+/* Drawer header */
+.cava-mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.cava-mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #f8fafc;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #475569;
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.cava-mobile-close:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+.cava-mobile-close:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 2px;
+}
+
+/* Drawer nav links */
+.cava-mobile-nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 16px 12px 0 12px;
+    flex: 1;
+}
+
+.cava-mobile-nav-links li {
+    margin-bottom: 4px;
+}
+
+.cava-mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #334155;
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.cava-mobile-nav-link i {
+    width: 18px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: color 180ms ease;
+}
+
+.cava-mobile-nav-link:hover {
+    background: var(--cava-purple-light);
+    color: var(--cava-purple);
+}
+
+.cava-mobile-nav-link:hover i {
+    color: var(--cava-purple);
+}
+
+.cava-mobile-nav-link--active {
+    background: var(--cava-purple-light);
+    color: var(--cava-purple);
+    font-weight: 600;
+}
+
+.cava-mobile-nav-link--active i {
+    color: var(--cava-purple);
+}
+
+.cava-mobile-nav-link:focus-visible {
+    outline: 2px solid var(--cava-purple);
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
+/* Drawer footer */
+.cava-mobile-drawer-footer {
+    padding: 20px 16px 28px 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Authenticated user info strip */
+.cava-mobile-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    margin-bottom: 4px;
+}
+
+.cava-mobile-user-avatar-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid rgba(111, 66, 193, 0.2);
+}
+
+.cava-mobile-user-avatar-initials {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--cava-purple);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cava-mobile-user-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.cava-mobile-user-role {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* CTA Button in mobile drawer */
+.cava-mobile-cta-btn {
+    display: block;
+    width: 100%;
+    padding: 13px 20px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: -0.1px;
+    transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.cava-mobile-cta-btn:hover {
+    background: #000000;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.cava-mobile-logout-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #ef4444;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 180ms ease;
+}
+
+.cava-mobile-logout-link:hover {
+    background: #fef2f2;
+}
+
+.cava-mobile-register-hint {
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.cava-mobile-register-hint a {
+    color: var(--cava-purple);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cava-mobile-register-hint a:hover {
+    text-decoration: underline;
+}
+
+/* ── Responsive Breakpoints ───────────────────────────────────────────────── */
+
+/* Desktop wide: show center nav, hide hamburger */
+@media (min-width: 992px) {
+    .cava-nav-hamburger {
+        display: none !important;
+    }
+
+    .cava-nav-center {
+        display: flex;
+    }
+}
+
+/* Tablet + Mobile: hide center nav, show hamburger */
+@media (max-width: 991.98px) {
+    .cava-nav-inner {
+        grid-template-columns: auto 1fr;
+        padding: 0 18px;
+    }
+
+    .cava-nav-center {
+        display: none;
+    }
+
+    .cava-nav-right {
+        grid-column: 2;
+    }
+
+    .cava-nav-hamburger {
+        display: flex;
+    }
+
+    /* On mobile, hide the login button in header (it's in the drawer) */
+    .cava-nav-login-btn {
+        display: none;
+    }
+
+    /* On mobile, user dropdown shrinks but stays visible */
+    .cava-user-name {
+        display: none;
+    }
+
+    .cava-user-btn {
+        padding: 7px 10px;
+    }
+
+    .cava-user-chevron {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .cava-nav-inner {
+        padding: 0 14px;
+    }
+
+    .cava-nav-brand {
+        font-size: 1rem;
+    }
+
+    .cava-nav-logo-img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .cava-mobile-drawer {
+        width: 280px;
+    }
+}
+
+@media (max-width: 359.98px) {
+    .cava-nav-brand {
+        display: none;
+    }
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .cava-nav-header,
+    .cava-nav-link,
+    .cava-nav-link::after,
+    .cava-nav-login-btn,
+    .cava-user-btn,
+    .cava-nav-logo-link,
+    .cava-hamburger-bar,
+    .cava-mobile-drawer,
+    .cava-mobile-overlay,
+    .cava-mobile-nav-link,
+    .cava-dropdown-item {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .cava-mobile-drawer {
+        transform: translateX(0) !important;
+    }
+}
+
+/* ── Utility: prevent body scroll when mobile drawer is open ──────────────── */
+body.cava-drawer-open {
+    overflow: hidden;
 }

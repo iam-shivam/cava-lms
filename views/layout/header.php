@@ -73,100 +73,207 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
 </head>
 <body>
 
-    <!-- Header / Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="<?php echo SITE_URL; ?>/index.php">
-                <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="lp-nav-logo">
-                <span class="lp-brand-text">CAVA LMS</span>
+    <!-- =========================================================================
+         Premium 3-Zone Navigation Header
+         ========================================================================= -->
+    <header class="cava-nav-header" id="cava-nav-header" role="banner">
+        <div class="cava-nav-inner">
+            <!-- Zone 1: Logo -->
+            <a class="cava-nav-logo-link" href="<?php echo SITE_URL; ?>/index.php" aria-label="CAVA LMS Home">
+                <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="cava-nav-logo-img">
+                <span class="cava-nav-brand">CAVA LMS</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/index.php">Home</a>
+
+            <!-- Zone 2: Center Navigation (Desktop) -->
+            <nav class="cava-nav-center" aria-label="Main navigation">
+                <ul class="cava-nav-links" role="list">
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/index.php"
+                           class="cava-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? ' cava-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? 'aria-current="page"' : ''; ?>>
+                            Home
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/courses.php">Courses</a>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/courses.php"
+                           class="cava-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'courses.php') ? ' cava-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'courses.php') ? 'aria-current="page"' : ''; ?>>
+                            Courses
+                        </a>
                     </li>
-                    <?php if (false): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/webinars.php">Webinars</a>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/events.php"
+                           class="cava-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'events.php') ? ' cava-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'events.php') ? 'aria-current="page"' : ''; ?>>
+                            Events
+                        </a>
                     </li>
-                    <?php endif; ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/events.php">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/support.php">Support</a>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/support.php"
+                           class="cava-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'support.php') ? ' cava-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'support.php') ? 'aria-current="page"' : ''; ?>>
+                            Support
+                        </a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center gap-3">
+            </nav>
 
-                    <?php if ($isUserLoggedIn): ?>
-                        <?php
-                        // Resolve profile picture for navbar
-                        $navAvatarUrl = '';
-                        if (!empty($_SESSION['user_avatar'])) {
-                            $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $_SESSION['user_avatar'];
-                            if (file_exists($navAvatarFile)) {
-                                $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $_SESSION['user_avatar'];
-                            }
+            <!-- Zone 3: Right Actions -->
+            <div class="cava-nav-right">
+                <?php if ($isUserLoggedIn): ?>
+                    <?php
+                    // Resolve profile picture for navbar
+                    $navAvatarUrl = '';
+                    if (!empty($_SESSION['user_avatar'])) {
+                        $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $_SESSION['user_avatar'];
+                        if (file_exists($navAvatarFile)) {
+                            $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $_SESSION['user_avatar'];
                         }
-                        if (!$navAvatarUrl && empty($_SESSION['user_avatar_checked'])) {
-                            // Fetch from DB once per session
-                            try {
-                                $navUser = DB::fetch("SELECT profile_picture FROM users WHERE id = ?", [$_SESSION['user_id']]);
-                                if ($navUser && !empty($navUser['profile_picture'])) {
-                                    $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $navUser['profile_picture'];
-                                    if (file_exists($navAvatarFile)) {
-                                        $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $navUser['profile_picture'];
-                                        $_SESSION['user_avatar'] = $navUser['profile_picture'];
-                                    }
+                    }
+                    if (!$navAvatarUrl && empty($_SESSION['user_avatar_checked'])) {
+                        try {
+                            $navUser = DB::fetch("SELECT profile_picture FROM users WHERE id = ?", [$_SESSION['user_id']]);
+                            if ($navUser && !empty($navUser['profile_picture'])) {
+                                $navAvatarFile = BASE_PATH . '/uploads/avatars/' . $navUser['profile_picture'];
+                                if (file_exists($navAvatarFile)) {
+                                    $navAvatarUrl = SITE_URL . '/uploads/avatars/' . $navUser['profile_picture'];
+                                    $_SESSION['user_avatar'] = $navUser['profile_picture'];
                                 }
-                                $_SESSION['user_avatar_checked'] = true;
-                            } catch (Exception $e) {}
-                        }
-                        $navNameParts = explode(' ', trim($userName));
-                        $navInitials  = strtoupper(substr($navNameParts[0], 0, 1) . (isset($navNameParts[1]) ? substr($navNameParts[1], 0, 1) : ''));
-                        ?>
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <?php if ($navAvatarUrl): ?>
-                                    <img src="<?php echo htmlspecialchars($navAvatarUrl); ?>" alt="avatar" class="nav-avatar">
-                                <?php else: ?>
-                                    <div class="nav-avatar-initials"><?php echo $navInitials; ?></div>
-                                <?php endif; ?>
-                                <span>Hi, <?php echo htmlspecialchars($userName); ?></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 w-100" aria-labelledby="userMenuButton" style="border-radius: 0.5rem; overflow: hidden; margin-top: 5px;">
-                                <li>
-                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center" href="<?php echo SITE_URL; ?>/dashboard.php">
-                                        <i class="fa-solid fa-chart-pie me-2 text-primary" style="width: 20px; text-align: center;"></i> <span class="fw-medium">My Dashboard</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center" href="<?php echo SITE_URL; ?>/dashboard.php?tab=profile">
-                                        <i class="fa-solid fa-user-gear me-2 text-success" style="width: 20px; text-align: center;"></i> <span class="fw-medium">My Profile</span>
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item py-2 px-3 d-flex align-items-center text-danger" href="<?php echo SITE_URL; ?>/logout.php">
-                                        <i class="fa-solid fa-arrow-right-from-bracket me-2" style="width: 20px; text-align: center;"></i> <span class="fw-medium">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    <?php else: ?>
-                        <a href="<?php echo SITE_URL; ?>/login.php" class="btn btn-outline-primary btn-sm px-3">Login</a>
-                        <a href="<?php echo SITE_URL; ?>/register.php" class="btn btn-primary btn-sm px-3">Register</a>
-                    <?php endif; ?>
-                </div>
+                            }
+                            $_SESSION['user_avatar_checked'] = true;
+                        } catch (Exception $e) {}
+                    }
+                    $navNameParts = explode(' ', trim($userName));
+                    $navInitials  = strtoupper(substr($navNameParts[0], 0, 1) . (isset($navNameParts[1]) ? substr($navNameParts[1], 0, 1) : ''));
+                    ?>
+                    <div class="dropdown cava-user-dropdown">
+                        <button class="cava-user-btn" type="button" id="cavaUserMenuBtn" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                            <?php if ($navAvatarUrl): ?>
+                                <img src="<?php echo htmlspecialchars($navAvatarUrl); ?>" alt="<?php echo htmlspecialchars($userName); ?> avatar" class="cava-user-avatar-img">
+                            <?php else: ?>
+                                <span class="cava-user-avatar-initials" aria-hidden="true"><?php echo $navInitials; ?></span>
+                            <?php endif; ?>
+                            <span class="cava-user-name">Hi, <?php echo htmlspecialchars($userName); ?></span>
+                            <i class="fa-solid fa-chevron-down cava-user-chevron" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end cava-user-dropdown-menu" aria-labelledby="cavaUserMenuBtn">
+                            <li class="cava-dropdown-header">
+                                <span class="cava-dropdown-username"><?php echo htmlspecialchars($userName); ?></span>
+                                <span class="cava-dropdown-role">Student Account</span>
+                            </li>
+                            <li><hr class="cava-dropdown-divider"></li>
+                            <li>
+                                <a class="cava-dropdown-item" href="<?php echo SITE_URL; ?>/dashboard.php">
+                                    <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+                                    My Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a class="cava-dropdown-item" href="<?php echo SITE_URL; ?>/dashboard.php?tab=profile">
+                                    <i class="fa-solid fa-user-gear" aria-hidden="true"></i>
+                                    My Profile
+                                </a>
+                            </li>
+                            <li><hr class="cava-dropdown-divider"></li>
+                            <li>
+                                <a class="cava-dropdown-item cava-dropdown-item--danger" href="<?php echo SITE_URL; ?>/logout.php">
+                                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <a href="<?php echo SITE_URL; ?>/login.php" class="cava-nav-login-btn">Login</a>
+                <?php endif; ?>
+
+                <!-- Mobile Hamburger -->
+                <button class="cava-nav-hamburger" id="cavaNavHamburger"
+                        aria-label="Open navigation menu"
+                        aria-expanded="false"
+                        aria-controls="cavaMobileDrawer">
+                    <span class="cava-hamburger-bar"></span>
+                    <span class="cava-hamburger-bar"></span>
+                    <span class="cava-hamburger-bar"></span>
+                </button>
             </div>
         </div>
-    </nav>
-    
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="cava-mobile-drawer" id="cavaMobileDrawer" role="dialog" aria-modal="false" aria-label="Mobile navigation" hidden>
+        <div class="cava-mobile-drawer-inner">
+            <div class="cava-mobile-drawer-header">
+                <a class="cava-nav-logo-link" href="<?php echo SITE_URL; ?>/index.php" aria-label="CAVA LMS Home">
+                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="cava-nav-logo-img">
+                    <span class="cava-nav-brand">CAVA LMS</span>
+                </a>
+                <button class="cava-mobile-close" id="cavaMobileClose" aria-label="Close navigation menu">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <nav aria-label="Mobile navigation">
+                <ul class="cava-mobile-nav-links" role="list">
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/index.php"
+                           class="cava-mobile-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? ' cava-mobile-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'index.php') ? 'aria-current="page"' : ''; ?>>
+                            <i class="fa-solid fa-house" aria-hidden="true"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/courses.php"
+                           class="cava-mobile-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'courses.php') ? ' cava-mobile-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'courses.php') ? 'aria-current="page"' : ''; ?>>
+                            <i class="fa-solid fa-book-open" aria-hidden="true"></i> Courses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/events.php"
+                           class="cava-mobile-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'events.php') ? ' cava-mobile-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'events.php') ? 'aria-current="page"' : ''; ?>>
+                            <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Events
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo SITE_URL; ?>/support.php"
+                           class="cava-mobile-nav-link<?php echo (basename($_SERVER['PHP_SELF']) === 'support.php') ? ' cava-mobile-nav-link--active' : ''; ?>"
+                           <?php echo (basename($_SERVER['PHP_SELF']) === 'support.php') ? 'aria-current="page"' : ''; ?>>
+                            <i class="fa-solid fa-headset" aria-hidden="true"></i> Support
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="cava-mobile-drawer-footer">
+                <?php if ($isUserLoggedIn): ?>
+                    <div class="cava-mobile-user-info">
+                        <?php if ($navAvatarUrl ?? ''): ?>
+                            <img src="<?php echo htmlspecialchars($navAvatarUrl); ?>" alt="Avatar" class="cava-mobile-user-avatar-img">
+                        <?php else: ?>
+                            <span class="cava-mobile-user-avatar-initials"><?php echo $navInitials ?? '?'; ?></span>
+                        <?php endif; ?>
+                        <div>
+                            <div class="cava-mobile-user-name"><?php echo htmlspecialchars($userName); ?></div>
+                            <div class="cava-mobile-user-role">Student Account</div>
+                        </div>
+                    </div>
+                    <a href="<?php echo SITE_URL; ?>/dashboard.php" class="cava-mobile-cta-btn">My Dashboard</a>
+                    <a href="<?php echo SITE_URL; ?>/logout.php" class="cava-mobile-logout-link">
+                        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Logout
+                    </a>
+                <?php else: ?>
+                    <a href="<?php echo SITE_URL; ?>/login.php" class="cava-mobile-cta-btn">Login to CAVA</a>
+                    <p class="cava-mobile-register-hint">
+                        Don't have an account?
+                        <a href="<?php echo SITE_URL; ?>/register.php">Create Account</a>
+                    </p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Overlay Backdrop -->
+    <div class="cava-mobile-overlay" id="cavaMobileOverlay" aria-hidden="true"></div>
+
     <?php display_flash_message(); ?>

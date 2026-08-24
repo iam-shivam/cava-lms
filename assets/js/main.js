@@ -531,6 +531,90 @@ function initLmsUIEnhancements() {
     initProgressAnimations();
     initHomePageRevealAnimations();
     initStorytellingController();
+    initPremiumNav();
 }
 
+/* ==========================================================================
+   Premium Navigation Controller
+   Handles: sticky scroll, mobile drawer, keyboard accessibility
+   ========================================================================== */
+function initPremiumNav() {
+    var header   = document.getElementById('cava-nav-header');
+    var hamburger = document.getElementById('cavaNavHamburger');
+    var drawer   = document.getElementById('cavaMobileDrawer');
+    var overlay  = document.getElementById('cavaMobileOverlay');
+    var closeBtn = document.getElementById('cavaMobileClose');
 
+    if (!header) return;
+
+    // ── Sticky scroll state ───────────────────────────────────────────────────
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function onScroll() {
+        if (window.scrollY > 12) {
+            header.classList.add('is-scrolled');
+        } else {
+            header.classList.remove('is-scrolled');
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // run once on init
+
+    // ── Mobile drawer helpers ─────────────────────────────────────────────────
+    if (!hamburger || !drawer || !overlay || !closeBtn) return;
+
+    function openDrawer() {
+        // Remove hidden attribute to make it display:block, then allow CSS transition
+        drawer.removeAttribute('hidden');
+        // Force reflow so transition fires
+        void drawer.offsetWidth;
+        drawer.classList.add('is-open');
+        overlay.classList.add('is-visible');
+        document.body.classList.add('cava-drawer-open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        // Focus first focusable element inside drawer
+        var firstFocusable = drawer.querySelector('a, button, [tabindex="0"]');
+        if (firstFocusable) {
+            setTimeout(function() { firstFocusable.focus(); }, 60);
+        }
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('is-open');
+        overlay.classList.remove('is-visible');
+        document.body.classList.remove('cava-drawer-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        // After transition, hide drawer again for accessibility/tab order
+        var transitionDuration = prefersReduced ? 0 : 360;
+        setTimeout(function() {
+            if (!drawer.classList.contains('is-open')) {
+                drawer.setAttribute('hidden', '');
+            }
+        }, transitionDuration);
+        hamburger.focus();
+    }
+
+    hamburger.addEventListener('click', function() {
+        var isOpen = drawer.classList.contains('is-open');
+        if (isOpen) { closeDrawer(); } else { openDrawer(); }
+    });
+
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    // Escape key closes drawer
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
+            closeDrawer();
+        }
+    });
+
+    // Close drawer on nav link click (navigating away)
+    var mobileLinks = drawer.querySelectorAll('.cava-mobile-nav-link, .cava-mobile-cta-btn, .cava-mobile-logout-link');
+    mobileLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            closeDrawer();
+        });
+    });
+}
