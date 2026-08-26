@@ -25,7 +25,7 @@ if (isset($cardIndex)) {
 <div class="col-md-6 col-lg-4 mb-4 lms-reveal-card<?php echo $delayClass; ?>">
     <div class="custom-card">
         <div class="card-img-wrapper">
-            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" loading="lazy" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
+            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" loading="lazy" onerror="this.src='assets/images/study_abroad.jpeg'">
             <span class="card-badge"><?php echo htmlspecialchars($course['category_name'] ?? 'Course'); ?></span>
             
             <div class="card-status-badge">
@@ -43,7 +43,7 @@ if (isset($cardIndex)) {
                     <?php echo htmlspecialchars($course['title']); ?>
                 </a>
             </h4>
-            <p class="card-text text-muted mb-4 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3rem;">
+            <p class="card-text text-muted mb-3 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8rem;">
                 <?php echo htmlspecialchars(strip_tags($course['description'] ?? '')); ?>
             </p>
             
@@ -52,11 +52,11 @@ if (isset($cardIndex)) {
             $hasDuration = isset($course['course_duration']) && intval($course['course_duration']) > 0;
             ?>
             <div class="card-meta">
-                <span><i class="fa-regular fa-file-video"></i> <?php echo $lessonsCount; ?> Lessons</span>
+                <span><i class="fa-regular fa-file-video text-purple"></i> <?php echo $lessonsCount; ?> Lessons</span>
                 <?php if ($hasDuration): ?>
-                    <span><i class="fa-regular fa-clock"></i> <?php echo intval($course['course_duration']); ?> Hours</span>
+                    <span><i class="fa-regular fa-clock text-purple"></i> <?php echo intval($course['course_duration']); ?>h</span>
                 <?php endif; ?>
-                <span><i class="fa-solid fa-infinity"></i> Lifetime Access</span>
+                <span><i class="fa-solid fa-infinity text-purple"></i> Lifetime Access</span>
             </div>
             
             <div class="card-price-row">
@@ -76,7 +76,7 @@ if (isset($cardIndex)) {
                         </a>
                     <?php else: ?>
                         <a href="<?php echo SITE_URL; ?>/course.php?slug=<?php echo $course['slug']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                            View Details
+                            View Details <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </a>
                     <?php endif; ?>
                 </div>
