@@ -757,7 +757,7 @@ require_once __DIR__ . '/views/layout/header.php';
 
                         <div class="mt-4">
                             <a href="#featured-courses" class="lp-btn-pill-white">
-                                Start Learning With Amarnath <i class="fa-solid fa-arrow-down ms-2"></i>
+                                Start Learning With Amarnath <i class="fa-solid ms-2"></i>
                             </a>
                         </div>
                     </div>
