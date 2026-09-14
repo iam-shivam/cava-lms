@@ -1,8 +1,13 @@
 /* CAVA LMS Core Stylesheet - Premium UI/UX Black, White & Gray Theme */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 :root {
+    /* ==========================================================================
+       PREMIUM TYPOGRAPHY TOKENS (Plus Jakarta Sans + Inter)
+       ========================================================================== */
+    --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-sans: var(--font-body);
+
     --primary: #111111;
     --primary-hover: #000000;
     --primary-light: #F5F5F5;
@@ -256,10 +261,11 @@
 }
 
 body {
-    font-family: 'Inter', Arial, sans-serif;
+    font-family: var(--font-body);
     background-color: var(--bg-gray);
     color: var(--text-main);
     overflow-x: hidden;
+    letter-spacing: normal;
 }
 
 /* Typography */
@@ -269,13 +275,17 @@ h3,
 h4,
 h5,
 h6 {
+    font-family: var(--font-heading);
     font-weight: 700;
     color: var(--dark);
+    letter-spacing: -0.02em;
 }
 
 p {
+    font-family: var(--font-body);
     line-height: 1.6;
     color: var(--text-muted);
+    letter-spacing: normal;
 }
 
 a {
@@ -465,8 +475,10 @@ background-clip: text;
 }
 
 .card-title {
+    font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: -0.01em;
     margin-bottom: 12px;
     color: var(--dark);
     display: -webkit-box;
@@ -474,7 +486,8 @@ background-clip: text;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 3rem;
+    line-height: 1.5;
+    min-height: 2.8rem;
 }
 
 .card-price-row {
@@ -482,6 +495,8 @@ background-clip: text;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     padding-top: 16px;
     border-top: 1px solid var(--border-color);
 }
@@ -596,8 +611,8 @@ background-clip: text;
 .dash-stat-icon.blue    { background: #E5E5E5; color: #222222; }
 .dash-stat-icon.amber   { background: #EEEEEE; color: #333333; }
 .dash-stat-icon.green   { background: #F8F8F8; color: #111111; }
-.dash-stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1; color: #111; }
-.dash-stat-label { font-size: 0.78rem; color: #666666; margin-top: 3px; }
+.dash-stat-value { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; line-height: 1; color: #111; letter-spacing: -0.02em; }
+.dash-stat-label { font-family: var(--font-body); font-size: 0.78rem; color: #666666; margin-top: 3px; letter-spacing: 0.01em; }
 
 /* Sidebar */
 .dashboard-sidebar {
@@ -808,6 +823,22 @@ background-clip: text;
     box-shadow: var(--shadow-lg);
     background-color: #000;
     aspect-ratio: 16/9;
+    min-height: 240px;
+    position: relative;
+}
+
+/* Fluid responsive height when locked or verifying OTP */
+.video-player-container.is-locked,
+.video-player-container:has(.lms-player-locked),
+.video-player-container:has(#otp-request-block),
+.video-player-container:has(#otp-verify-block) {
+    aspect-ratio: auto;
+    min-height: 320px;
+}
+
+.video-player-container .lms-player-locked h4,
+.video-player-container .lms-player-locked .text-white {
+    color: #ffffff !important;
 }
 
 .syllabus-list {
@@ -1144,4 +1175,227 @@ thead th:last-child {
     background-color: #cbd5e1 !important;
     color: #0f172a !important;
     border-color: #94a3b8 !important;
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLE TO CARDS SYSTEM (< 768px)
+   Transforms dense tabular data into modern mobile cards on phones/tablets
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    .table-responsive-cards {
+        display: block !important;
+        border: none !important;
+    }
+
+    .table-responsive-cards thead {
+        display: none !important;
+    }
+
+    .table-responsive-cards tbody {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .table-responsive-cards tr {
+        display: block !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 14px !important;
+        padding: 14px 16px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        transition: box-shadow 0.2s ease !important;
+    }
+
+    .table-responsive-cards td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        font-size: 0.85rem !important;
+        text-align: right !important;
+    }
+
+    .table-responsive-cards td:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+
+    .table-responsive-cards td::before {
+        content: attr(data-label);
+        font-weight: 600 !important;
+        color: #64748b !important;
+        font-size: 0.78rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+        text-align: left !important;
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   MOBILE-FIRST DASHBOARD OPTIMIZATIONS (< 768px & < 576px)
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    .dashboard-wrapper {
+        padding: 20px 0 40px !important;
+    }
+
+    .dash-welcome-banner {
+        padding: 20px 18px !important;
+        border-radius: 16px !important;
+    }
+
+    .dash-content-card {
+        padding: 20px 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .dash-sidebar-user {
+        padding: 8px 4px 12px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dash-welcome-banner .d-flex {
+        flex-direction: column !important;
+        text-align: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .dash-welcome-banner h2 {
+        font-size: 1.25rem !important;
+    }
+
+    .dash-stat-card {
+        padding: 12px 10px !important;
+        border-radius: 12px !important;
+        gap: 8px !important;
+    }
+
+    .dash-stat-icon {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+    }
+
+    .dash-stat-value {
+        font-size: 1.15rem !important;
+    }
+
+    .dash-stat-label {
+        font-size: 0.7rem !important;
+    }
+
+    /* Course Row on Mobile: Vertical Stack */
+    .dash-course-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 14px !important;
+        gap: 12px !important;
+    }
+
+    .dash-course-row .dash-course-thumb {
+        width: 100% !important;
+        height: 120px !important;
+        object-fit: cover !important;
+    }
+
+    .dash-course-row .dash-course-body {
+        width: 100% !important;
+    }
+
+    .dash-course-row .btn {
+        width: 100% !important;
+        text-align: center !important;
+        margin-top: 4px !important;
+    }
+
+    /* Dashboard Tab Nav: Mobile horizontal scrollable pill bar */
+    .dashboard-sidebar {
+        position: static !important;
+        margin-bottom: 20px !important;
+        padding: 12px !important;
+        border-radius: 16px !important;
+    }
+
+    .dashboard-menu-links-container {
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 6px !important;
+        padding-bottom: 4px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+    }
+
+    .dashboard-menu-links-container::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .dashboard-menu-link {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        padding: 8px 12px !important;
+        font-size: 0.82rem !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE OTP INPUT GROUP
+   ========================================================================== */
+.otp-input-group {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+}
+
+.otp-input {
+    width: 48px !important;
+    height: 56px !important;
+    max-width: 15% !important;
+    font-size: 1.3rem !important;
+    padding: 0 !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.otp-input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    outline: none !important;
+}
+
+@media (max-width: 380px) {
+    .otp-input-group {
+        gap: 5px !important;
+    }
+    .otp-input {
+        width: 40px !important;
+        height: 48px !important;
+        font-size: 1.15rem !important;
+        border-radius: 8px !important;
+    }
+}
+
+@media (max-width: 330px) {
+    .otp-input-group {
+        gap: 4px !important;
+    }
+    .otp-input {
+        width: 35px !important;
+        height: 44px !important;
+        font-size: 1rem !important;
+        border-radius: 6px !important;
+    }
 }

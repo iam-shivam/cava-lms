@@ -81,7 +81,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <div class="row align-items-center justify-content-between g-3 mb-5">
                 <!-- Timeframe Pill Tabs -->
                 <div class="col-lg-8">
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="lp-filter-scroll d-flex align-items-center gap-2 flex-nowrap flex-md-wrap">
                         <a href="events.php?timeframe=upcoming<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>" 
                            class="btn lp-filter-link <?php echo $timeframe === 'upcoming' ? 'active' : ''; ?>">
                             <i class="fa-regular fa-calendar-check me-1"></i> Upcoming Events

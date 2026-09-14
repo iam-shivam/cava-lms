@@ -194,14 +194,14 @@ require_once __DIR__ . '/views/layout/header.php';
                         <?php endif; ?>
                     <?php else: ?>
                         <!-- OTP Locked Screen -->
-                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white" style="min-height: 450px;">
-                            <div class="text-center p-4">
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-dark text-white lms-player-locked p-3" style="min-height: 320px;">
+                            <div class="text-center p-3 p-sm-4 w-100" style="max-width: 480px;">
                                 <i class="fa-solid fa-lock fs-1 text-warning mb-3"></i>
-                                <h4>Premium Content Locked</h4>
-                                <p class="text-light fs-7 mb-4">This video requires OTP verification to unlock.</p>
+                                <h4 class="text-white fw-bold mb-2">Premium Content Locked</h4>
+                                <p class="text-white-50 fs-7 mb-4">This video requires OTP verification to unlock.</p>
                                 
                                 <div id="otp-request-block">
-                                    <button class="btn btn-warning fw-bold px-4 rounded-pill" onclick="sendVideoOtp('<?php echo $activeVideo['id']; ?>')">
+                                    <button class="btn btn-warning fw-bold px-4 py-2 rounded-pill w-100 text-truncate" style="max-width: 320px;" onclick="sendVideoOtp('<?php echo $activeVideo['id']; ?>')">
                                         <i class="fa-solid fa-paper-plane me-2"></i>Send OTP to Registered Email
                                     </button>
                                 </div>

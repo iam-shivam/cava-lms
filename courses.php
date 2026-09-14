@@ -78,7 +78,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <div class="row align-items-center justify-content-between g-3 mb-5">
                 <!-- Category Filter Pills -->
                 <div class="col-lg-8">
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="lp-filter-scroll d-flex align-items-center gap-2 flex-nowrap flex-md-wrap">
                         <a href="courses.php<?php 
                             $q = [];
                             if (!empty($search)) $q['search'] = $search;

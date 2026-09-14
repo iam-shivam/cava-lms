@@ -43,7 +43,7 @@ if (isset($cardIndex)) {
                     <?php echo htmlspecialchars($course['title']); ?>
                 </a>
             </h4>
-            <p class="card-text text-muted mb-3 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8rem;">
+            <p class="card-text text-muted mb-3 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7rem; line-height: 1.45;">
                 <?php echo htmlspecialchars(strip_tags($course['description'] ?? '')); ?>
             </p>
             

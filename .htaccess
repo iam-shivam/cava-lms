@@ -1,5 +1,9 @@
 RewriteEngine On
-RewriteBase /
+RewriteBase /lms/
+
+# Do not redirect missing static assets to 404.php (allows img onerror fallbacks to work cleanly without redirect loops)
+RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|webp|svg|ico|woff|woff2|ttf|map)$ [NC]
+RewriteRule ^ - [L]
 
 # If the request is not for a real directory or file, redirect to 404.php
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -7,7 +11,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(?!404\.php$).+$ 404.php [R=302,L]
 
 # Custom fallback ErrorDocument
-ErrorDocument 404 /404.php
+ErrorDocument 404 /lms/404.php
 
 # --- Performance Acceleration Configuration ---
 

@@ -211,32 +211,27 @@ require_once __DIR__ . '/views/layout/header.php';
                         </div>
                     </div>
 
-                    <div class="dash-section-label">Workspace</div>
-                    <a href="dashboard.php?tab=courses"
-                        class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-book-open"></i> My Courses
-                    </a>
-                    <?php if (false): ?>
-                        <a href="dashboard.php?tab=webinars"
-                            class="dashboard-menu-link <?php echo $tab === 'webinars' ? 'active' : ''; ?>">
-                            <i class="fa-solid fa-video"></i> My Webinars
+                    <div class="dashboard-menu-links-container">
+                        <div class="dash-section-label d-none d-md-block">Workspace</div>
+                        <a href="dashboard.php?tab=courses"
+                            class="dashboard-menu-link <?php echo $tab === 'courses' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-book-open"></i> My Courses
                         </a>
-                    <?php endif; ?>
-                    <a href="dashboard.php?tab=queries"
-                        class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-circle-question"></i> Query History
-                    </a>
-                    <a href="dashboard.php?tab=payments"
-                        class="dashboard-menu-link <?php echo $tab === 'payments' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-credit-card"></i> Order History
-                    </a>
+                        <a href="dashboard.php?tab=queries"
+                            class="dashboard-menu-link <?php echo $tab === 'queries' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-circle-question"></i> Query History
+                        </a>
+                        <a href="dashboard.php?tab=payments"
+                            class="dashboard-menu-link <?php echo $tab === 'payments' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-credit-card"></i> Order History
+                        </a>
 
-                    <div class="dash-section-label">Account</div>
-                    <a href="dashboard.php?tab=profile"
-                        class="dashboard-menu-link <?php echo $tab === 'profile' ? 'active' : ''; ?>">
-                        <i class="fa-solid fa-id-card"></i> My Profile
-                    </a>
-                    <!-- Sign Out removed from sidebar — use the top-right navbar dropdown instead -->
+                        <div class="dash-section-label d-none d-md-block">Account</div>
+                        <a href="dashboard.php?tab=profile"
+                            class="dashboard-menu-link <?php echo $tab === 'profile' ? 'active' : ''; ?>">
+                            <i class="fa-solid fa-id-card"></i> My Profile
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -404,8 +399,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-muted">You haven't submitted any queries yet.</p>
                             </div>
                         <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
+                            <div class="table-responsive-wrap">
+                                <table class="table table-hover align-middle table-responsive-cards">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Ticket ID</th>
@@ -417,7 +412,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                     <tbody>
                                         <?php foreach ($myQueries as $qIdx => $query): ?>
                                             <tr>
-                                                <td>
+                                                <td data-label="Ticket ID">
                                                      <span
                                                          class="badge bg-dark rounded-pill px-2 py-1 fw-bold text-white"
                                                          style="font-size: 0.7rem; letter-spacing: 0.5px;">
@@ -425,7 +420,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                                              class="fa-solid fa-ticket me-1"></i><?php echo htmlspecialchars($query['ticket_number'] ?? '------'); ?>
                                                      </span>
                                                 </td>
-                                                <td style="max-width:320px;">
+                                                <td data-label="Query Message" style="max-width:320px;">
                                                     <div class="fw-medium text-dark"
                                                         style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.85rem;">
                                                         <?php echo htmlspecialchars($query['query_message']); ?></div>
@@ -482,9 +477,9 @@ require_once __DIR__ . '/views/layout/header.php';
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-muted small">
+                                                <td data-label="Date" class="text-muted small">
                                                     <?php echo date('d M, Y', strtotime($query['created_at'])); ?></td>
-                                                <td>
+                                                <td data-label="Status">
                                                     <?php if ($query['status'] === 'Resolved'): ?>
                                                         <span
                                                             class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold"
@@ -520,8 +515,8 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <p class="text-muted">No transactions found.</p>
                             </div>
                         <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
+                            <div class="table-responsive-wrap">
+                                <table class="table table-hover align-middle table-responsive-cards">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Item</th>
@@ -535,26 +530,26 @@ require_once __DIR__ . '/views/layout/header.php';
                                     <tbody>
                                         <?php foreach ($myPayments as $payment): ?>
                                             <tr>
-                                                <td class="fw-semibold text-dark">
+                                                <td data-label="Item" class="fw-semibold text-dark">
                                                     <?php echo htmlspecialchars($payment['item_title'] ?? 'Purchase'); ?></td>
-                                                <td><span
+                                                <td data-label="Type"><span
                                                         class="badge bg-secondary rounded-pill"><?php echo ucfirst($payment['item_type']); ?></span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Payment">
                                                     <span
                                                         class="badge <?php echo (isset($payment['payment_type']) && $payment['payment_type'] === 'Full') ? 'bg-success' : 'bg-info text-dark'; ?> rounded-pill">
                                                         <?php echo $payment['payment_type'] ?? 'Full'; ?>
                                                     </span>
                                                 </td>
-                                                <td class="fw-bold text-primary">
+                                                <td data-label="Amount" class="fw-bold text-primary">
                                                     ₹<?php echo number_format($payment['amount'], 2); ?></td>
-                                                <td>
+                                                <td data-label="Status">
                                                     <span
                                                         class="badge <?php echo $payment['status'] === 'Success' ? 'bg-success' : ($payment['status'] === 'Pending' ? 'bg-warning text-dark' : 'bg-danger'); ?> rounded-pill">
                                                         <?php echo $payment['status']; ?>
                                                     </span>
                                                 </td>
-                                                <td><?php echo date('d M, Y', strtotime($payment['created_at'])); ?></td>
+                                                <td data-label="Date"><?php echo date('d M, Y', strtotime($payment['created_at'])); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>

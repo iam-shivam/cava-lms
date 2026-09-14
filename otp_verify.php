@@ -32,9 +32,9 @@ require_once __DIR__ . '/views/layout/header.php';
                             
                             <div class="mb-4 text-center">
                                 <label class="lp-form-label mb-3">One-Time Security Password</label>
-                                <div class="d-flex justify-content-center gap-2 otp-input-group" dir="ltr">
+                                <div class="d-flex justify-content-center align-items-center flex-nowrap gap-1 gap-sm-2 otp-input-group" dir="ltr">
                                     <?php for($i = 0; $i < 6; $i++): ?>
-                                        <input type="text" inputmode="numeric" class="form-control text-center fs-4 fw-bold otp-input bg-light border shadow-sm" maxlength="1" required style="width: 50px; height: 60px; border-radius: 12px; border-color: rgba(226,232,240,0.9) !important;">
+                                        <input type="text" inputmode="numeric" class="form-control otp-input bg-light border shadow-sm" maxlength="1" required>
                                     <?php endfor; ?>
                                 </div>
                                 <input type="hidden" name="otp" id="final_otp" required>

@@ -13,6 +13,13 @@
     --wa-bg-light: #F8F8F8;
     --wa-border: #E5E5E5;
 
+    /* ==========================================================================
+       PREMIUM TYPOGRAPHY TOKENS (Plus Jakarta Sans + Inter)
+       ========================================================================== */
+    --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-sans: var(--font-body);
+
     /* Hardware acceleration transition */
     --wa-transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 
@@ -29,10 +36,11 @@
 
 /* Scoped Landing Page Body Styling */
 .lp-body-scope {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     color: var(--wa-slate-500);
     background-color: #ffffff;
     overflow-x: hidden;
+    letter-spacing: normal;
 }
 
 .lp-body-scope h1,
@@ -41,15 +49,17 @@
 .lp-body-scope h4,
 .lp-body-scope h5,
 .lp-body-scope h6 {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-heading);
     font-weight: 700;
     color: var(--wa-dark);
     letter-spacing: -0.02em;
 }
 
 .lp-body-scope p {
+    font-family: var(--font-body);
     color: var(--wa-slate-500);
     line-height: 1.6;
+    letter-spacing: normal;
 }
 
 /* Navbar overrides */
@@ -2098,11 +2108,17 @@ textarea:focus-visible {
 
 .page-courses .card-title,
 .page-events .card-title {
-    font-size: 1.25rem !important;
+    font-size: 1.15rem !important;
     font-weight: 700 !important;
-    line-height: 1.45 !important;
+    line-height: 1.4 !important;
     margin-top: 0 !important;
     margin-bottom: 10px !important;
+    min-height: 2.8rem !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
 }
 
 .page-courses .card-title a,
@@ -3094,11 +3110,11 @@ body {
 }
 
 .cava-nav-brand {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.1rem;
     font-weight: 800;
     color: #0f172a;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.02em;
     white-space: nowrap;
 }
 
@@ -3123,7 +3139,7 @@ body {
     display: inline-flex;
     align-items: center;
     padding: 7px 14px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.935rem;
     font-weight: 500;
     color: #334155;
@@ -3131,6 +3147,7 @@ body {
     border-radius: 8px;
     transition: color 250ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms ease;
     white-space: nowrap;
+    letter-spacing: normal;
 }
 
 /* Underline indicator */
@@ -3138,13 +3155,14 @@ body {
     content: '';
     position: absolute;
     bottom: 2px;
-    left: 50%;
-    width: 0;
+    left: 14px;
+    right: 14px;
     height: 2px;
     background: var(--cava-purple);
     border-radius: 2px;
-    transform: translateX(-50%);
-    transition: width 250ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cava-nav-link:hover {
@@ -3153,27 +3171,29 @@ body {
 }
 
 .cava-nav-link:hover::after {
-    width: calc(100% - 28px);
+    transform: scaleX(1);
 }
 
 .cava-nav-link--active {
     color: var(--cava-purple) !important;
     font-weight: 600;
+    background: var(--cava-purple-light);
 }
 
 .cava-nav-link--active::after {
-    width: calc(100% - 28px);
+    transform: scaleX(1);
 }
 
 /* Focus visible styles for accessibility */
 .cava-nav-link:focus-visible {
     outline: 2px solid var(--cava-purple);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
-/* ── Zone 3: Right CTA ────────────────────────────────────────────────────── */
+/* ── Zone 3: Right Actions ────────────────────────────────────────────────── */
 .cava-nav-right {
+    grid-column: 3;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -3185,7 +3205,7 @@ body {
     display: inline-flex;
     align-items: center;
     padding: 9px 22px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.9rem;
     font-weight: 600;
     color: #0f172a;
@@ -3193,7 +3213,7 @@ body {
     border: 1.5px solid rgba(0, 0, 0, 0.16);
     border-radius: 10px;
     text-decoration: none;
-    letter-spacing: -0.1px;
+    letter-spacing: normal;
     transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease;
     white-space: nowrap;
 }
@@ -3221,12 +3241,13 @@ body {
     border: 1.5px solid rgba(0, 0, 0, 0.1);
     border-radius: 100px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.88rem;
     font-weight: 600;
     color: #0f172a;
     transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
     white-space: nowrap;
+    letter-spacing: normal;
 }
 
 .cava-user-btn:hover {
@@ -3304,17 +3325,19 @@ body {
 }
 
 .cava-dropdown-username {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 700;
     color: #0f172a;
+    letter-spacing: normal;
 }
 
 .cava-dropdown-role {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     color: #94a3b8;
     margin-top: 1px;
+    letter-spacing: 0.01em;
 }
 
 .cava-dropdown-divider {
@@ -3328,12 +3351,13 @@ body {
     gap: 10px;
     padding: 9px 12px;
     border-radius: 9px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 500;
     color: #334155;
     text-decoration: none;
     transition: background 180ms ease, color 180ms ease;
+    letter-spacing: normal;
 }
 
 .cava-dropdown-item i {
@@ -3532,12 +3556,13 @@ body {
     gap: 12px;
     padding: 13px 14px;
     border-radius: 10px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 500;
     color: #334155;
     text-decoration: none;
     transition: background 180ms ease, color 180ms ease;
+    letter-spacing: normal;
 }
 
 .cava-mobile-nav-link i {
@@ -3620,16 +3645,18 @@ body {
 }
 
 .cava-mobile-user-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.88rem;
     font-weight: 700;
     color: #0f172a;
+    letter-spacing: normal;
 }
 
 .cava-mobile-user-role {
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     color: #94a3b8;
+    letter-spacing: 0.01em;
 }
 
 /* CTA Button in mobile drawer */
@@ -3641,12 +3668,12 @@ body {
     color: #ffffff;
     border: none;
     border-radius: 10px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.92rem;
-    font-weight: 700;
+    font-weight: 600;
     text-align: center;
     text-decoration: none;
-    letter-spacing: -0.1px;
+    letter-spacing: normal;
     transition: background 200ms ease, box-shadow 200ms ease;
 }
 
@@ -3662,13 +3689,14 @@ body {
     justify-content: center;
     gap: 8px;
     padding: 10px;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.86rem;
     font-weight: 600;
     color: #ef4444;
     text-decoration: none;
     border-radius: 8px;
     transition: background 180ms ease;
+    letter-spacing: normal;
 }
 
 .cava-mobile-logout-link:hover {
@@ -3677,10 +3705,11 @@ body {
 
 .cava-mobile-register-hint {
     text-align: center;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.82rem;
     color: #64748b;
     margin: 0;
+    letter-spacing: normal;
 }
 
 .cava-mobile-register-hint a {
@@ -3780,7 +3809,7 @@ body {
     }
 
     .cava-mobile-drawer {
-        width: 280px;
+        width: min(300px, 86vw);
     }
 }
 
@@ -3816,4 +3845,615 @@ body {
 /* ── Utility: prevent body scroll when mobile drawer is open ──────────────── */
 body.cava-drawer-open {
     overflow: hidden;
+}
+
+/* ==========================================================================
+   CAVA LMS - COMPREHENSIVE MULTI-BREAKPOINT RESPONSIVE DESIGN SYSTEM
+   Optimized for:
+     - Mobile: 320px, 375px, 390px, 430px
+     - Tablet: 768px, 820px
+     - Desktop: 1024px, 1280px, 1440px
+   ========================================================================== */
+
+/* ── Global Touch & Viewport Baseline ───────────────────────────────────── */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Ensure images, videos, iframes never cause horizontal overflow */
+img, video, iframe, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ── Fluid Typography & Spacing Defaults ────────────────────────────────── */
+.lp-hero-wa-title .hero-main-line {
+    font-size: clamp(1.9rem, 6.5vw, 4rem);
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+.why-choose-title,
+.lp-section-title {
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem) !important;
+    line-height: 1.25 !important;
+}
+
+.lp-page-hero-title {
+    font-size: clamp(1.6rem, 5vw, 2.75rem) !important;
+    line-height: 1.2 !important;
+}
+
+/* ── Filter Pills Horizontal Scroll Component ───────────────────────────── */
+.lp-filter-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 4px;
+    width: 100%;
+}
+
+.lp-filter-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.lp-filter-link {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ==========================================================================
+   BREAKPOINT: MOBILE (max-width: 767.98px)
+   Covers 320px, 375px, 390px, 430px
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    /* Section paddings */
+    .why-choose-section,
+    .lp-section-padding,
+    .lp-overview-section,
+    .lp-journey-section,
+    .lp-destinations-section,
+    .lp-support-section,
+    .lp-final-cta-section {
+        padding: 48px 0 !important;
+    }
+
+    .lp-page-hero {
+        padding: 36px 0 28px !important;
+    }
+
+    /* Hero CTAs */
+    .lp-hero-cta-group {
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 12px !important;
+    }
+
+    .lp-btn-pill-white,
+    .lp-btn-pill-outline {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+        padding: 14px 20px !important;
+        min-height: 48px !important;
+        font-size: 0.92rem !important;
+    }
+
+    /* Hero Stats Row */
+    .lp-hero-stats-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin-top: 28px !important;
+        padding-top: 20px !important;
+    }
+
+    .lp-hero-stat-item {
+        width: 100% !important;
+        padding: 14px 18px !important;
+        border-radius: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        text-align: left !important;
+    }
+
+    .lp-hero-stat-heading {
+        font-size: 1.1rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    .lp-hero-stat-desc {
+        font-size: 0.8rem !important;
+    }
+
+    /* Hero Single Image */
+    .lp-hero-single-img-wrapper {
+        margin-top: 24px !important;
+        border-radius: 16px !important;
+        max-height: 320px !important;
+    }
+
+    /* Why Choose Cards */
+    .why-choose-card {
+        padding: 24px 20px !important;
+        border-radius: 16px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .why-choose-number {
+        font-size: 2.8rem !important;
+        opacity: 0.08 !important;
+        right: 16px !important;
+        bottom: 12px !important;
+    }
+
+    /* Auth Cards */
+    .lp-auth-card {
+        padding: 24px 18px !important;
+        border-radius: 18px !important;
+        margin: 16px 0 !important;
+    }
+
+    .lp-auth-card h2 {
+        font-size: 1.4rem !important;
+    }
+
+    /* Course Detail Sticky Sidebar */
+    .sticky-sidebar-card {
+        position: static !important;
+        padding: 24px 20px !important;
+        margin-top: 24px !important;
+    }
+
+    /* Course Detail Accordion */
+    .accordion-button {
+        padding: 14px 14px !important;
+        font-size: 1rem !important;
+    }
+
+    /* Support Form */
+    .custom-card {
+        padding: 22px 18px !important;
+        border-radius: 16px !important;
+    }
+
+    /* Footer Mobile Stacking */
+    .lp-footer {
+        padding-top: 40px !important;
+        padding-bottom: 24px !important;
+    }
+
+    .lp-footer .col-lg-4,
+    .lp-footer .col-lg-2,
+    .lp-footer .col-lg-3 {
+        margin-bottom: 24px !important;
+    }
+}
+
+/* ==========================================================================
+   BREAKPOINT: EXTRA-SMALL MOBILE (max-width: 374.98px)
+   Covers 320px to 360px (iPhone SE 1st gen, Galaxy Fold closed)
+   ========================================================================== */
+@media (max-width: 374.98px) {
+    .container {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    .cava-nav-inner {
+        padding: 0 10px !important;
+    }
+
+    .cava-nav-brand {
+        display: none !important;
+    }
+
+    .cava-mobile-drawer {
+        width: 270px !important;
+    }
+
+    .lp-hero-wa-title .hero-main-line {
+        font-size: 1.75rem !important;
+    }
+
+    .lp-hero-wa-subtitle {
+        font-size: 0.85rem !important;
+        line-height: 1.55 !important;
+    }
+
+    .lp-hero-stat-item {
+        padding: 10px 14px !important;
+    }
+
+    .lp-hero-stat-heading {
+        font-size: 0.95rem !important;
+    }
+
+    .card-content {
+        padding: 16px 14px !important;
+    }
+
+    .card-title {
+        font-size: 1rem !important;
+        min-height: 2.5rem !important;
+    }
+
+    .card-meta {
+        font-size: 0.72rem !important;
+        gap: 8px !important;
+    }
+
+    .card-price {
+        font-size: 1.15rem !important;
+    }
+
+    /* Buttons full width on 320px */
+    .card-price-row > div:last-child {
+        width: 100% !important;
+        margin-top: 4px !important;
+    }
+
+    .card-price-row > div:last-child .btn {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+
+    .lp-auth-card {
+        padding: 20px 14px !important;
+    }
+
+    .lp-auth-card h2 {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* ==========================================================================
+   BREAKPOINT: TABLET (min-width: 768px) and (max-width: 991.98px)
+   Covers 768px (iPad vertical) & 820px (iPad Air vertical)
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .cava-nav-inner {
+        padding: 0 24px !important;
+    }
+
+    /* Hero stats in a clean 3-column row */
+    .lp-hero-stats-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 12px !important;
+    }
+
+    .lp-hero-stat-item {
+        flex: 1 1 0 !important;
+        padding: 14px 16px !important;
+        text-align: center !important;
+    }
+
+    /* Course & Event cards: 2 columns */
+    .custom-card {
+        height: 100% !important;
+    }
+
+    /* Why Choose: 2x2 grid */
+    .why-choose-card {
+        height: 100% !important;
+    }
+
+    /* Footer: 2x2 grid */
+    .lp-footer .col-md-6 {
+        margin-bottom: 28px !important;
+    }
+}
+
+/* ==========================================================================
+   BREAKPOINT: DESKTOP & WIDE (min-width: 992px)
+   Covers 1024px, 1280px, 1440px
+   ========================================================================== */
+@media (min-width: 992px) {
+    .cava-nav-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 32px;
+    }
+
+    .lp-hero-stats-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 16px !important;
+    }
+
+    .lp-hero-stat-item {
+        flex: 1 1 0 !important;
+        padding: 16px 20px !important;
+    }
+}
+
+/* ==========================================================================
+   GLOBAL CARD TITLE PRESERVATION & RESPONSIVE OTP FIXES
+   ========================================================================== */
+.card-title,
+.lp-body-scope .card-title,
+.page-courses .card-title,
+.page-events .card-title {
+    line-height: 1.55 !important;
+    padding-bottom: 8px !important;
+    min-height: 3.6rem !important;
+    max-height: none !important;
+    height: auto !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+}
+
+/* ==========================================================================
+   TABLE TO CARDS SYSTEM (< 768px) IN LANDING-PREMIUM.CSS
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    .table-responsive-wrap {
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    table.table-responsive-cards,
+    .table-responsive-cards {
+        display: block !important;
+        width: 100% !important;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .table-responsive-cards thead,
+    .table-responsive-cards thead tr,
+    .table-responsive-cards thead th {
+        display: none !important;
+    }
+
+    .table-responsive-cards tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .table-responsive-cards tbody tr {
+        display: block !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 14px !important;
+        padding: 14px 16px !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    .table-responsive-cards tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        font-size: 0.85rem !important;
+        text-align: right !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .table-responsive-cards tbody td:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+
+    .table-responsive-cards tbody td::before {
+        content: attr(data-label) !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        font-size: 0.75rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+        text-align: left !important;
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+.otp-input-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+}
+
+.otp-input-group .otp-input {
+    width: 44px !important;
+    height: 52px !important;
+    flex: 0 0 auto !important;
+    display: inline-block !important;
+    text-align: center !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    padding: 0 !important;
+    background: #f8fafc !important;
+}
+
+@media (max-width: 380px) {
+    .otp-input-group {
+        gap: 6px !important;
+    }
+    .otp-input-group .otp-input {
+        width: 38px !important;
+        height: 46px !important;
+        font-size: 1.1rem !important;
+        border-radius: 8px !important;
+    }
+}
+
+@media (max-width: 330px) {
+    .otp-input-group {
+        gap: 4px !important;
+    }
+    .otp-input-group .otp-input {
+        width: 34px !important;
+        height: 42px !important;
+        font-size: 1rem !important;
+        border-radius: 6px !important;
+    }
+}
+
+/* ==========================================================================
+   CAVA LMS - UNIFIED PREMIUM TYPOGRAPHY SYSTEM
+   Plus Jakarta Sans (Headings, Titles, Statistics) + Inter (Body, UI, Forms)
+   ========================================================================== */
+
+/* 1. Headings & Display Text (Plus Jakarta Sans) */
+h1, h2, h3, h4, h5, h6,
+.lp-hero-wa-title,
+.hero-main-line,
+.course-hero-title,
+.hero-title,
+.lp-section-title,
+.section-title,
+.why-choose-title,
+.story-title,
+.cava-nav-brand {
+    font-family: var(--font-heading) !important;
+    letter-spacing: -0.02em;
+}
+
+/* 2. Course & Card Titles (Plus Jakarta Sans) */
+.card-title,
+.course-title,
+.course-card-title,
+.lp-course-card-title,
+.why-choose-card-title,
+.lms-course-title {
+    font-family: var(--font-heading) !important;
+    letter-spacing: -0.01em;
+}
+
+/* 3. Major Statistics & Metric Numbers (Plus Jakarta Sans) */
+.lp-hero-stat-heading,
+.why-choose-number,
+.story-stage-num,
+.dash-stat-value,
+.stat-number,
+.stat-value,
+.metrics-number {
+    font-family: var(--font-heading) !important;
+    letter-spacing: -0.02em;
+}
+
+/* 4. Body Text (Inter) */
+body,
+.lp-body-scope,
+p,
+.lead,
+.why-choose-card-desc,
+.story-desc,
+article {
+    font-family: var(--font-body);
+    letter-spacing: normal;
+}
+
+/* 5. Navigation & Links (Inter) */
+.cava-nav-links,
+.cava-nav-link,
+.cava-mobile-nav-links,
+.cava-mobile-nav-link,
+.navbar-nav,
+.nav-link,
+.nav-tabs,
+.nav-pills,
+.lp-filter-pill {
+    font-family: var(--font-body) !important;
+    letter-spacing: normal;
+}
+
+/* 6. Buttons & Interactive Controls (Inter) */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary,
+.lp-btn-pill-white,
+.lp-btn-pill-outline,
+.cava-nav-login-btn,
+.cava-user-btn,
+.cava-mobile-cta-btn,
+.cava-mobile-logout-link {
+    font-family: var(--font-body) !important;
+    letter-spacing: normal;
+}
+
+/* 7. Forms, Inputs & Field Controls (Inter) */
+input,
+button,
+select,
+optgroup,
+textarea,
+.form-control,
+.form-select,
+.form-label,
+.form-check-label,
+.input-group,
+.input-group-text,
+.otp-input,
+.otp-digit {
+    font-family: var(--font-body) !important;
+    letter-spacing: normal;
+}
+
+/* 8. Dashboard UI & Data Tables (Inter) */
+.dashboard-sidebar,
+.dashboard-menu-link,
+.dash-sidebar-card,
+.dash-stat-label,
+.table,
+th,
+td,
+.table-responsive-cards,
+.table-responsive-cards td::before {
+    font-family: var(--font-body) !important;
+    letter-spacing: normal;
+}
+
+/* 9. Metadata, Badges & Micro-Copy (Inter) */
+.badge,
+.badge-pill,
+.meta-item,
+.course-meta,
+.lp-meta,
+.event-meta,
+.date-badge,
+.duration-badge,
+.lp-section-badge,
+.story-stage-eyebrow,
+.lp-hero-tag,
+.lp-hero-stat-desc,
+.cava-dropdown-role,
+.cava-mobile-user-role,
+small,
+time {
+    font-family: var(--font-body) !important;
+    letter-spacing: 0.01em;
 }

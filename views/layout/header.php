@@ -58,18 +58,18 @@ $userName = $isUserLoggedIn ? ($_SESSION['user_name'] ?? 'User') : '';
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom Style Sheet -->
-    <link href="<?php echo SITE_URL; ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?php echo SITE_URL; ?>/assets/css/style.css?v=2.2" rel="stylesheet">
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
     <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>/assets/images/logo.jpeg">
 
-    <!-- Premium Google Fonts -->
+    <!-- Premium Google Fonts: Plus Jakarta Sans (Headings/Titles/Stats) + Inter (Body/UI/Forms) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Premium Design System CSS -->
-    <link href="<?php echo SITE_URL; ?>/assets/css/landing-premium.css" rel="stylesheet">
+    <link href="<?php echo SITE_URL; ?>/assets/css/landing-premium.css?v=2.2" rel="stylesheet">
 </head>
 <body>
 
