@@ -51,12 +51,12 @@ try {
 
 // SEO meta for this page
 $pageTitle       = 'Browse Courses';
-$pageDescription = 'Explore all self-paced courses on CAVA LMS. Filter by category, search by topic, and start learning immigration, career, and skills courses today.';
+$pageDescription = 'Browse published courses on CAVA LMS, search by topic, filter by category, and review available lessons.';
 
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="lp-body-scope">
+<main class="lp-body-scope" id="main-content">
     <!-- Page Hero Banner -->
     <section class="lp-page-hero">
         <div class="container">
@@ -67,7 +67,7 @@ require_once __DIR__ . '/views/layout/header.php';
                 </ol>
             </nav>
             <h1 class="lp-page-hero-title">Browse Courses</h1>
-            <p class="lp-page-hero-subtitle">Explore expert-led learning programs designed to help you build your skills and achieve your career goals.</p>
+            <p class="lp-page-hero-subtitle">Search published courses, filter by category, and review the available lessons before enrolling.</p>
         </div>
     </section>
 
@@ -85,7 +85,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             if ($sort !== 'latest') $q['sort'] = $sort;
                             echo !empty($q) ? '?' . http_build_query($q) : ''; 
                            ?>" 
-                           class="btn lp-filter-link <?php echo empty($categoryId) ? 'active' : ''; ?>">
+                           class="btn lp-filter-link filter-link <?php echo empty($categoryId) ? 'active' : ''; ?>">
                             All Courses
                         </a>
                         <?php foreach ($categories as $cat): ?>
@@ -93,7 +93,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 if (!empty($search)) echo '&search=' . urlencode($search);
                                 if ($sort !== 'latest') echo '&sort=' . urlencode($sort);
                                ?>" 
-                               class="btn lp-filter-link <?php echo (!empty($categoryId) && $categoryId === trim($cat['id'])) ? 'active' : ''; ?>">
+                               class="btn lp-filter-link filter-link <?php echo (!empty($categoryId) && $categoryId === trim($cat['id'])) ? 'active' : ''; ?>">
                                 <?php echo htmlspecialchars($cat['name']); ?>
                             </a>
                         <?php endforeach; ?>
@@ -116,14 +116,12 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <span class="input-group-text p-0 me-2"><i class="fa-solid fa-magnifying-glass"></i></span>
                                 <input type="text" class="form-control p-0" id="search" name="search" 
                                        value="<?php echo htmlspecialchars($search); ?>" placeholder="Search courses..." autocomplete="off">
-                                <?php if (!empty($search)): ?>
-                                    <a href="courses.php<?php echo !empty($categoryId) ? '?category=' . urlencode($categoryId) : ''; ?>" class="text-muted ms-2"><i class="fa-solid fa-xmark"></i></a>
-                                <?php endif; ?>
+                                <button type="button" id="search-clear" class="btn p-0 border-0 text-muted ms-2" aria-label="Clear course search"<?php echo empty($search) ? ' style="display: none;"' : ''; ?>><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                             </div>
                         </form>
 
                         <!-- Sorting Select -->
-                        <select class="form-select form-select-sm bg-white border fw-semibold rounded-pill px-3 py-2 text-dark shadow-sm" style="width: auto; min-width: 110px;" onchange="location = this.value;">
+                        <select class="form-select form-select-sm sort-select" aria-label="Sort courses" style="width: auto; min-width: 110px;" onchange="location = this.value;">
                             <?php 
                             $baseQuery = [];
                             if ($categoryId) $baseQuery['category'] = $categoryId;
@@ -168,6 +166,6 @@ require_once __DIR__ . '/views/layout/header.php';
             </div>
         </div>
     </section>
-</div>
+</main>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

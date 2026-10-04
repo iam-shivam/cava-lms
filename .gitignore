@@ -4,6 +4,9 @@
 # Upload Folder
 /uploads/
 
+# Runtime logs (may contain local delivery/debug data)
+/logs/
+
 # Environment configuration (contains secrets)
 .env
 

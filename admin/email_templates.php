@@ -40,7 +40,7 @@ try {
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800 fw-bold"><i class="fa-solid fa-envelope me-2 text-primary"></i>Email Template Manager</h1>
+    <h2 class="h3 mb-0 text-gray-800 fw-bold"><i class="fa-solid fa-envelope me-2 text-primary"></i>Email Template Manager</h2>
     <a href="email_template_add.php" class="btn btn-primary rounded-pill px-4">
         <i class="fa-solid fa-plus me-1"></i> Add New Template
     </a>

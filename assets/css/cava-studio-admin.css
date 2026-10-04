@@ -1,0 +1,1010 @@
+/* CAVA Studio — authenticated admin shell and standalone admin sign-in. */
+
+body.cava-studio-admin,
+body.cava-studio-auth {
+    overflow-x: hidden;
+}
+
+.studio-skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2000;
+    padding: 0.7rem 1rem;
+    border-radius: var(--studio-radius-sm);
+    background: var(--studio-lime-300);
+    color: var(--studio-green-950);
+    font-weight: 750;
+    text-decoration: none;
+    transform: translateY(-150%);
+    transition: transform var(--studio-transition);
+}
+
+.studio-skip-link:focus {
+    color: var(--studio-green-950);
+    transform: translateY(0);
+}
+
+/* Authenticated admin shell */
+.studio-admin-shell {
+    display: grid;
+    min-height: 100vh;
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+    background: var(--studio-canvas);
+}
+
+.studio-admin-sidebar.offcanvas-lg {
+    --bs-offcanvas-width: 18.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    height: 100vh;
+    border: 0 !important;
+    background:
+        radial-gradient(circle at 18% 8%, rgba(200, 239, 120, 0.12), transparent 25%),
+        linear-gradient(180deg, var(--studio-green-950) 0%, #0d2d22 100%) !important;
+    color: #fff;
+    box-shadow: 10px 0 34px rgba(11, 36, 27, 0.11);
+}
+
+.studio-admin-sidebar .offcanvas-body {
+    display: flex;
+    height: 100%;
+    min-height: 0;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-width: thin;
+}
+
+.studio-admin-sidebar .offcanvas-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.studio-admin-sidebar .offcanvas-body::-webkit-scrollbar-thumb {
+    border-radius: var(--studio-radius-pill);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.studio-admin-sidebar__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1.35rem 1.25rem 1.15rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.studio-admin-brand {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.8rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.studio-admin-brand:hover {
+    color: var(--studio-lime-300);
+}
+
+.studio-admin-brand__logo {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+    object-fit: cover;
+}
+
+.studio-admin-brand__copy {
+    display: grid;
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.studio-admin-brand__name {
+    overflow: hidden;
+    font-family: var(--studio-font-display);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.studio-admin-brand__label {
+    margin-top: 0.25rem;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.studio-admin-sidebar__close {
+    display: none;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--studio-radius-sm);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.studio-admin-sidebar__close:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.studio-admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 1rem 0.45rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--studio-radius-md);
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.studio-admin-profile__avatar,
+.studio-admin-topbar__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--studio-lime-300);
+    color: var(--studio-green-950);
+    font-family: var(--studio-font-display);
+    font-weight: 800;
+}
+
+.studio-admin-profile__avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+}
+
+.studio-admin-profile__copy {
+    display: grid;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.studio-admin-profile__name {
+    overflow: hidden;
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.studio-admin-profile__role {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.7rem;
+}
+
+.studio-admin-nav {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    gap: 0.18rem;
+    padding: 0.7rem 0.8rem 1rem;
+}
+
+.studio-admin-nav__label {
+    margin: 0.9rem 0.7rem 0.35rem;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.66rem;
+    font-weight: 750;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.admin-nav-link {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.68rem 0.78rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.86rem;
+    font-weight: 650;
+    text-decoration: none;
+    transition: color var(--studio-transition), background-color var(--studio-transition), border-color var(--studio-transition), transform var(--studio-transition);
+}
+
+.admin-nav-link i {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.85rem;
+    transition: inherit;
+}
+
+.admin-nav-link:hover {
+    border-color: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.075);
+    color: #fff;
+    transform: translateX(2px);
+}
+
+.admin-nav-link.active {
+    border-color: rgba(200, 239, 120, 0.7);
+    background: var(--studio-lime-300);
+    color: var(--studio-green-950);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+}
+
+.admin-nav-link.active i {
+    background: rgba(16, 52, 40, 0.1);
+    color: var(--studio-green-950);
+}
+
+.admin-nav-link--logout {
+    margin-top: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 10px 10px;
+    color: #ffc0b5;
+}
+
+.admin-nav-link--logout i {
+    color: #ffc0b5;
+}
+
+.studio-admin-frame {
+    display: flex;
+    min-width: 0;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.studio-admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    min-height: 76px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem clamp(1rem, 2.4vw, 2rem);
+    border-bottom: 1px solid rgba(185, 184, 174, 0.7);
+    background: rgba(255, 253, 248, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.studio-admin-topbar__leading,
+.studio-admin-topbar__actions,
+.studio-admin-topbar__user {
+    display: flex;
+    align-items: center;
+}
+
+.studio-admin-topbar__leading {
+    min-width: 0;
+    gap: 0.8rem;
+}
+
+.studio-admin-topbar__actions {
+    gap: 0.75rem;
+}
+
+.studio-admin-topbar__user {
+    gap: 0.65rem;
+}
+
+.studio-admin-topbar__avatar {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    font-size: 0.78rem;
+}
+
+.studio-admin-topbar__copy {
+    display: grid;
+    line-height: 1.15;
+}
+
+.studio-admin-topbar__eyebrow {
+    color: var(--studio-muted);
+    font-size: 0.66rem;
+    font-weight: 750;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.studio-admin-topbar__title {
+    overflow: hidden;
+    margin: 0.17rem 0 0;
+    color: var(--studio-ink);
+    font-family: var(--studio-font-display);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.studio-admin-sidebar-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--studio-border);
+    border-radius: var(--studio-radius-sm);
+    background: var(--studio-surface);
+    color: var(--studio-green-900);
+}
+
+.studio-admin-main,
+.main-content {
+    width: 100%;
+    min-width: 0;
+    flex: 1 0 auto;
+    padding: clamp(1.1rem, 2.6vw, 2.25rem);
+    background: var(--studio-canvas);
+}
+
+.studio-admin-main > :first-child,
+.main-content > :first-child {
+    margin-top: 0;
+}
+
+.main-content h1.h3,
+.main-content > .d-flex h1,
+.main-content > h1 {
+    color: var(--studio-ink) !important;
+    font-family: var(--studio-font-display);
+    font-weight: 800 !important;
+    letter-spacing: -0.035em;
+}
+
+.studio-admin-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem clamp(1rem, 2.6vw, 2.25rem) 1.4rem;
+    color: var(--studio-muted);
+    font-size: 0.76rem;
+}
+
+/* Existing admin-page compatibility and component refinement */
+.cava-studio-admin .card {
+    overflow: hidden;
+}
+
+.cava-studio-admin .card-header {
+    border-bottom-color: var(--studio-border) !important;
+    background: var(--studio-surface) !important;
+}
+
+.cava-studio-admin .card-footer {
+    border-top-color: var(--studio-border) !important;
+    background: var(--studio-canvas) !important;
+}
+
+.cava-studio-admin .card.border-start {
+    box-shadow: var(--studio-shadow-sm) !important;
+}
+
+.cava-studio-admin .card.border-start:hover {
+    box-shadow: var(--studio-shadow-md) !important;
+    transform: translateY(-2px);
+}
+
+.cava-studio-admin .text-xs {
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+}
+
+.cava-studio-admin .font-weight-bold {
+    font-weight: 750 !important;
+}
+
+.cava-studio-admin .font-medium,
+.cava-studio-admin .fw-medium {
+    font-weight: 600 !important;
+}
+
+.cava-studio-admin .fs-7 {
+    font-size: 0.82rem !important;
+}
+
+.cava-studio-admin .fs-8 {
+    font-size: 0.74rem !important;
+}
+
+.cava-studio-admin .bg-primary-light {
+    background: var(--studio-lime-100) !important;
+}
+
+.cava-studio-admin .bg-secondary-light {
+    background: var(--studio-canvas-deep) !important;
+}
+
+.cava-studio-admin .card:has(.modal),
+.cava-studio-admin .table-responsive:has(.modal) {
+    overflow: visible;
+}
+
+.cava-studio-admin .card .d-flex.justify-content-between:has(.pagination),
+.cava-studio-admin .card > .d-flex.justify-content-between:has(nav[aria-label*="pagination" i]) {
+    flex-wrap: wrap;
+    gap: 0.9rem 1.25rem;
+}
+
+.cava-studio-admin .card .d-flex:has(> nav[aria-label*="pagination" i]),
+.cava-studio-admin .card .d-flex:has(> .d-flex > nav[aria-label*="pagination" i]) {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.cava-studio-admin .pagination {
+    flex-wrap: wrap;
+    gap: 0.2rem;
+}
+
+.cava-studio-admin .pagination .page-link {
+    min-width: 36px;
+    text-align: center;
+}
+
+.cava-studio-admin .payments-table tr[role="button"]:focus-visible {
+    outline: 3px solid var(--studio-focus);
+    outline-offset: -3px;
+}
+
+.cava-studio-admin .payments-table {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.cava-studio-admin .payments-table > :not(caption) > * > * {
+    padding-inline: 0.65rem;
+}
+
+.cava-studio-admin .payments-table th,
+.cava-studio-admin .payments-table td {
+    white-space: nowrap;
+}
+
+.cava-studio-admin .payments-table th:nth-child(2),
+.cava-studio-admin .payments-table td:nth-child(2),
+.cava-studio-admin .payments-table th:nth-child(3),
+.cava-studio-admin .payments-table td:nth-child(3),
+.cava-studio-admin .payments-table th:nth-child(5),
+.cava-studio-admin .payments-table td:nth-child(5) {
+    max-width: 15rem;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.cava-studio-admin .payments-table tr[data-bs-toggle="collapse"] .eye-icon {
+    transition: transform var(--studio-transition), color var(--studio-transition);
+}
+
+.cava-studio-admin .payments-table tr[data-bs-toggle="collapse"][aria-expanded="true"] .eye-icon {
+    color: var(--studio-green-700) !important;
+    transform: scale(1.2);
+}
+
+.cava-studio-admin .studio-admin-table-scroll:focus-visible {
+    outline: 3px solid var(--studio-green-600);
+    outline-offset: 3px;
+}
+
+.cava-studio-admin .studio-table-scroll-hint {
+    margin: -0.25rem 0 0.75rem;
+    color: var(--studio-muted);
+    font-size: 0.78rem;
+}
+
+.cava-studio-admin .studio-admin-section-row {
+    min-width: 0;
+    align-items: stretch;
+}
+
+.cava-studio-admin .studio-admin-section-row .accordion-button {
+    min-width: 0;
+}
+
+.cava-studio-admin .studio-admin-section-row .accordion-button > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.cava-studio-admin .studio-admin-section-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.45rem 0.55rem;
+    border-left: 1px solid var(--studio-border);
+    background: var(--studio-canvas-deep);
+}
+
+.cava-studio-admin .modal p,
+.cava-studio-admin .modal td,
+.cava-studio-admin code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.cava-studio-admin .text-gray-800 {
+    color: var(--studio-ink) !important;
+}
+
+.cava-studio-admin .mr-2 {
+    margin-right: 0.5rem;
+}
+
+.cava-studio-admin .cursor-pointer {
+    cursor: pointer;
+}
+
+.cava-studio-admin .table-responsive,
+.cava-studio-admin .table-responsive-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.cava-studio-admin .card .table-responsive,
+.cava-studio-admin .card .table-responsive-wrap {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+}
+
+.cava-studio-admin .table tbody tr:last-child > * {
+    border-bottom: 0;
+}
+
+.cava-studio-admin .form-control,
+.cava-studio-admin .form-select,
+.cava-studio-admin .input-group-text {
+    background: var(--studio-surface-raised) !important;
+}
+
+.cava-studio-admin .form-check-input:checked {
+    border-color: var(--studio-green-700);
+    background-color: var(--studio-green-700);
+}
+
+.cava-studio-admin .nav-tabs {
+    border-bottom-color: var(--studio-border);
+}
+
+.cava-studio-admin .nav-tabs .nav-link {
+    border-radius: var(--studio-radius-sm) var(--studio-radius-sm) 0 0;
+    color: var(--studio-muted) !important;
+}
+
+.cava-studio-admin .nav-tabs .nav-link.active {
+    border-color: var(--studio-border) var(--studio-border) var(--studio-surface);
+    background: var(--studio-surface);
+    color: var(--studio-green-900) !important;
+}
+
+.cava-studio-admin .pagination {
+    flex-wrap: wrap;
+    gap: 0.2rem;
+}
+
+.cava-studio-admin .pagination .page-link {
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: var(--studio-radius-sm) !important;
+}
+
+.cava-studio-admin .modal-content {
+    overflow: hidden;
+}
+
+.cava-studio-admin code {
+    color: var(--studio-green-800);
+}
+
+.cava-studio-admin .offcanvas-backdrop,
+.offcanvas-backdrop.show {
+    background: var(--studio-green-950);
+    opacity: 0.62;
+}
+
+/* Standalone admin login */
+.studio-admin-auth-shell {
+    display: grid;
+    min-height: 100vh;
+    grid-template-columns: minmax(20rem, 0.85fr) minmax(28rem, 1.15fr);
+}
+
+.studio-admin-auth-aside {
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: clamp(2rem, 5vw, 4.5rem);
+    background:
+        radial-gradient(circle at 10% 15%, rgba(200, 239, 120, 0.17), transparent 28%),
+        radial-gradient(circle at 90% 86%, rgba(200, 239, 120, 0.1), transparent 24%),
+        var(--studio-green-950);
+    color: #fff;
+}
+
+.studio-admin-auth-aside::after {
+    position: absolute;
+    right: -7rem;
+    bottom: -7rem;
+    width: 21rem;
+    height: 21rem;
+    border: 1px solid rgba(200, 239, 120, 0.22);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3rem rgba(200, 239, 120, 0.025), 0 0 0 6rem rgba(200, 239, 120, 0.018);
+    content: "";
+}
+
+.studio-admin-auth-brand,
+.studio-admin-auth-message,
+.studio-admin-auth-note {
+    position: relative;
+    z-index: 1;
+}
+
+.studio-admin-auth-brand {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.85rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.studio-admin-auth-brand:hover {
+    color: var(--studio-lime-300);
+}
+
+.studio-admin-auth-brand img {
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+    object-fit: cover;
+}
+
+.studio-admin-auth-brand strong {
+    display: block;
+    font-family: var(--studio-font-display);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.studio-admin-auth-brand small {
+    display: block;
+    margin-top: 0.15rem;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.studio-admin-auth-message {
+    max-width: 31rem;
+    margin-block: 4rem;
+}
+
+.studio-admin-auth-message__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1.1rem;
+    color: var(--studio-lime-300);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.studio-admin-auth-message__kicker::before {
+    width: 1.7rem;
+    height: 2px;
+    background: currentColor;
+    content: "";
+}
+
+.studio-admin-auth-message h1 {
+    margin: 0;
+    color: #fff !important;
+    font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+    line-height: 1;
+}
+
+.studio-admin-auth-message p {
+    max-width: 29rem;
+    margin: 1.4rem 0 0;
+    color: rgba(255, 255, 255, 0.67);
+    font-size: 1.02rem;
+}
+
+.studio-admin-auth-note {
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.76rem;
+}
+
+.studio-admin-auth-main {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.25rem, 5vw, 4rem);
+    background:
+        linear-gradient(rgba(23, 76, 59, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 76, 59, 0.035) 1px, transparent 1px),
+        var(--studio-canvas);
+    background-size: 32px 32px;
+}
+
+.studio-admin-login-card {
+    width: min(100%, 31rem);
+    padding: clamp(1.5rem, 4vw, 2.75rem) !important;
+    border-top: 5px solid var(--studio-green-800) !important;
+    background: var(--studio-surface) !important;
+    box-shadow: var(--studio-shadow-lg) !important;
+}
+
+.studio-admin-login-card__mark {
+    display: inline-flex;
+    width: 54px;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.4rem;
+    border-radius: 16px;
+    background: var(--studio-lime-100);
+    color: var(--studio-green-900);
+    font-size: 1.15rem;
+}
+
+.studio-admin-login-card h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.25rem);
+}
+
+.studio-admin-login-card__intro {
+    margin: 0.55rem 0 1.8rem;
+    color: var(--studio-muted);
+}
+
+.studio-admin-login-card .input-group-text {
+    width: 48px;
+    justify-content: center;
+    color: var(--studio-green-800) !important;
+}
+
+.studio-admin-login-card .form-control {
+    min-height: 52px;
+}
+
+.studio-admin-login-card input[type="password"]::-ms-reveal,
+.studio-admin-login-card input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.studio-admin-password-field .form-control {
+    padding-right: 3.35rem !important;
+}
+
+.studio-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.45rem;
+    z-index: 6;
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--studio-muted);
+    transform: translateY(-50%);
+}
+
+.studio-password-toggle:hover {
+    background: var(--studio-lime-100);
+    color: var(--studio-green-900);
+}
+
+.animated-eye {
+    transition: transform 180ms var(--studio-ease), opacity 180ms ease;
+}
+
+.animated-eye.eye-click {
+    opacity: 0;
+    transform: scale(0.55);
+}
+
+.studio-admin-login-card__footer {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--studio-border);
+    text-align: center;
+}
+
+.studio-admin-login-card__footer a {
+    color: var(--studio-muted);
+    font-size: 0.84rem;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.studio-admin-login-card__footer a:hover {
+    color: var(--studio-green-900);
+}
+
+@media (min-width: 992px) {
+    .studio-admin-sidebar.offcanvas-lg {
+        visibility: visible !important;
+        transform: none !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .studio-admin-shell {
+        display: block;
+    }
+
+    .studio-admin-sidebar.offcanvas-lg {
+        position: fixed;
+        width: min(18.5rem, 88vw) !important;
+        height: 100dvh;
+    }
+
+    .studio-admin-sidebar__close,
+    .studio-admin-sidebar-toggle {
+        display: inline-flex;
+    }
+
+    .studio-admin-topbar {
+        min-height: 68px;
+    }
+
+    .studio-admin-topbar__user {
+        display: none;
+    }
+
+    .studio-admin-auth-shell {
+        grid-template-columns: minmax(17rem, 0.72fr) minmax(24rem, 1.28fr);
+    }
+
+    .studio-admin-auth-aside {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .studio-admin-topbar__actions .btn span {
+        display: none;
+    }
+
+    .studio-admin-main,
+    .main-content {
+        padding: 1.1rem;
+    }
+
+    .studio-admin-footer {
+        padding-inline: 1.1rem;
+    }
+
+    .main-content > .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+
+    .cava-studio-admin .card .d-flex.justify-content-between:has(.pagination),
+    .cava-studio-admin .card > .d-flex.justify-content-between:has(nav[aria-label*="pagination" i]) {
+        align-items: flex-start !important;
+    }
+
+    .cava-studio-admin .card.p-4,
+    .cava-studio-admin .card .p-4 {
+        padding: 1.15rem !important;
+    }
+
+    .studio-admin-auth-shell {
+        display: block;
+    }
+
+    .studio-admin-auth-aside {
+        min-height: auto;
+        padding: 1.15rem 1.25rem;
+    }
+
+    .studio-admin-auth-message,
+    .studio-admin-auth-note {
+        display: none;
+    }
+
+    .studio-admin-auth-brand img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .studio-admin-auth-main {
+        min-height: calc(100vh - 82px);
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .cava-studio-admin .card .d-flex.justify-content-between:has(.pagination),
+    .cava-studio-admin .card > .d-flex.justify-content-between:has(nav[aria-label*="pagination" i]),
+    .cava-studio-admin .card .d-flex:has(> nav[aria-label*="pagination" i]),
+    .cava-studio-admin .card .d-flex:has(> .d-flex > nav[aria-label*="pagination" i]) {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .cava-studio-admin .pagination {
+        justify-content: center;
+    }
+
+    .cava-studio-admin .card select.form-select[style*="width: auto"] {
+        width: 100% !important;
+        min-width: 5rem;
+    }
+
+    .studio-admin-topbar__eyebrow {
+        display: none;
+    }
+
+    .studio-admin-topbar__title {
+        margin-top: 0;
+        font-size: 0.98rem;
+    }
+
+    .studio-admin-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .studio-admin-login-card {
+        padding: 1.35rem !important;
+        border-radius: 18px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-nav-link:hover,
+    .cava-studio-admin .card.border-start:hover {
+        transform: none;
+    }
+}

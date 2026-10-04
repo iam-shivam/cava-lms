@@ -27,27 +27,11 @@ $payments = DB::fetchAll("
 ");
 ?>
 
-<style>
-    /* Table styling for one-line display */
-    .payments-table {
-        white-space: nowrap;
-        font-size: 0.85rem;
-    }
-    
-    /* Eye icon animation */
-    tr[data-bs-toggle="collapse"] .eye-icon {
-        transition: transform 0.3s ease, color 0.3s ease;
-    }
-    tr[data-bs-toggle="collapse"][aria-expanded="true"] .eye-icon {
-        transform: scale(1.3);
-        color: var(--bs-primary) !important;
-    }
-</style>
-
 <div class="card shadow-sm border-0 rounded-4 bg-white p-4">
     <h5 class="fw-bold text-dark mb-4">Payments Transaction Log</h5>
     
-    <div class="table-responsive">
+    <p class="studio-table-scroll-hint d-lg-none">Scroll horizontally to review all payment fields.</p>
+    <div class="table-responsive studio-admin-table-scroll" role="region" aria-label="Payments transaction table" tabindex="0">
         <table class="table table-hover align-middle payments-table">
             <thead>
                 <tr>
@@ -70,7 +54,7 @@ $payments = DB::fetchAll("
                     <?php foreach ($payments as $index => $p): 
                         $collapseId = 'details_' . md5($p['id']);
                     ?>
-                        <tr data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" style="cursor: pointer;" title="Click to view details">
+                        <tr data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" role="button" tabindex="0" aria-controls="<?php echo $collapseId; ?>" aria-expanded="false" style="cursor: pointer;" title="Open payment details" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
                             <td class="text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                             <td class="fw-semibold text-dark"><?php echo htmlspecialchars($p['user_name']); ?></td>
                             <td><?php echo htmlspecialchars($p['user_email']); ?></td>

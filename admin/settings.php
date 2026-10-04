@@ -13,11 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $settingsKeys = [
-        'site_title', 'contact_email', 'contact_phone', 'about_us', 
-        'hero_eyebrow', 'hero_title', 'hero_subtitle', 
-        'hero_stat_1_title', 'hero_stat_1_desc', 
-        'hero_stat_2_title', 'hero_stat_2_desc', 
-        'hero_stat_3_title', 'hero_stat_3_desc'
+        'site_title', 'contact_email', 'contact_phone', 'about_us',
+        'hero_eyebrow', 'hero_title', 'hero_subtitle'
     ];
     $heroImgKeys  = ['hero_img_1'];
     
@@ -150,45 +147,12 @@ try {
                 <div class="mb-3">
                     <label for="hero_title" class="form-label fw-semibold">Hero Main Heading</label>
                     <input type="text" class="form-control" id="hero_title" name="hero_title" 
-                           value="<?php echo htmlspecialchars($currentSettings['hero_title'] ?? 'Upgrade Your Skills with CAVA LMS'); ?>" required>
+                           value="<?php echo htmlspecialchars($currentSettings['hero_title'] ?? 'Learn with a clearer sense of direction.'); ?>" required>
                 </div>
                 
                 <div class="mb-3">
                     <label for="hero_subtitle" class="form-label fw-semibold">Hero Subtitle / Description</label>
-                    <textarea class="form-control" id="hero_subtitle" name="hero_subtitle" rows="3" required><?php echo htmlspecialchars($currentSettings['hero_subtitle'] ?? 'Access high-quality courses, webinars, and masterclasses designed by industry experts to boost your career.'); ?></textarea>
-                </div>
-            </div>
-
-            <!-- Hero Statistics Row Controls -->
-            <div class="col-12 mb-4">
-                <div class="border-bottom pb-2 mb-3">
-                    <h6 class="fw-bold text-dark"><i class="fa-solid fa-chart-simple text-primary me-2"></i>Hero Highlights & Statistics Row</h6>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-4 border">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 1 Title</label>
-                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_1_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_1_title'] ?? 'Global Students'); ?>">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 1 Subtitle</label>
-                            <input type="text" class="form-control form-control-sm" name="hero_stat_1_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_1_desc'] ?? 'Ages 12-18'); ?>">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-4 border">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 2 Title</label>
-                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_2_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_2_title'] ?? 'Top Instructors'); ?>">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 2 Subtitle</label>
-                            <input type="text" class="form-control form-control-sm" name="hero_stat_2_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_2_desc'] ?? 'Ivy League Experts'); ?>">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded-4 border">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 3 Title</label>
-                            <input type="text" class="form-control form-control-sm mb-2" name="hero_stat_3_title" value="<?php echo htmlspecialchars($currentSettings['hero_stat_3_title'] ?? 'Tailored Guidance'); ?>">
-                            <label class="form-label fw-semibold text-dark mb-1">Highlight 3 Subtitle</label>
-                            <input type="text" class="form-control form-control-sm" name="hero_stat_3_desc" value="<?php echo htmlspecialchars($currentSettings['hero_stat_3_desc'] ?? 'Micro-group classes'); ?>">
-                        </div>
-                    </div>
+                    <textarea class="form-control" id="hero_subtitle" name="hero_subtitle" rows="3" required><?php echo htmlspecialchars($currentSettings['hero_subtitle'] ?? 'Explore available courses, webinars, and learning resources in one place.'); ?></textarea>
                 </div>
             </div>
 
@@ -200,7 +164,7 @@ try {
                 </div>
 
                 <?php 
-                $heroSingleImg = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000&h=600';
+                $heroSingleImg = SITE_URL . '/assets/images/study_abroad.jpeg';
                 if (!empty($currentSettings['hero_img_1']) && file_exists(BASE_PATH . '/uploads/' . $currentSettings['hero_img_1'])) {
                     $heroSingleImg = SITE_URL . '/uploads/' . $currentSettings['hero_img_1'];
                 }

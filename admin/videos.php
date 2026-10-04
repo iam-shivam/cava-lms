@@ -225,7 +225,7 @@ foreach ($sections as $sec) {
     <a href="courses.php" class="text-decoration-none text-muted mb-2 d-inline-block">
         <i class="fa-solid fa-arrow-left"></i> Back to Courses
     </a>
-    <h1 class="h3 fw-bold text-dark">Syllabus Builder: <span class="text-primary"><?php echo htmlspecialchars($course['title']); ?></span></h1>
+    <h2 class="h3 fw-bold text-dark">Syllabus Builder: <span class="text-primary"><?php echo htmlspecialchars($course['title']); ?></span></h2>
 </div>
 
 <div class="row">
@@ -250,13 +250,12 @@ foreach ($sections as $sec) {
                         <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
                             <h2 class="accordion-header position-relative" id="<?php echo $headingId; ?>">
                                 <!-- View Mode -->
-                                <div id="view_sec_<?php echo $sec['id']; ?>" class="d-flex w-100 position-relative">
-                                    <button class="accordion-button collapsed bg-light fw-bold py-3 w-100" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="false">
+                                <div id="view_sec_<?php echo $sec['id']; ?>" class="d-flex w-100 studio-admin-section-row">
+                                    <button class="accordion-button collapsed bg-light fw-bold py-3 flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="false">
                                         <i class="fa-solid fa-folder me-2 text-warning"></i>
                                         <span id="text_sec_<?php echo $sec['id']; ?>"><?php echo htmlspecialchars($sec['title']); ?></span>
                                     </button>
-                                    <!-- View Actions Overlay (Outside the button) -->
-                                    <div class="position-absolute top-50 translate-middle-y" style="right: 50px; z-index: 10;">
+                                    <div class="studio-admin-section-actions" aria-label="Section actions">
                                         <button type="button" 
                                            class="btn btn-outline-primary btn-sm border-0" 
                                            title="Edit Section"

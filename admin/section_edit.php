@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="videos.php?course_id=<?php echo $courseId; ?>" class="text-decoration-none text-muted mb-2 d-inline-block">
         <i class="fa-solid fa-arrow-left"></i> Back to Syllabus
     </a>
-    <h1 class="h3 fw-bold text-dark">Edit Course Section</h1>
+    <h2 class="h3 fw-bold text-dark">Edit Course Section</h2>
 </div>
 
 <div class="row">

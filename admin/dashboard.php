@@ -25,7 +25,7 @@ $recentPayments = DB::fetchAll("
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800 fw-bold">Admin Dashboard Overview</h1>
+    <h2 class="h3 mb-0 text-gray-800 fw-bold">Admin Dashboard Overview</h2>
 </div>
 
 <!-- Stats Row -->
@@ -101,7 +101,7 @@ $recentPayments = DB::fetchAll("
 
 <div class="row">
     <!-- Recent Users Table -->
-    <div class="col-lg-6 mb-4">
+    <div class="col-xl-6 mb-4">
         <div class="card shadow-sm border-0 rounded-4 bg-white">
             <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Recent Registered Users</h6>
@@ -137,7 +137,7 @@ $recentPayments = DB::fetchAll("
     </div>
 
     <!-- Recent Payments Table -->
-    <div class="col-lg-6 mb-4">
+    <div class="col-xl-6 mb-4">
         <div class="card shadow-sm border-0 rounded-4 bg-white">
             <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-success fw-bold"><i class="fa-solid fa-wallet me-2"></i>Recent Payments Log</h6>

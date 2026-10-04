@@ -333,7 +333,7 @@ $csrfToken = generate_csrf_token();
                             <div class="mt-2">
                                 <span class="d-block fs-8 text-muted mb-1">Current Banner:</span>
                                 <img src="<?php echo (file_exists(BASE_PATH . '/uploads/' . $editWebinar['thumbnail'])) ? SITE_URL . '/uploads/' . $editWebinar['thumbnail'] : SITE_URL . '/assets/images/' . $editWebinar['thumbnail']; ?>" 
-                                     alt="Current webinar thumbnail" class="img-fluid rounded-3 border" style="max-width: 150px; max-height: 90px; object-fit: cover;" onerror="this.src='https://placehold.co/150x90/6f42c1/ffffff?text=No+Thumbnail'">
+                                     alt="Current webinar thumbnail" class="img-fluid rounded-3 border" style="max-width: 150px; max-height: 90px; object-fit: cover;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
                             </div>
                         <?php endif; ?>
                     </div>

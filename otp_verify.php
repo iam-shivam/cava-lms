@@ -8,52 +8,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $csrfToken = generate_csrf_token();
+$pageTitle = 'Verify OTP';
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="lp-body-scope">
-    <section class="py-5 min-vh-75 d-flex align-items-center bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-5">
-                    <div class="lp-auth-card">
-                        <div class="text-center mb-4">
-                            <div class="mb-3">
-                                <a href="<?php echo SITE_URL; ?>/index.php" class="d-inline-block">
-                                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="CAVA LMS Logo" class="rounded-circle shadow-sm" style="height: 68px; width: 68px; object-fit: contain; border: 2px solid rgba(109, 40, 217, 0.15);">
-                                </a>
-                            </div>
-                            <h2 class="fw-bold text-dark mb-1">Enter OTP Code</h2>
-                            <p class="text-muted fs-7">Check your registered email or phone for the 6-digit verification code</p>
-                        </div>
-
-                        <form method="POST" class="needs-validation">
-                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                            
-                            <div class="mb-4 text-center">
-                                <label class="lp-form-label mb-3">One-Time Security Password</label>
-                                <div class="d-flex justify-content-center align-items-center flex-nowrap gap-1 gap-sm-2 otp-input-group" dir="ltr">
-                                    <?php for($i = 0; $i < 6; $i++): ?>
-                                        <input type="text" inputmode="numeric" class="form-control otp-input bg-light border shadow-sm" maxlength="1" required>
-                                    <?php endfor; ?>
-                                </div>
-                                <input type="hidden" name="otp" id="final_otp" required>
-                            </div>
-
-                            <button type="submit" class="lp-btn-primary w-100 py-3 mb-3 text-center" style="border-radius: 100px;">
-                                Verify & Continue <i class="fa-solid fa-circle-check ms-2"></i>
-                            </button>
-
-                            <div class="text-center mt-3">
-                                <p class="mb-0 text-muted fs-7">Didn't receive the code? <a href="resend_otp.php" class="fw-bold text-primary">Resend OTP / Change Contact</a></p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+<main class="lp-body-scope studio-auth-layout">
+    <div class="studio-auth-layout__context" aria-hidden="true">
+        <div class="studio-auth-layout__context-inner">
+            <span class="studio-kicker studio-kicker--light">Verification</span>
+            <h1>One quick check before you continue.</h1>
+            <p>The one-time code confirms access to the contact details connected to your student account.</p>
+        </div>
+    </div>
+    <section class="studio-auth-layout__form" aria-labelledby="otp-title">
+        <div class="lp-auth-card">
+            <a href="<?php echo SITE_URL; ?>/index.php" class="studio-auth-brand" aria-label="CAVA Studio home">
+                <img src="<?php echo SITE_URL; ?>/assets/images/logo.jpeg" alt="" width="54" height="54">
+                <span>CAVA Studio</span>
+            </a>
+            <div class="mb-4">
+                <p class="studio-kicker mb-2">Enter your code</p>
+                <h2 class="mb-2" id="otp-title">Verify your sign-in</h2>
+                <p class="text-muted mb-0">Enter the six-digit OTP sent to your registered contact.</p>
             </div>
+
+            <form method="POST" class="needs-validation">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                <fieldset class="mb-4 text-center">
+                    <legend class="lp-form-label mb-3">One-time password</legend>
+                    <div class="d-flex justify-content-center align-items-center flex-nowrap gap-1 gap-sm-2 otp-input-group" dir="ltr">
+                        <?php for ($i = 0; $i < 6; $i++): ?>
+                            <input type="text" inputmode="numeric" pattern="[0-9]*" class="form-control otp-input" maxlength="1" autocomplete="one-time-code" aria-label="OTP digit <?php echo $i + 1; ?>" required>
+                        <?php endfor; ?>
+                    </div>
+                    <input type="hidden" name="otp" id="final_otp" required>
+                </fieldset>
+                <button type="submit" class="lp-btn-primary w-100">Verify and continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+                <p class="text-center text-muted small mt-4 mb-0">Didn't receive the code? <a href="resend_otp.php" class="fw-bold">Resend OTP or change contact</a></p>
+            </form>
         </div>
     </section>
-</div>
+</main>
 
 <script src="assets/js/otp.js"></script>
 

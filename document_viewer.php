@@ -38,75 +38,72 @@ $watermarkText = 'CAVA LMS';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $docTitle; ?> - Document Viewer</title>
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/cava-studio-tokens.css?v=2.0">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/cava-studio-document-viewer.css?v=2.0">
     <!-- PDF.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #333;
-            color: #fff;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        #toolbar {
-            background-color: #474747;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-        .controls button {
-            background: #555;
-            color: white;
-            border: 1px solid #777;
-            padding: 6px 12px;
-            margin-right: 5px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .controls button:hover {
-            background: #666;
-        }
-        #pdf-container {
-            flex: 1;
-            overflow: auto;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        canvas {
-            border: 1px solid #000;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            background: white;
-            pointer-events: none;
-        }
-    </style>
 </head>
 <body>
 
-    <div id="toolbar">
-        <div>
-            <strong><?php echo $docTitle; ?></strong>
+    <header id="toolbar">
+        <div class="viewer-identity">
+            <span class="viewer-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 3.75h7l3 3v13.5H7z"></path>
+                    <path d="M14 3.75v3h3M9.75 11h4.5M9.75 14.25h4.5M9.75 17.5h3"></path>
+                </svg>
+            </span>
+            <div class="viewer-heading">
+                <span class="viewer-eyebrow">CAVA Studio &middot; Protected viewer</span>
+                <strong class="viewer-title" title="<?php echo $docTitle; ?>"><?php echo $docTitle; ?></strong>
+            </div>
         </div>
-        <div class="controls">
-            <button id="prev-page">Previous</button>
-            <span id="page-num">1</span> / <span id="page-count">--</span>
-            <button id="next-page">Next</button>
-            <button id="zoom-out">Zoom Out</button>
-            <button id="zoom-in">Zoom In</button>
-        </div>
-    </div>
 
-    <div id="pdf-container">
-        <canvas id="pdf-render"></canvas>
-    </div>
+        <div class="controls" role="toolbar" aria-label="Document controls">
+            <div class="control-cluster" aria-label="Page navigation">
+                <button type="button" id="prev-page" aria-label="Previous page" aria-controls="pdf-container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    <span class="control-label">Previous</span>
+                </button>
+                <span class="page-indicator" role="status" aria-live="polite" aria-label="Current page">
+                    <span id="page-num">1</span> <span aria-hidden="true">/</span> <span id="page-count">--</span>
+                </span>
+                <button type="button" id="next-page" aria-label="Next page" aria-controls="pdf-container">
+                    <span class="control-label">Next</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <span class="control-divider" aria-hidden="true"></span>
+
+            <div class="control-cluster" aria-label="Zoom controls">
+                <button type="button" id="zoom-out" aria-label="Zoom out" aria-controls="pdf-container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                        <path d="M15.2 15.2 20 20M7.5 10.5h6"></path>
+                    </svg>
+                    <span class="control-label">Zoom out</span>
+                </button>
+                <button type="button" id="zoom-in" aria-label="Zoom in" aria-controls="pdf-container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                        <path d="M15.2 15.2 20 20M7.5 10.5h6M10.5 7.5v6"></path>
+                    </svg>
+                    <span class="control-label">Zoom in</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="pdf-container" role="region" aria-label="<?php echo $docTitle; ?> document pages" tabindex="0">
+        <div class="document-stage">
+            <canvas id="pdf-render" role="img" aria-label="Rendered page from <?php echo $docTitle; ?>"></canvas>
+        </div>
+    </main>
 
     <?php echo SecurityHelper::renderAntiPiracyScript(); ?>
 

@@ -175,7 +175,7 @@ $csrfToken = generate_csrf_token();
                         <tr><td colspan="6" class="text-center text-muted">No events listed yet.</td></tr>
                     <?php else: ?>
                         <?php foreach ($events as $index => $ev): 
-                            $imageUrl = 'https://placehold.co/80x50/6f42c1/ffffff?text=Event';
+                            $imageUrl = SITE_URL . '/assets/images/logo.jpeg';
                             if ($ev['event_image']) {
                                 if (file_exists(BASE_PATH . '/uploads/' . $ev['event_image'])) {
                                     $imageUrl = SITE_URL . '/uploads/' . $ev['event_image'];
@@ -187,7 +187,7 @@ $csrfToken = generate_csrf_token();
                             <tr>
                                 <td class="text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                                 <td>
-                                    <img src="<?php echo $imageUrl; ?>" alt="event" class="img-fluid rounded-3 border" style="width: 70px; height: 45px; object-fit: cover;" onerror="this.src='https://placehold.co/80x50/6f42c1/ffffff?text=Event'">
+                                    <img src="<?php echo htmlspecialchars($imageUrl); ?>" alt="Event artwork for <?php echo htmlspecialchars($ev['title']); ?>" class="img-fluid rounded-3 border" style="width: 70px; height: 45px; object-fit: cover;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark"><?php echo htmlspecialchars($ev['title']); ?></div>
@@ -321,7 +321,7 @@ $csrfToken = generate_csrf_token();
                             <div class="mt-3">
                                 <span class="d-block fs-8 text-muted mb-1">Current Banner:</span>
                                 <img src="<?php echo (file_exists(BASE_PATH . '/uploads/' . $editEvent['event_image'])) ? SITE_URL . '/uploads/' . $editEvent['event_image'] : SITE_URL . '/assets/images/' . $editEvent['event_image']; ?>" 
-                                     alt="Current event banner" class="img-fluid rounded-3 border" style="max-width: 150px;" onerror="this.src='https://placehold.co/150x80/6f42c1/ffffff?text=No+Image'">
+                                     alt="Current event banner" class="img-fluid rounded-3 border" style="max-width: 150px;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
                             </div>
                         <?php endif; ?>
                     </div>

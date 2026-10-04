@@ -1,13 +1,12 @@
 <?php
 // Course Card Component
-// Expected variable: $course (array), $isEnrolled (boolean)
+// Expected variables: $course (array), $isEnrolled (boolean), optional $cardIndex.
 
 $thumbnailUrl = SITE_URL . '/assets/images/default_course.jpg';
 if (!empty($course['thumbnail'])) {
     if (file_exists(BASE_PATH . '/uploads/' . $course['thumbnail'])) {
         $thumbnailUrl = SITE_URL . '/uploads/' . $course['thumbnail'];
     } else {
-        // Fallback to demo images or direct
         $thumbnailUrl = SITE_URL . '/assets/images/' . $course['thumbnail'];
     }
 }
@@ -21,66 +20,59 @@ if (isset($cardIndex)) {
         $delayClass = ' lms-delay-2';
     }
 }
+
+$lessonsCount = isset($course['lessons_count'])
+    ? intval($course['lessons_count'])
+    : Course::countLessons($course['id']);
+$courseUrl = SITE_URL . '/course.php?slug=' . urlencode($course['slug']);
+$playerUrl = SITE_URL . '/course_play.php?slug=' . urlencode($course['slug']);
 ?>
-<div class="col-md-6 col-lg-4 mb-4 lms-reveal-card<?php echo $delayClass; ?>">
-    <div class="custom-card">
-        <div class="card-img-wrapper">
-            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" loading="lazy" onerror="this.src='assets/images/study_abroad.jpeg'">
-            <span class="card-badge"><?php echo htmlspecialchars($course['category_name'] ?? 'Course'); ?></span>
-            
-            <div class="card-status-badge">
-                <?php if ($isEnrolled): ?>
-                    <i class="fa-solid fa-lock-open text-success" title="Unlocked"></i>
-                <?php else: ?>
-                    <i class="fa-solid fa-lock text-warning" title="Locked"></i>
-                <?php endif; ?>
-            </div>
+<div class="col-md-6 col-lg-4 mb-4 lms-reveal-card<?php echo $delayClass; ?>" data-studio-reveal>
+    <article class="studio-course-card">
+        <div class="studio-course-card__media">
+            <img src="<?php echo htmlspecialchars($thumbnailUrl); ?>"
+                 alt="<?php echo htmlspecialchars($course['title']); ?>"
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/study_abroad.jpeg';">
+            <span class="studio-course-card__category">
+                <?php echo htmlspecialchars($course['category_name'] ?? 'Course'); ?>
+            </span>
+            <span class="studio-course-card__state" title="<?php echo $isEnrolled ? 'Enrolled' : 'Course details'; ?>">
+                <i class="fa-solid <?php echo $isEnrolled ? 'fa-circle-check' : 'fa-book-open'; ?>" aria-hidden="true"></i>
+                <?php echo $isEnrolled ? 'Enrolled' : 'Course'; ?>
+            </span>
         </div>
-        
-        <div class="card-content">
-            <h4 class="card-title">
-                <a href="<?php echo SITE_URL; ?>/course.php?slug=<?php echo $course['slug']; ?>">
+
+        <div class="studio-course-card__body">
+            <h3 class="studio-course-card__title">
+                <a href="<?php echo htmlspecialchars($courseUrl); ?>">
                     <?php echo htmlspecialchars($course['title']); ?>
                 </a>
-            </h4>
-            <p class="card-text text-muted mb-3 fs-7" style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7rem; line-height: 1.45;">
+            </h3>
+            <p class="studio-course-card__copy">
                 <?php echo htmlspecialchars(strip_tags($course['description'] ?? '')); ?>
             </p>
-            
-            <?php 
-            $lessonsCount = isset($course['lessons_count']) ? intval($course['lessons_count']) : Course::countLessons($course['id']);
-            $hasDuration = isset($course['course_duration']) && intval($course['course_duration']) > 0;
-            ?>
-            <div class="card-meta">
-                <span><i class="fa-regular fa-file-video text-purple"></i> <?php echo $lessonsCount; ?> Lessons</span>
-                <?php if ($hasDuration): ?>
-                    <span><i class="fa-regular fa-clock text-purple"></i> <?php echo intval($course['course_duration']); ?>h</span>
-                <?php endif; ?>
-                <span><i class="fa-solid fa-infinity text-purple"></i> Lifetime Access</span>
+
+            <div class="studio-course-card__meta">
+                <span><i class="fa-regular fa-circle-play" aria-hidden="true"></i><?php echo $lessonsCount; ?> lesson<?php echo $lessonsCount === 1 ? '' : 's'; ?></span>
+                <span><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>Online</span>
             </div>
-            
-            <div class="card-price-row">
-                <div>
-                    <?php if ($isEnrolled): ?>
-                        <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-semibold">
-                            <i class="fa-solid fa-circle-check me-1"></i>Enrolled
-                        </span>
-                    <?php else: ?>
-                        <span class="card-price text-primary">₹<?php echo number_format($course['price'], 2); ?></span>
-                    <?php endif; ?>
-                </div>
-                <div>
-                    <?php if ($isEnrolled): ?>
-                        <a href="<?php echo SITE_URL; ?>/course_play.php?slug=<?php echo $course['slug']; ?>" class="btn btn-primary btn-sm rounded-pill px-3">
-                            <i class="fa-solid fa-play me-1"></i>Start Learning
-                        </a>
-                    <?php else: ?>
-                        <a href="<?php echo SITE_URL; ?>/course.php?slug=<?php echo $course['slug']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                            View Details <i class="fa-solid fa-arrow-right-long ms-1"></i>
-                        </a>
-                    <?php endif; ?>
-                </div>
+
+            <div class="studio-course-card__footer">
+                <?php if ($isEnrolled): ?>
+                    <span class="studio-course-card__enrolled">
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ready to continue
+                    </span>
+                    <a href="<?php echo htmlspecialchars($playerUrl); ?>" class="btn btn-primary btn-sm studio-course-card__action">
+                        Continue <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+                <?php else: ?>
+                    <span class="studio-course-card__price">&#8377;<?php echo number_format((float) $course['price'], 2); ?></span>
+                    <a href="<?php echo htmlspecialchars($courseUrl); ?>" class="btn btn-outline-primary btn-sm studio-course-card__action">
+                        View course <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
-    </div>
+    </article>
 </div>

@@ -225,7 +225,7 @@ $csrfToken = generate_csrf_token();
             <tr><td colspan="8" class="text-center text-muted">No courses created yet.</td></tr>
           <?php else: ?>
             <?php foreach ($courses as $index => $c): 
-              $thumbnailUrl = 'https://placehold.co/80x50/6f42c1/ffffff?text=LMS';
+              $thumbnailUrl = SITE_URL . '/assets/images/logo.jpeg';
               if ($c['thumbnail']) {
                 if (file_exists(BASE_PATH . '/uploads/' . $c['thumbnail'])) {
                   $thumbnailUrl = SITE_URL . '/uploads/' . $c['thumbnail'];
@@ -237,7 +237,7 @@ $csrfToken = generate_csrf_token();
               <tr>
                 <td class="text-center text-muted fw-semibold"><?php echo $offset + $index + 1; ?></td>
                 <td class="text-center">
-                  <img src="<?php echo $thumbnailUrl; ?>" alt="thumbnail" class="img-fluid rounded-3 border" style="width: 70px; height: 45px; object-fit: cover;" onerror="this.src='https://placehold.co/80x50/6f42c1/ffffff?text=LMS'">
+                  <img src="<?php echo htmlspecialchars($thumbnailUrl); ?>" alt="Course thumbnail for <?php echo htmlspecialchars($c['title']); ?>" class="img-fluid rounded-3 border" style="width: 70px; height: 45px; object-fit: cover;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
                 </td>
                 <td class="text-center">
                   <div class="fw-bold text-dark"><?php echo htmlspecialchars($c['title']); ?></div>
@@ -413,7 +413,7 @@ $csrfToken = generate_csrf_token();
               <div class="mt-3">
                 <span class="d-block fs-8 text-muted mb-1">Current Thumbnail:</span>
                 <img src="<?php echo (file_exists(BASE_PATH . '/uploads/' . $editCourse['thumbnail'])) ? SITE_URL . '/uploads/' . $editCourse['thumbnail'] : SITE_URL . '/assets/images/' . $editCourse['thumbnail']; ?>" 
-                   alt="Current thumbnail" class="img-fluid rounded-3 border" style="max-width: 150px;" onerror="this.src='https://placehold.co/150x80/6f42c1/ffffff?text=No+Image'">
+                   alt="Current course thumbnail" class="img-fluid rounded-3 border" style="max-width: 150px;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
               </div>
             <?php endif; ?>
           </div>

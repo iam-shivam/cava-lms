@@ -9,12 +9,14 @@ $course = Course::getBySlug($slug);
 
 if (!$course) {
     require_once __DIR__ . '/views/layout/header.php';
-    echo '<div class="lp-body-scope"><div class="container my-5 text-center"><div class="lp-empty-state">';
-    echo '<div class="lp-empty-icon"><i class="fa-solid fa-graduation-cap"></i></div>';
-    echo '<h2 class="fw-bold text-dark">Course Not Found</h2>';
-    echo '<p class="text-muted mb-4">The course you are looking for does not exist or has been disabled.</p>';
-    echo '<a href="index.php" class="lp-btn-pill-dark">Back to Home <i class="fa-solid fa-arrow-right ms-1"></i></a>';
-    echo '</div></div></div>';
+    echo '<main class="lp-body-scope studio-detail-page">';
+    echo '<section class="studio-detail-section" aria-labelledby="course-not-found-title"><div class="container">';
+    echo '<div class="studio-content-card studio-access-state text-center">';
+    echo '<div class="lp-empty-icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></div>';
+    echo '<h1 id="course-not-found-title">Course Not Found</h1>';
+    echo '<p>The course you are looking for does not exist or has been disabled.</p>';
+    echo '<a href="index.php" class="lp-btn-pill-dark">Back to Home <i class="fa-solid fa-arrow-right ms-1" aria-hidden="true"></i></a>';
+    echo '</div></div></section></main>';
     require_once __DIR__ . '/views/layout/footer.php';
     exit;
 }
@@ -34,7 +36,7 @@ if ($userId) {
 $syllabus = Course::getSyllabus($courseId);
 $totalLessons = Course::countLessons($courseId);
 
-$thumbnailUrl = SITE_URL . '/assets/images/default_course.jpg';
+$thumbnailUrl = SITE_URL . '/assets/images/study_abroad.jpeg';
 if (!empty($course['thumbnail'])) {
     if (file_exists(BASE_PATH . '/uploads/' . $course['thumbnail'])) {
         $thumbnailUrl = SITE_URL . '/uploads/' . $course['thumbnail'];
@@ -51,9 +53,8 @@ $pageImage       = $thumbnailUrl;
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="lp-body-scope">
-    <!-- Header Hero Banner for Course Details -->
-    <section class="lp-page-hero">
+<main class="lp-body-scope studio-detail-page" aria-labelledby="course-detail-title">
+    <section class="studio-detail-hero">
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -62,40 +63,38 @@ require_once __DIR__ . '/views/layout/header.php';
                     <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($course['category_name']); ?></li>
                 </ol>
             </nav>
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <span class="badge bg-primary-light text-white px-3 py-2 rounded-pill fw-semibold fs-8" style="background: rgba(255,255,255,0.15) !important;">
-                    <i class="fa-regular fa-folder-open me-1"></i><?php echo htmlspecialchars($course['category_name']); ?>
+            <div class="studio-detail-meta">
+                <span class="studio-meta-chip">
+                    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                    <?php echo htmlspecialchars($course['category_name']); ?>
                 </span>
-                <span class="badge bg-primary-light text-white px-3 py-2 rounded-pill fw-semibold fs-8" style="background: rgba(255,255,255,0.15) !important;">
-                    <i class="fa-regular fa-circle-play me-1"></i><?php echo $totalLessons; ?> Lessons
+                <span class="studio-meta-chip">
+                    <i class="fa-regular fa-circle-play" aria-hidden="true"></i>
+                    <?php echo $totalLessons; ?> <?php echo (int) $totalLessons === 1 ? 'Lesson' : 'Lessons'; ?>
                 </span>
             </div>
-            <h1 class="lp-page-hero-title"><?php echo htmlspecialchars($course['title']); ?></h1>
+            <h1 id="course-detail-title"><?php echo htmlspecialchars($course['title']); ?></h1>
         </div>
     </section>
 
-    <!-- Content Section -->
-    <section class="py-5 bg-white">
+    <section class="studio-detail-section">
         <div class="container">
-            <div class="row g-4">
-                <!-- Main details column -->
+            <div class="row g-4 g-xl-5">
                 <div class="col-lg-8">
-                    <!-- About Section -->
-                    <div class="mb-5">
-                        <h3 class="fw-bold mb-3 text-dark">About This Course</h3>
-                        <div class="custom-card border-0 bg-white p-4 p-md-5 shadow-sm rounded-4">
-                            <p style="white-space: pre-line; font-size: 1.05rem; line-height: 1.7; color: var(--wa-slate-500);">
-                                <?php echo htmlspecialchars($course['description']); ?>
-                            </p>
+                    <section class="studio-detail-block" aria-labelledby="course-about-heading">
+                        <h2 id="course-about-heading">About This Course</h2>
+                        <div class="studio-content-card">
+                            <p class="studio-detail-copy"><?php echo htmlspecialchars($course['description']); ?></p>
                         </div>
-                    </div>
-                    
-                    <!-- Syllabus Accordion Section -->
-                    <div class="mb-5">
-                        <h3 class="fw-bold mb-3 text-dark">Course Syllabus</h3>
-                        <div class="accordion" id="syllabusAccordion">
+                    </section>
+
+                    <section class="studio-detail-block" aria-labelledby="course-syllabus-heading">
+                        <h2 id="course-syllabus-heading">Course Syllabus</h2>
+                        <div class="accordion studio-syllabus" id="syllabusAccordion">
                             <?php if (empty($syllabus)): ?>
-                                <p class="text-muted">No content available for this course yet.</p>
+                                <div class="studio-content-card studio-access-state">
+                                    <p class="mb-0">No content is available for this course yet.</p>
+                                </div>
                             <?php else: ?>
                                 <?php foreach ($syllabus as $index => $item): 
                                     $section = $item['section'];
@@ -103,31 +102,31 @@ require_once __DIR__ . '/views/layout/header.php';
                                     $collapseId = "collapseSec_" . $section['id'];
                                     $headingId = "headingSec_" . $section['id'];
                                 ?>
-                                    <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                                    <div class="accordion-item studio-syllabus-item">
                                         <h2 class="accordion-header" id="<?php echo $headingId; ?>">
-                                            <button class="accordion-button bg-white fw-bold py-3 fs-5" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="true" aria-controls="<?php echo $collapseId; ?>">
-                                                <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                                            <button class="accordion-button studio-syllabus-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $collapseId; ?>" aria-expanded="true" aria-controls="<?php echo $collapseId; ?>">
+                                                <span class="studio-syllabus-heading">
                                                     <span><?php echo htmlspecialchars($section['title']); ?></span>
-                                                    <span class="badge bg-primary-light text-primary rounded-pill fs-7 fw-normal" style="background: rgba(111,66,193,0.08) !important; color: var(--wa-highlight) !important;"><?php echo count($videos); ?> Lessons</span>
-                                                </div>
+                                                    <span class="studio-meta-chip"><?php echo count($videos); ?> <?php echo count($videos) === 1 ? 'Lesson' : 'Lessons'; ?></span>
+                                                </span>
                                             </button>
                                         </h2>
                                         <div id="<?php echo $collapseId; ?>" class="accordion-collapse collapse show" aria-labelledby="<?php echo $headingId; ?>" data-bs-parent="#syllabusAccordion">
-                                            <div class="accordion-body bg-white border-top p-0">
+                                            <div class="accordion-body p-0">
                                                 <div class="list-group list-group-flush">
                                                     <?php foreach ($videos as $video): ?>
-                                                        <div class="list-group-item d-flex align-items-center justify-content-between py-3 px-4 border-0 border-bottom">
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                <i class="fa-regular fa-circle-play text-primary fs-5"></i>
-                                                                <span class="fw-medium text-dark"><?php echo htmlspecialchars($video['title']); ?></span>
+                                                        <div class="list-group-item studio-lesson-row">
+                                                            <div class="studio-lesson-row__title">
+                                                                <i class="fa-regular fa-circle-play" aria-hidden="true"></i>
+                                                                <span><?php echo htmlspecialchars($video['title']); ?></span>
                                                             </div>
                                                             <div>
                                                                 <?php if ($isEnrolled): ?>
-                                                                    <a href="course_play.php?slug=<?php echo $course['slug']; ?>&video_id=<?php echo $video['id']; ?>" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                                                        <i class="fa-solid fa-play me-1"></i>Play
+                                                                    <a href="course_play.php?slug=<?php echo $course['slug']; ?>&video_id=<?php echo $video['id']; ?>" class="btn btn-outline-primary btn-sm">
+                                                                        <i class="fa-solid fa-play me-1" aria-hidden="true"></i>Play
                                                                     </a>
                                                                 <?php else: ?>
-                                                                    <i class="fa-solid fa-lock text-muted" title="Locked"></i>
+                                                                    <i class="fa-solid fa-lock" title="Locked" aria-label="Locked"></i>
                                                                 <?php endif; ?>
                                                             </div>
                                                         </div>
@@ -139,76 +138,71 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                    </div>
+                    </section>
                 </div>
-                
-                <!-- Sidebar Checkout/Enrollment Card Column -->
                 <div class="col-lg-4">
-                    <div class="sticky-top" style="top: 90px; z-index: 100;">
-                        <div class="custom-card sticky-sidebar-card border-0 p-4 p-md-5 shadow-sm rounded-4 bg-white">
-                            <img src="<?php echo $thumbnailUrl; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="img-fluid rounded-4 mb-4 shadow-sm" onerror="this.src='https://placehold.co/600x340/6f42c1/ffffff?text=Course+Thumbnail'">
-                            
+                    <aside class="studio-purchase-card" aria-label="Course access and payment">
+                            <img src="<?php echo htmlspecialchars($thumbnailUrl, ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="studio-purchase-card__image" onerror="this.onerror=null;this.src='<?php echo htmlspecialchars(SITE_URL . '/assets/images/study_abroad.jpeg', ENT_QUOTES); ?>'">
+
                             <?php if ($isEnrolled): ?>
-                                <div class="alert alert-success text-center border-0 mb-4 rounded-4 py-3">
-                                    <h5 class="alert-heading fw-bold mb-1"><i class="fa-solid fa-circle-check me-2"></i>You are Enrolled</h5>
-                                    <p class="mb-0 fs-7">Access to all course content is unlocked.</p>
+                                <div class="studio-access-state studio-access-state--active">
+                                    <h2><i class="fa-solid fa-circle-check" aria-hidden="true"></i>You are enrolled</h2>
+                                    <p>Course content is available through the course player.</p>
                                 </div>
-                                <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="lp-btn-primary btn-enroll-sweep w-100 py-3 text-center" style="border-radius: 100px;">
-                                    <i class="fa-solid fa-circle-play me-2"></i>Go to Course Player
+                                <a href="course_play.php?slug=<?php echo $course['slug']; ?>" class="lp-btn-primary btn-enroll-sweep studio-purchase-action w-100 text-center">
+                                    <i class="fa-solid fa-circle-play me-2" aria-hidden="true"></i>Go to Course Player
                                 </a>
                             <?php else: ?>
-                                <div class="mb-4 text-center text-lg-start">
-                                    <span class="text-muted d-block mb-1 fs-7">Course Fee</span>
-                                    <span class="h1 fw-extrabold text-primary m-0">₹<?php echo number_format($course['price'], 2); ?></span>
+                                <div class="studio-purchase-card__summary">
+                                    <span class="studio-purchase-card__label">Course fee</span>
+                                    <strong class="studio-purchase-card__price">&#8377;<?php echo number_format($course['price'], 2); ?></strong>
                                     <?php if ($totalPaid > 0 && $remainingBalance > 0): ?>
-                                        <span class="d-block text-warning fw-bold mt-2 fs-7">Remaining Balance: ₹<?php echo number_format($remainingBalance, 2); ?></span>
+                                        <span class="studio-purchase-card__balance">Remaining balance: &#8377;<?php echo number_format($remainingBalance, 2); ?></span>
                                     <?php endif; ?>
-                                    <div class="mt-2">
+                                    <div class="studio-detail-meta">
                                         <?php if ($course['course_duration'] > 0): ?>
-                                            <span class="badge bg-info-light text-info rounded-pill px-3 py-1 fw-semibold">Duration: <?php echo $course['course_duration']; ?> Months</span>
+                                            <span class="studio-meta-chip">Duration: <?php echo $course['course_duration']; ?> <?php echo $course['course_duration'] == 1 ? 'month' : 'months'; ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-success-light text-success rounded-pill px-3 py-1 fw-semibold">Lifetime Access</span>
+                                            <span class="studio-meta-chip">Duration not specified</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
-                                
-                                <div class="p-3 bg-light rounded-4 mb-4 d-flex align-items-center gap-3">
-                                    <i class="fa-solid fa-lock text-primary fs-4"></i>
-                                    <div class="fs-7 text-muted">Purchase this course to unlock all sections and video tutorials instantly.</div>
+
+                                <div class="studio-access-state studio-access-state--locked">
+                                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                                    <p>Complete enrollment to access the course lessons and resources.</p>
                                 </div>
 
                                 <?php if ($userId): ?>
-                                    <!-- Checkout with Razorpay Form -->
                                     <form action="payment_process.php" method="POST">
                                         <input type="hidden" name="item_type" value="course">
                                         <input type="hidden" name="item_id" value="<?php echo $courseId; ?>">
-                                        
+
                                         <?php if ($course['allow_partial_payment'] && $remainingBalance > 0): 
                                             $minPayment = min($course['min_installment'], $remainingBalance);
                                         ?>
                                             <div class="mb-3 text-start">
                                                 <label for="amount_to_pay" class="lp-form-label">Amount to Pay (INR)</label>
                                                 <input type="number" step="0.01" min="<?php echo $minPayment; ?>" max="<?php echo $remainingBalance; ?>" class="form-control lp-form-control" id="amount_to_pay" name="amount_to_pay" value="<?php echo $remainingBalance; ?>" required>
-                                                <small class="text-muted fs-8 mt-1 d-block">Min: ₹<?php echo number_format($minPayment, 2); ?> | Max: ₹<?php echo number_format($remainingBalance, 2); ?></small>
+                                                <small class="form-text">Min: &#8377;<?php echo number_format($minPayment, 2); ?> | Max: &#8377;<?php echo number_format($remainingBalance, 2); ?></small>
                                             </div>
                                         <?php endif; ?>
 
-                                        <button type="submit" class="lp-btn-primary w-100 py-3 text-center" style="border-radius: 100px;">
-                                            <i class="fa-solid fa-cart-shopping me-2"></i><?php echo ($totalPaid > 0) ? 'Pay Remaining' : 'Buy Now'; ?>
+                                        <button type="submit" class="lp-btn-primary studio-purchase-action w-100 text-center">
+                                            <i class="fa-solid fa-cart-shopping me-2" aria-hidden="true"></i><?php echo ($totalPaid > 0) ? 'Pay Remaining' : 'Buy Now'; ?>
                                         </button>
                                     </form>
                                 <?php else: ?>
-                                    <a href="login.php" class="lp-btn-primary w-100 py-3 text-center" style="border-radius: 100px;">
-                                        <i class="fa-solid fa-right-to-bracket me-2"></i>Login to Buy Course
+                                    <a href="login.php" class="lp-btn-primary studio-purchase-action w-100 text-center">
+                                        <i class="fa-solid fa-right-to-bracket me-2" aria-hidden="true"></i>Login to Buy Course
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
-                        </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
         </div>
     </section>
-</div>
+</main>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

@@ -9,9 +9,9 @@ $pageDescription = 'Privacy Policy of Career Abroad Visa Academy (CAVA LMS). Lea
 require_once __DIR__ . '/views/layout/header.php'; 
 ?>
 
-<div class="lp-body-scope">
+<main class="lp-body-scope studio-public-main studio-policy-page">
     <!-- Page Hero Banner -->
-    <section class="lp-page-hero">
+    <section class="lp-page-hero studio-detail-hero studio-policy-hero">
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -19,19 +19,19 @@ require_once __DIR__ . '/views/layout/header.php';
                     <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
                 </ol>
             </nav>
-            <h1 class="lp-page-hero-title">Privacy Policy</h1>
+            <h1 class="lp-page-hero-title studio-detail-hero__title">Privacy Policy</h1>
             <p class="lp-page-hero-subtitle">How we collect, use, and protect your personal information.</p>
         </div>
     </section>
 
     <!-- Privacy Policy Content -->
-    <section class="py-5 bg-white">
+    <section class="studio-policy-section">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="custom-card border-0 shadow-sm p-4 p-md-5 bg-white rounded-4">
+                    <article class="studio-policy-card">
                         
-                        <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="d-flex align-items-center gap-3 mb-4 studio-policy-card__header">
                             <div class="lp-avatar-initials rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5" style="width: 48px; height: 48px; flex-shrink: 0;">
                                 <i class="fa-solid fa-shield-halved"></i>
                             </div>
@@ -41,7 +41,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             </div>
                         </div>
 
-                        <div class="privacy-content" style="line-height: 1.85; color: #444;">
+                        <div class="privacy-content studio-policy-content" style="line-height: 1.85; color: #444;">
 
                             <p class="fs-6">
                                 Career Abroad Visa Academy respects your privacy and is committed to protecting your personal information. This Privacy Policy explains what we collect, why we collect it, how we use it, and the choices you have.
@@ -97,17 +97,17 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <a href="mailto:abroadcareerexpert9@gmail.com" class="text-primary fw-semibold text-decoration-none">abroadcareerexpert9@gmail.com</a>.
                             </p>
 
-                            <div class="alert alert-light border rounded-4 mt-4 fs-7" style="background: #f8f6ff;">
+                            <div class="alert alert-light border rounded-4 mt-4 fs-7 studio-policy-notice" style="background: #f8f6ff;">
                                 <i class="fa-solid fa-circle-info text-primary me-2"></i>
                                 This policy may be updated periodically, and continued use of our website means you accept the updated terms.
                             </div>
                         </div>
 
-                    </div>
+                    </article>
                 </div>
             </div>
         </div>
     </section>
-</div>
+</main>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

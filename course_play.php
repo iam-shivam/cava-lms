@@ -118,7 +118,7 @@ $activeVideoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="container-fluid py-4" style="background-color: var(--bg-gray); min-height: 90vh;">
+<main class="container-fluid py-4 studio-player-shell" aria-labelledby="studio-player-course-title">
     <div class="container">
         
         <div class="row mb-4 align-items-center">
@@ -127,7 +127,8 @@ require_once __DIR__ . '/views/layout/header.php';
                     <a href="dashboard.php" class="text-decoration-none text-muted mb-2 d-inline-block">
                         <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
                     </a>
-                    <h2 class="fw-bold m-0"><?php echo htmlspecialchars($course['title']); ?></h2>
+                    <p class="studio-kicker mb-1">Course player</p>
+                    <h1 class="h2 fw-bold m-0" id="studio-player-course-title"><?php echo htmlspecialchars($course['title']); ?></h1>
                 </div>
                 <div>
                     <button type="button" id="lms-sidebar-toggle" class="btn btn-outline-secondary btn-sm rounded-pill px-3 shadow-sm" aria-controls="coursePlayerSidebar" aria-expanded="true" aria-label="Toggle course navigation">
@@ -355,7 +356,7 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
 
     </div>
-</div>
+</main>
 
 
 <script>

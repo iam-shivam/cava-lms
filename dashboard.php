@@ -117,7 +117,7 @@ $csrfToken = generate_csrf_token();
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="dashboard-wrapper">
+<main class="dashboard-wrapper" aria-labelledby="student-dashboard-title">
     <div class="container">
 
         <!-- Welcome Banner -->
@@ -129,8 +129,9 @@ require_once __DIR__ . '/views/layout/header.php';
                     <div class="dash-avatar-initials"><?php echo $initials; ?></div>
                 <?php endif; ?>
                 <div>
-                    <h2 class="fw-bold mb-1">Welcome back, <?php echo htmlspecialchars($user['full_name']); ?>!</h2>
-                    <p>Track your enrolled courses, webinars, and support queries from here.</p>
+                    <p class="studio-kicker studio-kicker--light mb-1">Student dashboard</p>
+                    <h1 class="h2 fw-bold mb-1" id="student-dashboard-title">Welcome back, <?php echo htmlspecialchars($user['full_name']); ?>!</h1>
+                    <p>Track your enrolled courses, orders, profile, and support queries from here.</p>
                 </div>
                 <div class="ms-auto d-none d-md-block">
                     <span class="badge px-3 py-2 rounded-pill fw-semibold"
@@ -142,7 +143,7 @@ require_once __DIR__ . '/views/layout/header.php';
         </div>
 
         <!-- Stats Row -->
-        <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
+        <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
             <div class="col">
                 <div class="dash-stat-card animate-fade-in-up">
                     <div class="dash-stat-icon purple"><i class="fa-solid fa-book-open"></i></div>
@@ -261,7 +262,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             $userCourseProgress = array_column($progressRows, 'count', 'course_id');
                             ?>
                             <?php foreach ($purchasedCourses as $course):
-                                $thumbnailUrl = 'https://placehold.co/160x120/6f42c1/ffffff?text=Course';
+                                $thumbnailUrl = SITE_URL . '/assets/images/study_abroad.jpeg';
                                 if ($course['thumbnail']) {
                                     $thumbnailUrl = (file_exists(BASE_PATH . '/uploads/' . $course['thumbnail']))
                                         ? SITE_URL . '/uploads/' . $course['thumbnail']
@@ -279,7 +280,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 ?>
                                 <div class="dash-course-row">
                                     <img src="<?php echo $thumbnailUrl; ?>" alt="thumbnail" class="dash-course-thumb"
-                                        onerror="this.src='https://placehold.co/160x120/6f42c1/ffffff?text=Course'">
+                                        onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/study_abroad.jpeg'">
                                     <div class="dash-course-body">
                                         <div class="dash-course-title"><?php echo htmlspecialchars($course['title']); ?></div>
                                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -619,7 +620,7 @@ require_once __DIR__ . '/views/layout/header.php';
             </div><!-- /col-lg-9 -->
         </div><!-- /row -->
     </div><!-- /container -->
-</div><!-- /dashboard-wrapper -->
+</main><!-- /dashboard-wrapper -->
 
 <script>
     function previewAvatar(input) {

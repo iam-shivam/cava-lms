@@ -1,0 +1,146 @@
+/*
+ * CAVA Studio — design tokens
+ * Loaded after the legacy stylesheets so the redesign remains reversible.
+ */
+
+:root {
+    color-scheme: light;
+
+    /* Brand */
+    --studio-green-950: #0b241b;
+    --studio-green-900: #103428;
+    --studio-green-800: #174c3b;
+    --studio-green-700: #1f614b;
+    --studio-green-600: #28765b;
+    --studio-lime-400: #c8ef78;
+    --studio-lime-300: #d9f79c;
+    --studio-lime-100: #effbd8;
+
+    /* Warm neutrals */
+    --studio-ink: #17211c;
+    --studio-ink-soft: #45534b;
+    --studio-muted: #68766e;
+    --studio-canvas: #f5f2e9;
+    --studio-canvas-deep: #ece7dc;
+    --studio-surface: #fffdf8;
+    --studio-surface-raised: #ffffff;
+    --studio-border: #d8d5ca;
+    --studio-border-strong: #b9b8ae;
+
+    /* Semantic */
+    --studio-success: #287a50;
+    --studio-success-soft: #e6f5ec;
+    --studio-warning: #a45b13;
+    --studio-warning-soft: #fff1dc;
+    --studio-danger: #b43b35;
+    --studio-danger-soft: #fdecea;
+    --studio-info: #2b6478;
+    --studio-info-soft: #e8f3f6;
+
+    /* Type */
+    --studio-font-display: "Manrope", "Inter", system-ui, sans-serif;
+    --studio-font-body: "DM Sans", "Inter", system-ui, sans-serif;
+    --studio-display-xl: clamp(3rem, 7vw, 6.75rem);
+    --studio-display-lg: clamp(2.35rem, 5vw, 4.75rem);
+    --studio-display-md: clamp(2rem, 3.5vw, 3.5rem);
+    --studio-heading-lg: clamp(1.65rem, 2.6vw, 2.5rem);
+    --studio-heading-md: clamp(1.3rem, 1.8vw, 1.75rem);
+    --studio-body-lg: clamp(1.05rem, 1.2vw, 1.18rem);
+
+    /* Layout */
+    --studio-container: 1240px;
+    --studio-header-height: 76px;
+    --studio-space-1: 0.25rem;
+    --studio-space-2: 0.5rem;
+    --studio-space-3: 0.75rem;
+    --studio-space-4: 1rem;
+    --studio-space-5: 1.25rem;
+    --studio-space-6: 1.5rem;
+    --studio-space-8: 2rem;
+    --studio-space-10: 2.5rem;
+    --studio-space-12: 3rem;
+    --studio-space-16: 4rem;
+    --studio-space-20: 5rem;
+    --studio-space-24: 6rem;
+
+    /* Shape and depth */
+    --studio-radius-sm: 8px;
+    --studio-radius-md: 14px;
+    --studio-radius-lg: 22px;
+    --studio-radius-xl: 30px;
+    --studio-radius-pill: 999px;
+    --studio-shadow-sm: 0 1px 2px rgba(16, 52, 40, 0.06);
+    --studio-shadow-md: 0 12px 32px rgba(16, 52, 40, 0.09);
+    --studio-shadow-lg: 0 28px 70px rgba(11, 36, 27, 0.14);
+    --studio-focus: 0 0 0 4px rgba(40, 118, 91, 0.18);
+    --studio-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --studio-transition: 220ms var(--studio-ease);
+
+    /* Compatibility mapping for existing application styles */
+    --primary: var(--studio-green-800);
+    --primary-hover: var(--studio-green-900);
+    --primary-light: var(--studio-lime-100);
+    --dark: var(--studio-ink);
+    --light: var(--studio-surface);
+    --bg-gray: var(--studio-canvas);
+    --border-color: var(--studio-border);
+    --text-main: var(--studio-ink);
+    --text-muted: var(--studio-muted);
+    --accent: var(--studio-lime-400);
+    --accent-light: var(--studio-lime-100);
+    --success: var(--studio-success);
+    --success-light: var(--studio-success-soft);
+
+    --lms-black: var(--studio-ink);
+    --lms-white: var(--studio-surface);
+    --lms-gray-50: var(--studio-canvas);
+    --lms-gray-100: var(--studio-canvas-deep);
+    --lms-gray-200: var(--studio-border);
+    --lms-gray-500: var(--studio-muted);
+    --lms-gray-700: var(--studio-ink-soft);
+    --lms-purple: var(--studio-green-800);
+    --lms-purple-dark: var(--studio-green-900);
+
+    --wa-primary: var(--studio-green-900);
+    --wa-accent: var(--studio-green-800);
+    --wa-highlight: var(--studio-green-800);
+    --wa-light: var(--studio-surface);
+    --wa-dark: var(--studio-ink);
+    --wa-slate-500: var(--studio-muted);
+    --wa-bg-light: var(--studio-canvas);
+    --wa-border: var(--studio-border);
+    --cava-purple: var(--studio-green-800);
+    --cava-purple-light: rgba(23, 76, 59, 0.09);
+    --cava-nav-bg: rgba(255, 253, 248, 0.94);
+
+    --font-heading: var(--studio-font-display);
+    --font-body: var(--studio-font-body);
+    --font-sans: var(--studio-font-body);
+
+    /* Bootstrap mapping */
+    --bs-primary: var(--studio-green-800);
+    --bs-primary-rgb: 23, 76, 59;
+    --bs-secondary: var(--studio-ink-soft);
+    --bs-secondary-rgb: 69, 83, 75;
+    --bs-success: var(--studio-success);
+    --bs-success-rgb: 40, 122, 80;
+    --bs-warning: var(--studio-warning);
+    --bs-warning-rgb: 164, 91, 19;
+    --bs-danger: var(--studio-danger);
+    --bs-danger-rgb: 180, 59, 53;
+    --bs-info: var(--studio-info);
+    --bs-info-rgb: 43, 100, 120;
+    --bs-body-font-family: var(--studio-font-body);
+    --bs-body-color: var(--studio-ink);
+    --bs-body-bg: var(--studio-canvas);
+    --bs-border-color: var(--studio-border);
+    --bs-link-color: var(--studio-green-800);
+    --bs-link-hover-color: var(--studio-green-900);
+}
+@media (max-width: 767.98px) {
+    :root {
+        --studio-header-height: 66px;
+        --studio-space-20: 4rem;
+        --studio-space-24: 4.5rem;
+    }
+}

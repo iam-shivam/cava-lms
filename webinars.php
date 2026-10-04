@@ -38,12 +38,12 @@ try {
 }
 
 $pageTitle       = 'Live Webinars';
-$pageDescription = 'Join live interactive webinars with certified consultants on CAVA LMS. Learn from experts, ask questions, and get your immigration queries resolved.';
+$pageDescription = 'Browse upcoming live webinars on CAVA LMS and review their schedule and registration details.';
 
 require_once __DIR__ . '/views/layout/header.php';
 ?>
 
-<div class="lp-body-scope">
+<main class="lp-body-scope" id="main-content">
     <!-- Page Hero Banner -->
     <section class="lp-page-hero">
         <div class="container">
@@ -56,7 +56,7 @@ require_once __DIR__ . '/views/layout/header.php';
             <h1 class="lp-page-hero-title">
                 Live Webinars
             </h1>
-            <p class="lp-page-hero-subtitle">Interact live with regulated consultants and career advisors. Ask questions in real-time and get personalized guidance.</p>
+            <p class="lp-page-hero-subtitle">Browse scheduled live sessions and review the date, time, and registration details.</p>
         </div>
     </section>
 
@@ -74,7 +74,7 @@ require_once __DIR__ . '/views/layout/header.php';
                             if ($sortBy !== 'soonest') $q['sort'] = $sortBy;
                             echo !empty($q) ? '?' . http_build_query($q) : ''; 
                            ?>" 
-                           class="btn lp-filter-link active">
+                           class="btn lp-filter-link filter-link active">
                             <i class="fa-solid fa-video me-1"></i> Upcoming Webinars
                         </a>
                     </div>
@@ -93,14 +93,12 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <span class="input-group-text p-0 me-2"><i class="fa-solid fa-magnifying-glass"></i></span>
                                 <input type="text" class="form-control p-0" id="search" name="search" 
                                        value="<?php echo htmlspecialchars($search); ?>" placeholder="Search webinars..." autocomplete="off">
-                                <?php if (!empty($search)): ?>
-                                    <a href="webinars.php" class="text-muted ms-2"><i class="fa-solid fa-xmark"></i></a>
-                                <?php endif; ?>
+                                <button type="button" id="search-clear" class="btn p-0 border-0 text-muted ms-2" aria-label="Clear webinar search"<?php echo empty($search) ? ' style="display: none;"' : ''; ?>><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                             </div>
                         </form>
 
                         <!-- Sorting Select -->
-                        <select class="form-select form-select-sm bg-white border fw-semibold rounded-pill px-3 py-2 text-dark shadow-sm" style="width: auto; min-width: 120px;" onchange="location = this.value;">
+                        <select class="form-select form-select-sm sort-select" aria-label="Sort webinars" style="width: auto; min-width: 120px;" onchange="location = this.value;">
                             <?php 
                             $baseQuery = [];
                             if ($search) $baseQuery['search'] = $search;
@@ -126,7 +124,7 @@ require_once __DIR__ . '/views/layout/header.php';
                                 <i class="fa-solid fa-video-slash"></i>
                             </div>
                             <h3 class="fw-bold text-dark mb-2">No Webinars Found</h3>
-                            <p class="text-muted mb-4" style="max-width: 440px; margin: 0 auto;">No live masterclasses match your search criteria. Check back soon for new scheduled sessions.</p>
+                            <p class="text-muted mb-4" style="max-width: 440px; margin: 0 auto;">No upcoming webinars match your search. Try another term or check back later.</p>
                             <a href="webinars.php" class="lp-btn-pill-dark">
                                 Clear Filters <i class="fa-solid fa-rotate-left ms-1"></i>
                             </a>
@@ -141,6 +139,6 @@ require_once __DIR__ . '/views/layout/header.php';
             </div>
         </div>
     </section>
-</div>
+</main>
 
 <?php require_once __DIR__ . '/views/layout/footer.php'; ?>

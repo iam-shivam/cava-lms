@@ -103,19 +103,23 @@ window.confirmAction = function(event, message, url) {
 };
 document.addEventListener('DOMContentLoaded', function () {
     // 1. Tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
 
     // 2. Alerts Auto Fade
     var alerts = document.querySelectorAll('.alert-dismissible');
-    alerts.forEach(function (alert) {
-        setTimeout(function () {
-            var bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
+    if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+        alerts.forEach(function (alert) {
+            setTimeout(function () {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
+    }
 
     // 3. Toasts initialization (from config.php)
     var toastEl = document.getElementById("flashToast");
@@ -168,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 "email": rzpData.getAttribute('data-email')
             },
             "theme": {
-                "color": "#6f42c1"
+                "color": getComputedStyle(document.documentElement).getPropertyValue('--studio-green-800').trim() || '#174c3b'
             },
             "modal": {
                 "ondismiss": function(){
@@ -202,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // This ensures clicking category tabs or changing sort after searching still works correctly
         function syncFilterLinks(searchValue) {
             // Sync .filter-link tab hrefs
-            document.querySelectorAll('a.filter-link').forEach(function(link) {
+            document.querySelectorAll('a.filter-link, a.lp-filter-link').forEach(function(link) {
                 try {
                     var url = new URL(link.href);
                     if (searchValue && searchValue.trim() !== '') {
@@ -261,6 +265,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     if (currentGrid && newGrid) {
                         currentGrid.innerHTML = newGrid.innerHTML;
+
+                        // AJAX-inserted cards must not remain in the legacy pre-reveal state.
+                        // The initial observers run only once at DOMContentLoaded, so reveal
+                        // the replacement fragment after it has entered the document.
+                        window.requestAnimationFrame(function () {
+                            currentGrid.querySelectorAll('.lms-reveal, .lms-reveal-hero-img, .lms-reveal-card, [data-studio-reveal]').forEach(function (element) {
+                                element.classList.add('is-visible');
+                            });
+                        });
                     }
                     
                     // Push new URL to browser history
@@ -342,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 overlay.style.alignItems = 'center';
                 
                 // Add a large spinner in the center of the screen
-                overlay.innerHTML = '<i class="comet-spinner" style="font-size: 3rem; color: #6f42c1;"></i><h5 class="mt-3 text-dark fw-bold">Please wait...</h5>';
+                overlay.innerHTML = '<i class="comet-spinner text-primary" style="font-size: 3rem;"></i><h5 class="mt-3 text-dark fw-bold">Please wait...</h5>';
                 document.body.appendChild(overlay);
                 
                 // Block keyboard interactions (Tab, Enter, etc.) while processing
@@ -464,7 +477,8 @@ function initHomePageRevealAnimations() {
     var revealElements = document.querySelectorAll('.lms-reveal, .lms-reveal-hero-img, .lms-reveal-card');
     if (!revealElements.length) return;
 
-    if (!('IntersectionObserver' in window)) {
+    var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || !('IntersectionObserver' in window)) {
         revealElements.forEach(function(el) {
             el.classList.add('is-visible');
         });

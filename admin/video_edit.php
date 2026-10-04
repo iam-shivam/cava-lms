@@ -188,7 +188,7 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
     <a href="videos.php?course_id=<?php echo $courseId; ?>" class="text-decoration-none text-muted mb-2 d-inline-block">
         <i class="fa-solid fa-arrow-left"></i> Back to Syllabus
     </a>
-    <h1 class="h3 fw-bold text-dark">Edit Video Lesson</h1>
+    <h2 class="h3 fw-bold text-dark">Edit Video Lesson</h2>
 </div>
 
 <div class="row justify-content-center">
@@ -221,7 +221,7 @@ $videoDocuments = DB::fetchAll("SELECT * FROM video_documents WHERE video_id = ?
                     <?php if (!empty($video['thumbnail']) && file_exists(BASE_PATH . '/' . $video['thumbnail'])): ?>
                         <div class="mb-2">
                             <span class="d-block fs-8 text-muted mb-1">Current Thumbnail:</span>
-                            <img src="<?php echo SITE_URL . '/' . htmlspecialchars($video['thumbnail']); ?>" alt="Current thumbnail" class="img-fluid rounded-3 border" style="max-width:200px;max-height:120px;object-fit:cover;" onerror="this.src='https://placehold.co/200x120/6f42c1/ffffff?text=No+Thumbnail'">
+                            <img src="<?php echo SITE_URL . '/' . htmlspecialchars($video['thumbnail']); ?>" alt="Current lesson thumbnail" class="img-fluid rounded-3 border" style="max-width:200px;max-height:120px;object-fit:cover;" onerror="this.onerror=null;this.src='<?php echo SITE_URL; ?>/assets/images/logo.jpeg'">
                         </div>
                     <?php endif; ?>
                     <label for="lesson_thumbnail" class="form-label fw-semibold mt-1"><?php echo !empty($video['thumbnail']) ? 'Replace Thumbnail (Optional)' : 'Upload Thumbnail (Optional)'; ?></label>

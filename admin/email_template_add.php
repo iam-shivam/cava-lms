@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="email_templates.php" class="btn btn-link text-decoration-none p-0 mb-2 d-inline-flex align-items-center">
             <i class="fa-solid fa-arrow-left me-1"></i> Back to Templates
         </a>
-        <h1 class="h3 mb-0 text-gray-800 fw-bold">Add New Email Template</h1>
+        <h2 class="h3 mb-0 text-gray-800 fw-bold">Add New Email Template</h2>
     </div>
 </div>
 
